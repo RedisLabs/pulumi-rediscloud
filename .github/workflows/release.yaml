@@ -17,19 +17,19 @@ env:
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
 
   # NodeJS SDK
-  NPM_PUBLISH: true
+  NPM_PUBLISH: false
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # dotNet SDK
-  NUGET_PUBLISH: false
-  NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
+  NUGET_PUBLISH: true
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   NUGET_FEED_URL: https://api.nuget.org/v3/index.json
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 
   # Python SDK
-  PYPI_PUBLISH: false
-  PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+  PYPI_PUBLISH: true
+  PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
   PYPI_USERNAME: "__token__"
 
 jobs:
@@ -149,7 +149,7 @@ jobs:
       - if: ${{ matrix.language == 'dotnet' && env.NUGET_PUBLISH == 'true' }}
         name: publish nuget package
         run: |
-          dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_PUBLISH_KEY }}
+          dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_API_KEY }}
           echo "done publishing packages"
 
     strategy:
