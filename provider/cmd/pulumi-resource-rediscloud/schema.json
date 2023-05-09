@@ -1,0 +1,2876 @@
+{
+    "name": "rediscloud",
+    "description": "A Pulumi package for creating and managing rediscloud cloud resources.",
+    "keywords": [
+        "pulumi",
+        "rediscloud",
+        "category/cloud"
+    ],
+    "homepage": "https://www.pulumi.com",
+    "license": "Apache-2.0",
+    "attribution": "This Pulumi package is based on the [`rediscloud` Terraform Provider](https://github.com/terraform-providers/terraform-provider-rediscloud).",
+    "repository": "https://github.com/RedisLabs/pulumi-rediscloud",
+    "publisher": "Pulumi",
+    "meta": {
+        "moduleFormat": "(.*)(?:/[^/]*)"
+    },
+    "language": {
+        "csharp": {
+            "compatibility": "tfbridge20",
+            "namespaces": null,
+            "packageReferences": {
+                "Pulumi": "3.*"
+            }
+        },
+        "go": {
+            "generateExtraInputTypes": true,
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+        },
+        "nodejs": {
+            "compatibility": "tfbridge20",
+            "dependencies": {
+                "@pulumi/pulumi": "^3.0.0"
+            },
+            "devDependencies": {
+                "@types/mime": "^2.0.0",
+                "@types/node": "^10.0.0"
+            },
+            "disableUnionOutputTypes": true,
+            "packageDescription": "A Pulumi package for creating and managing rediscloud cloud resources.",
+            "packageName": "",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/terraform-providers/terraform-provider-rediscloud)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-rediscloud` repo](https://github.com/RedisLabs/pulumi-rediscloud/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-rediscloud` repo](https://github.com/terraform-providers/terraform-provider-rediscloud/issues).",
+            "typescriptVersion": ""
+        },
+        "python": {
+            "compatibility": "tfbridge20",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/terraform-providers/terraform-provider-rediscloud)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-rediscloud` repo](https://github.com/RedisLabs/pulumi-rediscloud/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-rediscloud` repo](https://github.com/terraform-providers/terraform-provider-rediscloud/issues).",
+            "requires": {
+                "pulumi": "\u003e=3.0.0,\u003c4.0.0"
+            }
+        }
+    },
+    "config": {
+        "variables": {
+            "apiKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment\nvariable.\n"
+            },
+            "secretKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY`\nenvironment variable.\n"
+            },
+            "url": {
+                "type": "string",
+                "description": "This is the URL of Redis Cloud and will default to `https://api.redislabs.com/v1`. This can also be set by the\n`REDISCLOUD_URL` environment variable.\n"
+            }
+        }
+    },
+    "types": {
+        "rediscloud:index/ActiveActiveSubscriptionCreationPlan:ActiveActiveSubscriptionCreationPlan": {
+            "properties": {
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "quantity": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "regions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionCreationPlanRegion:ActiveActiveSubscriptionCreationPlanRegion"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "memoryLimitInGb",
+                "quantity",
+                "regions"
+            ]
+        },
+        "rediscloud:index/ActiveActiveSubscriptionCreationPlanRegion:ActiveActiveSubscriptionCreationPlanRegion": {
+            "properties": {
+                "networkingDeploymentCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "readOperationsPerSecond": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "region": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "writeOperationsPerSecond": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "networkingDeploymentCidr",
+                "readOperationsPerSecond",
+                "region",
+                "writeOperationsPerSecond"
+            ]
+        },
+        "rediscloud:index/ActiveActiveSubscriptionDatabaseGlobalAlert:ActiveActiveSubscriptionDatabaseGlobalAlert": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "value": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ]
+        },
+        "rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegion:ActiveActiveSubscriptionDatabaseOverrideRegion": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "overrideGlobalAlerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert:ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "overrideGlobalDataPersistence": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "overrideGlobalPassword": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "overrideGlobalSourceIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name"
+            ]
+        },
+        "rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert:ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "value": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ]
+        },
+        "rediscloud:index/ActiveActiveSubscriptionRegionsRegion:ActiveActiveSubscriptionRegionsRegion": {
+            "properties": {
+                "databases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionRegionsRegionDatabase:ActiveActiveSubscriptionRegionsRegionDatabase"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingDeploymentCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "recreateRegion": {
+                    "type": "boolean",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "region": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "regionId": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "vpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "databases",
+                "networkingDeploymentCidr",
+                "region"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "databases",
+                        "networkingDeploymentCidr",
+                        "region",
+                        "regionId",
+                        "vpcId"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/ActiveActiveSubscriptionRegionsRegionDatabase:ActiveActiveSubscriptionRegionsRegionDatabase": {
+            "properties": {
+                "databaseId": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "databaseName": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "localReadOperationsPerSecond": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "localWriteOperationsPerSecond": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "databaseId",
+                "databaseName",
+                "localReadOperationsPerSecond",
+                "localWriteOperationsPerSecond"
+            ]
+        },
+        "rediscloud:index/SubscriptionAllowlist:SubscriptionAllowlist": {
+            "properties": {
+                "cidrs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "securityGroupIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "securityGroupIds"
+            ]
+        },
+        "rediscloud:index/SubscriptionCloudProvider:SubscriptionCloudProvider": {
+            "properties": {
+                "cloudAccountId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "provider": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "regions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionCloudProviderRegion:SubscriptionCloudProviderRegion"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "regions"
+            ]
+        },
+        "rediscloud:index/SubscriptionCloudProviderRegion:SubscriptionCloudProviderRegion": {
+            "properties": {
+                "multipleAvailabilityZones": {
+                    "type": "boolean",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "networkingDeploymentCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "networkingVpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "networks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionCloudProviderRegionNetwork:SubscriptionCloudProviderRegionNetwork"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "preferredAvailabilityZones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                },
+                "region": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "networkingDeploymentCidr",
+                "preferredAvailabilityZones",
+                "region"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "networkingDeploymentCidr",
+                        "networks",
+                        "preferredAvailabilityZones",
+                        "region"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/SubscriptionCloudProviderRegionNetwork:SubscriptionCloudProviderRegionNetwork": {
+            "properties": {
+                "networkingDeploymentCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingSubnetId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingVpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "networkingDeploymentCidr",
+                        "networkingSubnetId",
+                        "networkingVpcId"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/SubscriptionCreationPlan:SubscriptionCreationPlan": {
+            "properties": {
+                "averageItemSizeInBytes": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "quantity": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "replication": {
+                    "type": "boolean",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "supportOssClusterApi": {
+                    "type": "boolean",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "throughputMeasurementBy": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "throughputMeasurementValue": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "memoryLimitInGb",
+                "modules",
+                "quantity",
+                "replication",
+                "throughputMeasurementBy",
+                "throughputMeasurementValue"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "averageItemSizeInBytes",
+                        "memoryLimitInGb",
+                        "modules",
+                        "quantity",
+                        "replication",
+                        "throughputMeasurementBy",
+                        "throughputMeasurementValue"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/SubscriptionDatabaseAlert:SubscriptionDatabaseAlert": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "value": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ]
+        },
+        "rediscloud:index/SubscriptionDatabaseModule:SubscriptionDatabaseModule": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    },
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "name"
+            ]
+        },
+        "rediscloud:index/getDataPersistenceDataPersistence:getDataPersistenceDataPersistence": {
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getDatabaseAlert:getDatabaseAlert": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "value": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getDatabaseModule:getDatabaseModule": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getDatabaseModulesModule:getDatabaseModulesModule": {
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getRegionsRegion:getRegionsRegion": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "providerName": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "providerName"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getSubscriptionCloudProvider:getSubscriptionCloudProvider": {
+            "properties": {
+                "cloudAccountId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "provider": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "regions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/getSubscriptionCloudProviderRegion:getSubscriptionCloudProviderRegion"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "cloudAccountId",
+                "provider",
+                "regions"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getSubscriptionCloudProviderRegion:getSubscriptionCloudProviderRegion": {
+            "properties": {
+                "multipleAvailabilityZones": {
+                    "type": "boolean",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingVpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/getSubscriptionCloudProviderRegionNetwork:getSubscriptionCloudProviderRegionNetwork"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "preferredAvailabilityZones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "region": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "multipleAvailabilityZones",
+                "networkingVpcId",
+                "networks",
+                "preferredAvailabilityZones",
+                "region"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getSubscriptionCloudProviderRegionNetwork:getSubscriptionCloudProviderRegionNetwork": {
+            "properties": {
+                "networkingDeploymentCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingSubnetId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "networkingVpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "networkingDeploymentCidr",
+                "networkingSubnetId",
+                "networkingVpcId"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        },
+        "rediscloud:index/getSubscriptionPeeringsPeering:getSubscriptionPeeringsPeering": {
+            "properties": {
+                "awsAccountId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "awsPeeringId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "gcpNetworkName": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "gcpPeeringId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "gcpProjectId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "gcpRedisNetworkName": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "gcpRedisProjectId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "peeringId": {
+                    "type": "integer",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "providerName": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "region": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "vpcCidr": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                },
+                "vpcId": {
+                    "type": "string",
+                    "language": {
+                        "python": {
+                            "mapCase": false
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "required": [
+                "awsAccountId",
+                "awsPeeringId",
+                "gcpNetworkName",
+                "gcpPeeringId",
+                "gcpProjectId",
+                "gcpRedisNetworkName",
+                "gcpRedisProjectId",
+                "peeringId",
+                "providerName",
+                "region",
+                "status",
+                "vpcCidr",
+                "vpcId"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": []
+                }
+            }
+        }
+    },
+    "provider": {
+        "description": "The provider type for the rediscloud package. By default, resources use package-wide configuration\nsettings, however an explicit `Provider` instance may be created and passed during resource\nconstruction to achieve fine-grained programmatic control over provider settings. See the\n[documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.\n",
+        "properties": {
+            "apiKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment\nvariable.\n"
+            },
+            "secretKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY`\nenvironment variable.\n"
+            },
+            "url": {
+                "type": "string",
+                "description": "This is the URL of Redis Cloud and will default to `https://api.redislabs.com/v1`. This can also be set by the\n`REDISCLOUD_URL` environment variable.\n"
+            }
+        },
+        "inputProperties": {
+            "apiKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment\nvariable.\n"
+            },
+            "secretKey": {
+                "type": "string",
+                "description": "This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY`\nenvironment variable.\n"
+            },
+            "url": {
+                "type": "string",
+                "description": "This is the URL of Redis Cloud and will default to `https://api.redislabs.com/v1`. This can also be set by the\n`REDISCLOUD_URL` environment variable.\n"
+            }
+        }
+    },
+    "resources": {
+        "rediscloud:index/activeActiveSubscription:ActiveActiveSubscription": {
+            "properties": {
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "A cloud provider string either GCP or AWS\n"
+                },
+                "creationPlan": {
+                    "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionCreationPlan:ActiveActiveSubscriptionCreationPlan",
+                    "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the subscription\n"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n"
+                },
+                "paymentMethodId": {
+                    "type": "string",
+                    "description": "A valid payment method pre-defined in the current account\n"
+                }
+            },
+            "required": [
+                "name",
+                "paymentMethodId"
+            ],
+            "inputProperties": {
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "A cloud provider string either GCP or AWS\n",
+                    "willReplaceOnChanges": true
+                },
+                "creationPlan": {
+                    "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionCreationPlan:ActiveActiveSubscriptionCreationPlan",
+                    "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the subscription\n"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n",
+                    "willReplaceOnChanges": true
+                },
+                "paymentMethodId": {
+                    "type": "string",
+                    "description": "A valid payment method pre-defined in the current account\n"
+                }
+            },
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering ActiveActiveSubscription resources.\n",
+                "properties": {
+                    "cloudProvider": {
+                        "type": "string",
+                        "description": "A cloud provider string either GCP or AWS\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "creationPlan": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionCreationPlan:ActiveActiveSubscriptionCreationPlan",
+                        "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "A meaningful name to identify the subscription\n"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "paymentMethodId": {
+                        "type": "string",
+                        "description": "A valid payment method pre-defined in the current account\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase": {
+            "properties": {
+                "clientSslCertificate": {
+                    "type": "string",
+                    "description": "SSL certificate to authenticate user connections.\n"
+                },
+                "dataEviction": {
+                    "type": "string",
+                    "description": "Data eviction items policy\n"
+                },
+                "dbId": {
+                    "type": "integer",
+                    "description": "Identifier of the database created\n"
+                },
+                "enableTls": {
+                    "type": "boolean",
+                    "description": "Use TLS for authentication.\n"
+                },
+                "externalEndpointForOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                },
+                "globalAlerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseGlobalAlert:ActiveActiveSubscriptionDatabaseGlobalAlert"
+                    },
+                    "description": "Set of alerts to enable on the database\n"
+                },
+                "globalDataPersistence": {
+                    "type": "string",
+                    "description": "Rate of database data persistence (in persistent storage)\n"
+                },
+                "globalPassword": {
+                    "type": "string",
+                    "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                },
+                "globalSourceIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of CIDR addresses to allow access to the database\n"
+                },
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "description": "Maximum memory usage for this specific database\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the database\n"
+                },
+                "overrideRegions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegion:ActiveActiveSubscriptionDatabaseOverrideRegion"
+                    },
+                    "description": "Region-specific configuration parameters to override the global configuration\n"
+                },
+                "privateEndpoint": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Region public and private endpoints to access the database\n"
+                },
+                "publicEndpoint": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Region public and private endpoints to access the database\n"
+                },
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "Identifier of the subscription\n"
+                },
+                "supportOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Support Redis open-source (OSS) Cluster API\n"
+                }
+            },
+            "required": [
+                "dbId",
+                "globalPassword",
+                "memoryLimitInGb",
+                "name",
+                "privateEndpoint",
+                "publicEndpoint",
+                "subscriptionId"
+            ],
+            "inputProperties": {
+                "clientSslCertificate": {
+                    "type": "string",
+                    "description": "SSL certificate to authenticate user connections.\n"
+                },
+                "dataEviction": {
+                    "type": "string",
+                    "description": "Data eviction items policy\n"
+                },
+                "enableTls": {
+                    "type": "boolean",
+                    "description": "Use TLS for authentication.\n"
+                },
+                "externalEndpointForOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                },
+                "globalAlerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseGlobalAlert:ActiveActiveSubscriptionDatabaseGlobalAlert"
+                    },
+                    "description": "Set of alerts to enable on the database\n"
+                },
+                "globalDataPersistence": {
+                    "type": "string",
+                    "description": "Rate of database data persistence (in persistent storage)\n"
+                },
+                "globalPassword": {
+                    "type": "string",
+                    "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                },
+                "globalSourceIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of CIDR addresses to allow access to the database\n"
+                },
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "description": "Maximum memory usage for this specific database\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the database\n",
+                    "willReplaceOnChanges": true
+                },
+                "overrideRegions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegion:ActiveActiveSubscriptionDatabaseOverrideRegion"
+                    },
+                    "description": "Region-specific configuration parameters to override the global configuration\n"
+                },
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "Identifier of the subscription\n",
+                    "willReplaceOnChanges": true
+                },
+                "supportOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Support Redis open-source (OSS) Cluster API\n"
+                }
+            },
+            "requiredInputs": [
+                "memoryLimitInGb",
+                "subscriptionId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering ActiveActiveSubscriptionDatabase resources.\n",
+                "properties": {
+                    "clientSslCertificate": {
+                        "type": "string",
+                        "description": "SSL certificate to authenticate user connections.\n"
+                    },
+                    "dataEviction": {
+                        "type": "string",
+                        "description": "Data eviction items policy\n"
+                    },
+                    "dbId": {
+                        "type": "integer",
+                        "description": "Identifier of the database created\n"
+                    },
+                    "enableTls": {
+                        "type": "boolean",
+                        "description": "Use TLS for authentication.\n"
+                    },
+                    "externalEndpointForOssClusterApi": {
+                        "type": "boolean",
+                        "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                    },
+                    "globalAlerts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseGlobalAlert:ActiveActiveSubscriptionDatabaseGlobalAlert"
+                        },
+                        "description": "Set of alerts to enable on the database\n"
+                    },
+                    "globalDataPersistence": {
+                        "type": "string",
+                        "description": "Rate of database data persistence (in persistent storage)\n"
+                    },
+                    "globalPassword": {
+                        "type": "string",
+                        "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                    },
+                    "globalSourceIps": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Set of CIDR addresses to allow access to the database\n"
+                    },
+                    "memoryLimitInGb": {
+                        "type": "number",
+                        "description": "Maximum memory usage for this specific database\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "A meaningful name to identify the database\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "overrideRegions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionDatabaseOverrideRegion:ActiveActiveSubscriptionDatabaseOverrideRegion"
+                        },
+                        "description": "Region-specific configuration parameters to override the global configuration\n"
+                    },
+                    "privateEndpoint": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Region public and private endpoints to access the database\n"
+                    },
+                    "publicEndpoint": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Region public and private endpoints to access the database\n"
+                    },
+                    "subscriptionId": {
+                        "type": "integer",
+                        "description": "Identifier of the subscription\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "supportOssClusterApi": {
+                        "type": "boolean",
+                        "description": "Support Redis open-source (OSS) Cluster API\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering": {
+            "properties": {
+                "awsAccountId": {
+                    "type": "string",
+                    "description": "AWS account id that the VPC to be peered lives in\n"
+                },
+                "awsPeeringId": {
+                    "type": "string",
+                    "description": "Identifier of the AWS cloud peering\n"
+                },
+                "destinationRegion": {
+                    "type": "string",
+                    "description": "AWS Region that the VPC to be peered lives in\n"
+                },
+                "gcpNetworkName": {
+                    "type": "string",
+                    "description": "The name of the network to be peered\n"
+                },
+                "gcpPeeringId": {
+                    "type": "string",
+                    "description": "Identifier of the cloud peering\n"
+                },
+                "gcpProjectId": {
+                    "type": "string",
+                    "description": "GCP project ID that the VPC to be peered lives in\n"
+                },
+                "gcpRedisNetworkName": {
+                    "type": "string",
+                    "description": "The name of the Redis Enterprise Cloud network to be peered\n"
+                },
+                "gcpRedisProjectId": {
+                    "type": "string",
+                    "description": "Identifier of the Redis Enterprise Cloud GCP project to be peered\n"
+                },
+                "providerName": {
+                    "type": "string",
+                    "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n"
+                },
+                "sourceRegion": {
+                    "type": "string",
+                    "description": "AWS or GCP Region that the VPC to be peered lives in\n"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`\n"
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "A valid subscription predefined in the current account\n"
+                },
+                "vpcCidr": {
+                    "type": "string",
+                    "description": "CIDR range of the VPC to be peered\n"
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "Identifier of the VPC to be peered\n"
+                }
+            },
+            "required": [
+                "awsAccountId",
+                "awsPeeringId",
+                "destinationRegion",
+                "gcpNetworkName",
+                "gcpPeeringId",
+                "gcpProjectId",
+                "gcpRedisNetworkName",
+                "gcpRedisProjectId",
+                "sourceRegion",
+                "status",
+                "subscriptionId",
+                "vpcId"
+            ],
+            "inputProperties": {
+                "awsAccountId": {
+                    "type": "string",
+                    "description": "AWS account id that the VPC to be peered lives in\n",
+                    "willReplaceOnChanges": true
+                },
+                "destinationRegion": {
+                    "type": "string",
+                    "description": "AWS Region that the VPC to be peered lives in\n",
+                    "willReplaceOnChanges": true
+                },
+                "gcpNetworkName": {
+                    "type": "string",
+                    "description": "The name of the network to be peered\n"
+                },
+                "gcpProjectId": {
+                    "type": "string",
+                    "description": "GCP project ID that the VPC to be peered lives in\n"
+                },
+                "providerName": {
+                    "type": "string",
+                    "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n",
+                    "willReplaceOnChanges": true
+                },
+                "sourceRegion": {
+                    "type": "string",
+                    "description": "AWS or GCP Region that the VPC to be peered lives in\n",
+                    "willReplaceOnChanges": true
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "A valid subscription predefined in the current account\n",
+                    "willReplaceOnChanges": true
+                },
+                "vpcCidr": {
+                    "type": "string",
+                    "description": "CIDR range of the VPC to be peered\n",
+                    "willReplaceOnChanges": true
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "Identifier of the VPC to be peered\n",
+                    "willReplaceOnChanges": true
+                }
+            },
+            "requiredInputs": [
+                "subscriptionId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering ActiveActiveSubscriptionPeering resources.\n",
+                "properties": {
+                    "awsAccountId": {
+                        "type": "string",
+                        "description": "AWS account id that the VPC to be peered lives in\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "awsPeeringId": {
+                        "type": "string",
+                        "description": "Identifier of the AWS cloud peering\n"
+                    },
+                    "destinationRegion": {
+                        "type": "string",
+                        "description": "AWS Region that the VPC to be peered lives in\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "gcpNetworkName": {
+                        "type": "string",
+                        "description": "The name of the network to be peered\n"
+                    },
+                    "gcpPeeringId": {
+                        "type": "string",
+                        "description": "Identifier of the cloud peering\n"
+                    },
+                    "gcpProjectId": {
+                        "type": "string",
+                        "description": "GCP project ID that the VPC to be peered lives in\n"
+                    },
+                    "gcpRedisNetworkName": {
+                        "type": "string",
+                        "description": "The name of the Redis Enterprise Cloud network to be peered\n"
+                    },
+                    "gcpRedisProjectId": {
+                        "type": "string",
+                        "description": "Identifier of the Redis Enterprise Cloud GCP project to be peered\n"
+                    },
+                    "providerName": {
+                        "type": "string",
+                        "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "sourceRegion": {
+                        "type": "string",
+                        "description": "AWS or GCP Region that the VPC to be peered lives in\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`\n"
+                    },
+                    "subscriptionId": {
+                        "type": "string",
+                        "description": "A valid subscription predefined in the current account\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "vpcCidr": {
+                        "type": "string",
+                        "description": "CIDR range of the VPC to be peered\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "vpcId": {
+                        "type": "string",
+                        "description": "Identifier of the VPC to be peered\n",
+                        "willReplaceOnChanges": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions": {
+            "properties": {
+                "deleteRegions": {
+                    "type": "boolean",
+                    "description": "Delete regions flag has to be set for re-creating and deleting regions\n"
+                },
+                "regions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionRegionsRegion:ActiveActiveSubscriptionRegionsRegion"
+                    },
+                    "description": "Cloud networking details, per region (multiple regions for Active-Active cluster)\n"
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "ID of the subscription that the regions belong to\n"
+                }
+            },
+            "required": [
+                "regions",
+                "subscriptionId"
+            ],
+            "inputProperties": {
+                "deleteRegions": {
+                    "type": "boolean",
+                    "description": "Delete regions flag has to be set for re-creating and deleting regions\n"
+                },
+                "regions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionRegionsRegion:ActiveActiveSubscriptionRegionsRegion"
+                    },
+                    "description": "Cloud networking details, per region (multiple regions for Active-Active cluster)\n"
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "ID of the subscription that the regions belong to\n"
+                }
+            },
+            "requiredInputs": [
+                "regions",
+                "subscriptionId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering ActiveActiveSubscriptionRegions resources.\n",
+                "properties": {
+                    "deleteRegions": {
+                        "type": "boolean",
+                        "description": "Delete regions flag has to be set for re-creating and deleting regions\n"
+                    },
+                    "regions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/ActiveActiveSubscriptionRegionsRegion:ActiveActiveSubscriptionRegionsRegion"
+                        },
+                        "description": "Cloud networking details, per region (multiple regions for Active-Active cluster)\n"
+                    },
+                    "subscriptionId": {
+                        "type": "string",
+                        "description": "ID of the subscription that the regions belong to\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/cloudAccount:CloudAccount": {
+            "properties": {
+                "accessKeyId": {
+                    "type": "string",
+                    "description": "Cloud provider access key\n"
+                },
+                "accessSecretKey": {
+                    "type": "string",
+                    "description": "Cloud provider secret key\n"
+                },
+                "consolePassword": {
+                    "type": "string",
+                    "description": "Cloud provider management console password\n"
+                },
+                "consoleUsername": {
+                    "type": "string",
+                    "description": "Cloud provider management console username\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Display name of the account\n"
+                },
+                "providerType": {
+                    "type": "string",
+                    "description": "Cloud provider type - either `AWS` or `GCP`\n"
+                },
+                "signInLoginUrl": {
+                    "type": "string",
+                    "description": "Cloud provider management console login URL\n"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The current status of the account - `draft`, `pending` or `active`\n"
+                }
+            },
+            "required": [
+                "accessKeyId",
+                "accessSecretKey",
+                "consolePassword",
+                "consoleUsername",
+                "name",
+                "providerType",
+                "signInLoginUrl",
+                "status"
+            ],
+            "inputProperties": {
+                "accessKeyId": {
+                    "type": "string",
+                    "description": "Cloud provider access key\n"
+                },
+                "accessSecretKey": {
+                    "type": "string",
+                    "description": "Cloud provider secret key\n"
+                },
+                "consolePassword": {
+                    "type": "string",
+                    "description": "Cloud provider management console password\n"
+                },
+                "consoleUsername": {
+                    "type": "string",
+                    "description": "Cloud provider management console username\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Display name of the account\n"
+                },
+                "providerType": {
+                    "type": "string",
+                    "description": "Cloud provider type - either `AWS` or `GCP`\n",
+                    "willReplaceOnChanges": true
+                },
+                "signInLoginUrl": {
+                    "type": "string",
+                    "description": "Cloud provider management console login URL\n"
+                }
+            },
+            "requiredInputs": [
+                "accessKeyId",
+                "accessSecretKey",
+                "consolePassword",
+                "consoleUsername",
+                "providerType",
+                "signInLoginUrl"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering CloudAccount resources.\n",
+                "properties": {
+                    "accessKeyId": {
+                        "type": "string",
+                        "description": "Cloud provider access key\n"
+                    },
+                    "accessSecretKey": {
+                        "type": "string",
+                        "description": "Cloud provider secret key\n"
+                    },
+                    "consolePassword": {
+                        "type": "string",
+                        "description": "Cloud provider management console password\n"
+                    },
+                    "consoleUsername": {
+                        "type": "string",
+                        "description": "Cloud provider management console username\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Display name of the account\n"
+                    },
+                    "providerType": {
+                        "type": "string",
+                        "description": "Cloud provider type - either `AWS` or `GCP`\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "signInLoginUrl": {
+                        "type": "string",
+                        "description": "Cloud provider management console login URL\n"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "The current status of the account - `draft`, `pending` or `active`\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/subscription:Subscription": {
+            "properties": {
+                "allowlist": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionAllowlist:SubscriptionAllowlist",
+                    "description": "An allowlist object\n"
+                },
+                "cloudProvider": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionCloudProvider:SubscriptionCloudProvider",
+                    "description": "A cloud provider object\n"
+                },
+                "creationPlan": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionCreationPlan:SubscriptionCreationPlan",
+                    "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                },
+                "memoryStorage": {
+                    "type": "string",
+                    "description": "Memory storage preference: either ‘ram’ or a combination of 'ram-and-flash’\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the subscription\n"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n"
+                },
+                "paymentMethodId": {
+                    "type": "string",
+                    "description": "A valid payment method pre-defined in the current account\n"
+                }
+            },
+            "required": [
+                "cloudProvider",
+                "name",
+                "paymentMethodId"
+            ],
+            "inputProperties": {
+                "allowlist": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionAllowlist:SubscriptionAllowlist",
+                    "description": "An allowlist object\n"
+                },
+                "cloudProvider": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionCloudProvider:SubscriptionCloudProvider",
+                    "description": "A cloud provider object\n",
+                    "willReplaceOnChanges": true
+                },
+                "creationPlan": {
+                    "$ref": "#/types/rediscloud:index/SubscriptionCreationPlan:SubscriptionCreationPlan",
+                    "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                },
+                "memoryStorage": {
+                    "type": "string",
+                    "description": "Memory storage preference: either ‘ram’ or a combination of 'ram-and-flash’\n",
+                    "willReplaceOnChanges": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the subscription\n"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n",
+                    "willReplaceOnChanges": true
+                },
+                "paymentMethodId": {
+                    "type": "string",
+                    "description": "A valid payment method pre-defined in the current account\n"
+                }
+            },
+            "requiredInputs": [
+                "cloudProvider"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Subscription resources.\n",
+                "properties": {
+                    "allowlist": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionAllowlist:SubscriptionAllowlist",
+                        "description": "An allowlist object\n"
+                    },
+                    "cloudProvider": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionCloudProvider:SubscriptionCloudProvider",
+                        "description": "A cloud provider object\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "creationPlan": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionCreationPlan:SubscriptionCreationPlan",
+                        "description": "Information about the planned databases used to optimise the database infrastructure. This information is only used when\ncreating a new subscription and any changes will be ignored after this.\n"
+                    },
+                    "memoryStorage": {
+                        "type": "string",
+                        "description": "Memory storage preference: either ‘ram’ or a combination of 'ram-and-flash’\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "A meaningful name to identify the subscription\n"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "description": "Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "paymentMethodId": {
+                        "type": "string",
+                        "description": "A valid payment method pre-defined in the current account\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/subscriptionDatabase:SubscriptionDatabase": {
+            "properties": {
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionDatabaseAlert:SubscriptionDatabaseAlert"
+                    },
+                    "description": "Set of alerts to enable on the database\n"
+                },
+                "averageItemSizeInBytes": {
+                    "type": "integer",
+                    "description": "Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database\n"
+                },
+                "clientSslCertificate": {
+                    "type": "string",
+                    "description": "SSL certificate to authenticate user connections\n"
+                },
+                "dataEviction": {
+                    "type": "string",
+                    "description": "(Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',\n'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')\n"
+                },
+                "dataPersistence": {
+                    "type": "string",
+                    "description": "Rate of database data persistence (in persistent storage)\n"
+                },
+                "dbId": {
+                    "type": "integer",
+                    "description": "Identifier of the database created\n"
+                },
+                "enableTls": {
+                    "type": "boolean",
+                    "description": "Use TLS for authentication\n"
+                },
+                "externalEndpointForOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                },
+                "hashingPolicies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of regular expression rules to shard the database by. See the documentation on clustering for more information on\nthe hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/\n"
+                },
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "description": "Maximum memory usage for this specific database\n"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionDatabaseModule:SubscriptionDatabaseModule"
+                    },
+                    "description": "Modules to be provisioned in the database\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the database\n"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                },
+                "periodicBackupPath": {
+                    "type": "string",
+                    "description": "Path that will be used to store database backup files\n"
+                },
+                "privateEndpoint": {
+                    "type": "string",
+                    "description": "Private endpoint to access the database\n"
+                },
+                "protocol": {
+                    "type": "string",
+                    "description": "The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)\n"
+                },
+                "publicEndpoint": {
+                    "type": "string",
+                    "description": "Public endpoint to access the database\n"
+                },
+                "replicaOfs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If\nthe URI provided is Redis Labs Cloud instance, only host and port should be provided\n"
+                },
+                "replication": {
+                    "type": "boolean",
+                    "description": "Databases replication\n"
+                },
+                "sourceIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of CIDR addresses to allow access to the database\n"
+                },
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "Identifier of the subscription\n"
+                },
+                "supportOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Support Redis open-source (OSS) Cluster API\n"
+                },
+                "throughputMeasurementBy": {
+                    "type": "string",
+                    "description": "Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)\n"
+                },
+                "throughputMeasurementValue": {
+                    "type": "integer",
+                    "description": "Throughput value (as applies to selected measurement method)\n"
+                }
+            },
+            "required": [
+                "dbId",
+                "hashingPolicies",
+                "memoryLimitInGb",
+                "name",
+                "password",
+                "privateEndpoint",
+                "protocol",
+                "publicEndpoint",
+                "subscriptionId",
+                "throughputMeasurementBy",
+                "throughputMeasurementValue"
+            ],
+            "inputProperties": {
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionDatabaseAlert:SubscriptionDatabaseAlert"
+                    },
+                    "description": "Set of alerts to enable on the database\n"
+                },
+                "averageItemSizeInBytes": {
+                    "type": "integer",
+                    "description": "Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database\n"
+                },
+                "clientSslCertificate": {
+                    "type": "string",
+                    "description": "SSL certificate to authenticate user connections\n"
+                },
+                "dataEviction": {
+                    "type": "string",
+                    "description": "(Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',\n'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')\n"
+                },
+                "dataPersistence": {
+                    "type": "string",
+                    "description": "Rate of database data persistence (in persistent storage)\n"
+                },
+                "enableTls": {
+                    "type": "boolean",
+                    "description": "Use TLS for authentication\n"
+                },
+                "externalEndpointForOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                },
+                "hashingPolicies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of regular expression rules to shard the database by. See the documentation on clustering for more information on\nthe hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/\n"
+                },
+                "memoryLimitInGb": {
+                    "type": "number",
+                    "description": "Maximum memory usage for this specific database\n"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/SubscriptionDatabaseModule:SubscriptionDatabaseModule"
+                    },
+                    "description": "Modules to be provisioned in the database\n",
+                    "willReplaceOnChanges": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "A meaningful name to identify the database\n"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                },
+                "periodicBackupPath": {
+                    "type": "string",
+                    "description": "Path that will be used to store database backup files\n"
+                },
+                "protocol": {
+                    "type": "string",
+                    "description": "The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)\n",
+                    "willReplaceOnChanges": true
+                },
+                "replicaOfs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If\nthe URI provided is Redis Labs Cloud instance, only host and port should be provided\n"
+                },
+                "replication": {
+                    "type": "boolean",
+                    "description": "Databases replication\n"
+                },
+                "sourceIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Set of CIDR addresses to allow access to the database\n"
+                },
+                "subscriptionId": {
+                    "type": "integer",
+                    "description": "Identifier of the subscription\n",
+                    "willReplaceOnChanges": true
+                },
+                "supportOssClusterApi": {
+                    "type": "boolean",
+                    "description": "Support Redis open-source (OSS) Cluster API\n"
+                },
+                "throughputMeasurementBy": {
+                    "type": "string",
+                    "description": "Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)\n"
+                },
+                "throughputMeasurementValue": {
+                    "type": "integer",
+                    "description": "Throughput value (as applies to selected measurement method)\n"
+                }
+            },
+            "requiredInputs": [
+                "memoryLimitInGb",
+                "protocol",
+                "subscriptionId",
+                "throughputMeasurementBy",
+                "throughputMeasurementValue"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering SubscriptionDatabase resources.\n",
+                "properties": {
+                    "alerts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/SubscriptionDatabaseAlert:SubscriptionDatabaseAlert"
+                        },
+                        "description": "Set of alerts to enable on the database\n"
+                    },
+                    "averageItemSizeInBytes": {
+                        "type": "integer",
+                        "description": "Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database\n"
+                    },
+                    "clientSslCertificate": {
+                        "type": "string",
+                        "description": "SSL certificate to authenticate user connections\n"
+                    },
+                    "dataEviction": {
+                        "type": "string",
+                        "description": "(Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',\n'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')\n"
+                    },
+                    "dataPersistence": {
+                        "type": "string",
+                        "description": "Rate of database data persistence (in persistent storage)\n"
+                    },
+                    "dbId": {
+                        "type": "integer",
+                        "description": "Identifier of the database created\n"
+                    },
+                    "enableTls": {
+                        "type": "boolean",
+                        "description": "Use TLS for authentication\n"
+                    },
+                    "externalEndpointForOssClusterApi": {
+                        "type": "boolean",
+                        "description": "Should use the external endpoint for open-source (OSS) Cluster API\n"
+                    },
+                    "hashingPolicies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of regular expression rules to shard the database by. See the documentation on clustering for more information on\nthe hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/\n"
+                    },
+                    "memoryLimitInGb": {
+                        "type": "number",
+                        "description": "Maximum memory usage for this specific database\n"
+                    },
+                    "modules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/SubscriptionDatabaseModule:SubscriptionDatabaseModule"
+                        },
+                        "description": "Modules to be provisioned in the database\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "A meaningful name to identify the database\n"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password used to access the database. If left empty, the password will be generated automatically\n"
+                    },
+                    "periodicBackupPath": {
+                        "type": "string",
+                        "description": "Path that will be used to store database backup files\n"
+                    },
+                    "privateEndpoint": {
+                        "type": "string",
+                        "description": "Private endpoint to access the database\n"
+                    },
+                    "protocol": {
+                        "type": "string",
+                        "description": "The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "publicEndpoint": {
+                        "type": "string",
+                        "description": "Public endpoint to access the database\n"
+                    },
+                    "replicaOfs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If\nthe URI provided is Redis Labs Cloud instance, only host and port should be provided\n"
+                    },
+                    "replication": {
+                        "type": "boolean",
+                        "description": "Databases replication\n"
+                    },
+                    "sourceIps": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Set of CIDR addresses to allow access to the database\n"
+                    },
+                    "subscriptionId": {
+                        "type": "integer",
+                        "description": "Identifier of the subscription\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "supportOssClusterApi": {
+                        "type": "boolean",
+                        "description": "Support Redis open-source (OSS) Cluster API\n"
+                    },
+                    "throughputMeasurementBy": {
+                        "type": "string",
+                        "description": "Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)\n"
+                    },
+                    "throughputMeasurementValue": {
+                        "type": "integer",
+                        "description": "Throughput value (as applies to selected measurement method)\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/subscriptionPeering:SubscriptionPeering": {
+            "properties": {
+                "awsAccountId": {
+                    "type": "string",
+                    "description": "AWS account id that the VPC to be peered lives in\n"
+                },
+                "awsPeeringId": {
+                    "type": "string",
+                    "description": "Identifier of the AWS cloud peering\n"
+                },
+                "gcpNetworkName": {
+                    "type": "string",
+                    "description": "The name of the network to be peered\n"
+                },
+                "gcpPeeringId": {
+                    "type": "string",
+                    "description": "Identifier of the cloud peering\n"
+                },
+                "gcpProjectId": {
+                    "type": "string",
+                    "description": "GCP project ID that the VPC to be peered lives in\n"
+                },
+                "gcpRedisNetworkName": {
+                    "type": "string",
+                    "description": "The name of the Redis Enterprise Cloud network to be peered\n"
+                },
+                "gcpRedisProjectId": {
+                    "type": "string",
+                    "description": "Identifier of the Redis Enterprise Cloud GCP project to be peered\n"
+                },
+                "providerName": {
+                    "type": "string",
+                    "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "AWS Region that the VPC to be peered lives in\n"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`\n"
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "A valid subscription predefined in the current account\n"
+                },
+                "vpcCidr": {
+                    "type": "string",
+                    "description": "CIDR range of the VPC to be peered\n"
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "Identifier of the VPC to be peered\n"
+                }
+            },
+            "required": [
+                "awsAccountId",
+                "awsPeeringId",
+                "gcpNetworkName",
+                "gcpPeeringId",
+                "gcpProjectId",
+                "gcpRedisNetworkName",
+                "gcpRedisProjectId",
+                "region",
+                "status",
+                "subscriptionId",
+                "vpcCidr",
+                "vpcId"
+            ],
+            "inputProperties": {
+                "awsAccountId": {
+                    "type": "string",
+                    "description": "AWS account id that the VPC to be peered lives in\n",
+                    "willReplaceOnChanges": true
+                },
+                "gcpNetworkName": {
+                    "type": "string",
+                    "description": "The name of the network to be peered\n"
+                },
+                "gcpProjectId": {
+                    "type": "string",
+                    "description": "GCP project ID that the VPC to be peered lives in\n"
+                },
+                "providerName": {
+                    "type": "string",
+                    "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n",
+                    "willReplaceOnChanges": true
+                },
+                "region": {
+                    "type": "string",
+                    "description": "AWS Region that the VPC to be peered lives in\n",
+                    "willReplaceOnChanges": true
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "A valid subscription predefined in the current account\n",
+                    "willReplaceOnChanges": true
+                },
+                "vpcCidr": {
+                    "type": "string",
+                    "description": "CIDR range of the VPC to be peered\n",
+                    "willReplaceOnChanges": true
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "Identifier of the VPC to be peered\n",
+                    "willReplaceOnChanges": true
+                }
+            },
+            "requiredInputs": [
+                "subscriptionId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering SubscriptionPeering resources.\n",
+                "properties": {
+                    "awsAccountId": {
+                        "type": "string",
+                        "description": "AWS account id that the VPC to be peered lives in\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "awsPeeringId": {
+                        "type": "string",
+                        "description": "Identifier of the AWS cloud peering\n"
+                    },
+                    "gcpNetworkName": {
+                        "type": "string",
+                        "description": "The name of the network to be peered\n"
+                    },
+                    "gcpPeeringId": {
+                        "type": "string",
+                        "description": "Identifier of the cloud peering\n"
+                    },
+                    "gcpProjectId": {
+                        "type": "string",
+                        "description": "GCP project ID that the VPC to be peered lives in\n"
+                    },
+                    "gcpRedisNetworkName": {
+                        "type": "string",
+                        "description": "The name of the Redis Enterprise Cloud network to be peered\n"
+                    },
+                    "gcpRedisProjectId": {
+                        "type": "string",
+                        "description": "Identifier of the Redis Enterprise Cloud GCP project to be peered\n"
+                    },
+                    "providerName": {
+                        "type": "string",
+                        "description": "The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "AWS Region that the VPC to be peered lives in\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`\n"
+                    },
+                    "subscriptionId": {
+                        "type": "string",
+                        "description": "A valid subscription predefined in the current account\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "vpcCidr": {
+                        "type": "string",
+                        "description": "CIDR range of the VPC to be peered\n",
+                        "willReplaceOnChanges": true
+                    },
+                    "vpcId": {
+                        "type": "string",
+                        "description": "Identifier of the VPC to be peered\n",
+                        "willReplaceOnChanges": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "functions": {
+        "rediscloud:index/getCloudAccount:getCloudAccount": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getCloudAccount.\n",
+                "properties": {
+                    "excludeInternalAccount": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "providerType": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "outputs": {
+                "description": "A collection of values returned by getCloudAccount.\n",
+                "properties": {
+                    "accessKeyId": {
+                        "type": "string"
+                    },
+                    "excludeInternalAccount": {
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "providerType": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "accessKeyId",
+                    "name",
+                    "providerType",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getDataPersistence:getDataPersistence": {
+            "outputs": {
+                "description": "A collection of values returned by getDataPersistence.\n",
+                "properties": {
+                    "dataPersistences": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getDataPersistenceDataPersistence:getDataPersistenceDataPersistence"
+                        }
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "dataPersistences",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getDatabase:getDatabase": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getDatabase.\n",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "region": {
+                        "type": "string"
+                    },
+                    "subscriptionId": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "subscriptionId"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getDatabase.\n",
+                "properties": {
+                    "alerts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getDatabaseAlert:getDatabaseAlert"
+                        }
+                    },
+                    "dataEviction": {
+                        "type": "string"
+                    },
+                    "dataPersistence": {
+                        "type": "string"
+                    },
+                    "hashingPolicies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "memoryLimitInGb": {
+                        "type": "number"
+                    },
+                    "modules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getDatabaseModule:getDatabaseModule"
+                        }
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "privateEndpoint": {
+                        "type": "string"
+                    },
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "publicEndpoint": {
+                        "type": "string"
+                    },
+                    "region": {
+                        "type": "string"
+                    },
+                    "replicaOfs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "replication": {
+                        "type": "boolean"
+                    },
+                    "subscriptionId": {
+                        "type": "string"
+                    },
+                    "supportOssClusterApi": {
+                        "type": "boolean"
+                    },
+                    "throughputMeasurementBy": {
+                        "type": "string"
+                    },
+                    "throughputMeasurementValue": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "alerts",
+                    "dataEviction",
+                    "dataPersistence",
+                    "hashingPolicies",
+                    "memoryLimitInGb",
+                    "modules",
+                    "name",
+                    "password",
+                    "privateEndpoint",
+                    "protocol",
+                    "publicEndpoint",
+                    "region",
+                    "replicaOfs",
+                    "replication",
+                    "subscriptionId",
+                    "supportOssClusterApi",
+                    "throughputMeasurementBy",
+                    "throughputMeasurementValue",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getDatabaseModules:getDatabaseModules": {
+            "outputs": {
+                "description": "A collection of values returned by getDatabaseModules.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "modules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getDatabaseModulesModule:getDatabaseModulesModule"
+                        }
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "modules",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getPaymentMethod:getPaymentMethod": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getPaymentMethod.\n",
+                "properties": {
+                    "cardType": {
+                        "type": "string"
+                    },
+                    "excludeExpired": {
+                        "type": "boolean"
+                    },
+                    "lastFourNumbers": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "outputs": {
+                "description": "A collection of values returned by getPaymentMethod.\n",
+                "properties": {
+                    "cardType": {
+                        "type": "string"
+                    },
+                    "excludeExpired": {
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "lastFourNumbers": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "cardType",
+                    "lastFourNumbers",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getRegions:getRegions": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getRegions.\n",
+                "properties": {
+                    "providerName": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "outputs": {
+                "description": "A collection of values returned by getRegions.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "providerName": {
+                        "type": "string"
+                    },
+                    "regions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getRegionsRegion:getRegionsRegion"
+                        }
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "regions",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getSubscription:getSubscription": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getSubscription.\n",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "outputs": {
+                "description": "A collection of values returned by getSubscription.\n",
+                "properties": {
+                    "cloudProviders": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getSubscriptionCloudProvider:getSubscriptionCloudProvider"
+                        }
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "memoryStorage": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "numberOfDatabases": {
+                        "type": "integer"
+                    },
+                    "paymentMethod": {
+                        "type": "string"
+                    },
+                    "paymentMethodId": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "cloudProviders",
+                    "memoryStorage",
+                    "name",
+                    "numberOfDatabases",
+                    "paymentMethod",
+                    "paymentMethodId",
+                    "status",
+                    "id"
+                ]
+            }
+        },
+        "rediscloud:index/getSubscriptionPeerings:getSubscriptionPeerings": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getSubscriptionPeerings.\n",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "subscriptionId": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "subscriptionId"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getSubscriptionPeerings.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "peerings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/getSubscriptionPeeringsPeering:getSubscriptionPeeringsPeering"
+                        }
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "subscriptionId": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "peerings",
+                    "subscriptionId",
+                    "id"
+                ]
+            }
+        }
+    }
+}
