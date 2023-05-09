@@ -3,6 +3,7 @@
 /dist
 /provider/dist
 **/schema-embed.json
+**/schema.json
 
 # These SDKs don't need to be commited
 # to be published.
