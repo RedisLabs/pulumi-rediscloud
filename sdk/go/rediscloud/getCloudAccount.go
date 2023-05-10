@@ -10,7 +10,73 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Cloud Account data source allows access to the ID of a Cloud Account configuration.  This ID can be
+// used when creating Subscription resources.
+//
+// ## Example Usage
+//
+// The following example excludes the Redis Labs internal cloud account and returns only AWS related accounts.
+// This example assumes there is only a single AWS cloud account defined.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.LookupCloudAccount(ctx, &GetCloudAccountArgs{
+//				ExcludeInternalAccount: pulumi.BoolRef(true),
+//				ProviderType:           pulumi.StringRef("AWS"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// If there is more than one AWS cloud account then the name attribute can be used to further filter the ID returned.
+// This example looks for a cloud account named `test` and returns the cloud account ID and access key ID.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.LookupCloudAccount(ctx, &GetCloudAccountArgs{
+//				ExcludeInternalAccount: pulumi.BoolRef(true),
+//				ProviderType:           pulumi.StringRef("AWS"),
+//				Name:                   pulumi.StringRef("test"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("cloudAccountId", example.Id)
+//			ctx.Export("cloudAccountAccessKeyId", example.AccessKeyId)
+//			return nil
+//		})
+//	}
+//
+// ```
 func LookupCloudAccount(ctx *pulumi.Context, args *LookupCloudAccountArgs, opts ...pulumi.InvokeOption) (*LookupCloudAccountResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv LookupCloudAccountResult
 	err := ctx.Invoke("rediscloud:index/getCloudAccount:getCloudAccount", args, &rv, opts...)
 	if err != nil {
@@ -21,9 +87,12 @@ func LookupCloudAccount(ctx *pulumi.Context, args *LookupCloudAccountArgs, opts 
 
 // A collection of arguments for invoking getCloudAccount.
 type LookupCloudAccountArgs struct {
-	ExcludeInternalAccount *bool   `pulumi:"excludeInternalAccount"`
-	Name                   *string `pulumi:"name"`
-	ProviderType           *string `pulumi:"providerType"`
+	// Whether to exclude the Redis Labs internal cloud account.
+	ExcludeInternalAccount *bool `pulumi:"excludeInternalAccount"`
+	// A meaningful name to identify the cloud account
+	Name *string `pulumi:"name"`
+	// The cloud provider of the cloud account, (either `AWS` or `GCP`)
+	ProviderType *string `pulumi:"providerType"`
 }
 
 // A collection of values returned by getCloudAccount.
@@ -51,9 +120,12 @@ func LookupCloudAccountOutput(ctx *pulumi.Context, args LookupCloudAccountOutput
 
 // A collection of arguments for invoking getCloudAccount.
 type LookupCloudAccountOutputArgs struct {
-	ExcludeInternalAccount pulumi.BoolPtrInput   `pulumi:"excludeInternalAccount"`
-	Name                   pulumi.StringPtrInput `pulumi:"name"`
-	ProviderType           pulumi.StringPtrInput `pulumi:"providerType"`
+	// Whether to exclude the Redis Labs internal cloud account.
+	ExcludeInternalAccount pulumi.BoolPtrInput `pulumi:"excludeInternalAccount"`
+	// A meaningful name to identify the cloud account
+	Name pulumi.StringPtrInput `pulumi:"name"`
+	// The cloud provider of the cloud account, (either `AWS` or `GCP`)
+	ProviderType pulumi.StringPtrInput `pulumi:"providerType"`
 }
 
 func (LookupCloudAccountOutputArgs) ElementType() reflect.Type {

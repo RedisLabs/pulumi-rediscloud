@@ -10,7 +10,39 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Subscription Peerings data source allows access to a list of VPC peerings for a particular subscription.
+//
+// ## Example Usage
+//
+// The following example returns a list of all VPC peering within a Subscription.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.GetSubscriptionPeerings(ctx, &GetSubscriptionPeeringsArgs{
+//				SubscriptionId: "1234",
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("rediscloudSubscriptionPeerings", example.Peerings)
+//			return nil
+//		})
+//	}
+//
+// ```
 func GetSubscriptionPeerings(ctx *pulumi.Context, args *GetSubscriptionPeeringsArgs, opts ...pulumi.InvokeOption) (*GetSubscriptionPeeringsResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetSubscriptionPeeringsResult
 	err := ctx.Invoke("rediscloud:index/getSubscriptionPeerings:getSubscriptionPeerings", args, &rv, opts...)
 	if err != nil {
@@ -21,8 +53,10 @@ func GetSubscriptionPeerings(ctx *pulumi.Context, args *GetSubscriptionPeeringsA
 
 // A collection of arguments for invoking getSubscriptionPeerings.
 type GetSubscriptionPeeringsArgs struct {
-	Status         *string `pulumi:"status"`
-	SubscriptionId string  `pulumi:"subscriptionId"`
+	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	Status *string `pulumi:"status"`
+	// ID of the subscription that the peerings belongs to
+	SubscriptionId string `pulumi:"subscriptionId"`
 }
 
 // A collection of values returned by getSubscriptionPeerings.
@@ -49,8 +83,10 @@ func GetSubscriptionPeeringsOutput(ctx *pulumi.Context, args GetSubscriptionPeer
 
 // A collection of arguments for invoking getSubscriptionPeerings.
 type GetSubscriptionPeeringsOutputArgs struct {
-	Status         pulumi.StringPtrInput `pulumi:"status"`
-	SubscriptionId pulumi.StringInput    `pulumi:"subscriptionId"`
+	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	Status pulumi.StringPtrInput `pulumi:"status"`
+	// ID of the subscription that the peerings belongs to
+	SubscriptionId pulumi.StringInput `pulumi:"subscriptionId"`
 }
 
 func (GetSubscriptionPeeringsOutputArgs) ElementType() reflect.Type {

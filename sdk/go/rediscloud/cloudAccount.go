@@ -11,22 +11,39 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Creates a Cloud Account resource representing the access credentials to a cloud provider account, (`AWS`).
+// Redis Enterprise Cloud uses these credentials to provision databases within your infrastructure.
+//
+// ## Import
+//
+// `rediscloud_cloud_account` can be imported using the ID of the Cloud Account, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/cloudAccount:CloudAccount example 12345678
+//
+// ```
 type CloudAccount struct {
 	pulumi.CustomResourceState
 
-	// Cloud provider access key
+	// Cloud provider access key.
 	AccessKeyId pulumi.StringOutput `pulumi:"accessKeyId"`
-	// Cloud provider secret key
+	// Cloud provider secret key.
+	// Note that drift cannot currently be detected for this.
 	AccessSecretKey pulumi.StringOutput `pulumi:"accessSecretKey"`
-	// Cloud provider management console password
+	// Cloud provider management console password.
+	// Note that drift cannot currently be detected for this.
 	ConsolePassword pulumi.StringOutput `pulumi:"consolePassword"`
-	// Cloud provider management console username
+	// Cloud provider management console username.
+	// Note that drift cannot currently be detected for this.
 	ConsoleUsername pulumi.StringOutput `pulumi:"consoleUsername"`
-	// Display name of the account
+	// Display name of the account.
 	Name pulumi.StringOutput `pulumi:"name"`
-	// Cloud provider type - either `AWS` or `GCP`
+	// Cloud provider type - either `AWS` or `GCP`.
+	// Note that drift cannot currently be detected for this.
 	ProviderType pulumi.StringOutput `pulumi:"providerType"`
-	// Cloud provider management console login URL
+	// Cloud provider management console login URL.
+	// Note that drift cannot currently be detected for this.
 	SignInLoginUrl pulumi.StringOutput `pulumi:"signInLoginUrl"`
 	// The current status of the account - `draft`, `pending` or `active`
 	Status pulumi.StringOutput `pulumi:"status"`
@@ -57,6 +74,7 @@ func NewCloudAccount(ctx *pulumi.Context,
 	if args.SignInLoginUrl == nil {
 		return nil, errors.New("invalid value for required argument 'SignInLoginUrl'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource CloudAccount
 	err := ctx.RegisterResource("rediscloud:index/cloudAccount:CloudAccount", name, args, &resource, opts...)
 	if err != nil {
@@ -79,38 +97,48 @@ func GetCloudAccount(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering CloudAccount resources.
 type cloudAccountState struct {
-	// Cloud provider access key
+	// Cloud provider access key.
 	AccessKeyId *string `pulumi:"accessKeyId"`
-	// Cloud provider secret key
+	// Cloud provider secret key.
+	// Note that drift cannot currently be detected for this.
 	AccessSecretKey *string `pulumi:"accessSecretKey"`
-	// Cloud provider management console password
+	// Cloud provider management console password.
+	// Note that drift cannot currently be detected for this.
 	ConsolePassword *string `pulumi:"consolePassword"`
-	// Cloud provider management console username
+	// Cloud provider management console username.
+	// Note that drift cannot currently be detected for this.
 	ConsoleUsername *string `pulumi:"consoleUsername"`
-	// Display name of the account
+	// Display name of the account.
 	Name *string `pulumi:"name"`
-	// Cloud provider type - either `AWS` or `GCP`
+	// Cloud provider type - either `AWS` or `GCP`.
+	// Note that drift cannot currently be detected for this.
 	ProviderType *string `pulumi:"providerType"`
-	// Cloud provider management console login URL
+	// Cloud provider management console login URL.
+	// Note that drift cannot currently be detected for this.
 	SignInLoginUrl *string `pulumi:"signInLoginUrl"`
 	// The current status of the account - `draft`, `pending` or `active`
 	Status *string `pulumi:"status"`
 }
 
 type CloudAccountState struct {
-	// Cloud provider access key
+	// Cloud provider access key.
 	AccessKeyId pulumi.StringPtrInput
-	// Cloud provider secret key
+	// Cloud provider secret key.
+	// Note that drift cannot currently be detected for this.
 	AccessSecretKey pulumi.StringPtrInput
-	// Cloud provider management console password
+	// Cloud provider management console password.
+	// Note that drift cannot currently be detected for this.
 	ConsolePassword pulumi.StringPtrInput
-	// Cloud provider management console username
+	// Cloud provider management console username.
+	// Note that drift cannot currently be detected for this.
 	ConsoleUsername pulumi.StringPtrInput
-	// Display name of the account
+	// Display name of the account.
 	Name pulumi.StringPtrInput
-	// Cloud provider type - either `AWS` or `GCP`
+	// Cloud provider type - either `AWS` or `GCP`.
+	// Note that drift cannot currently be detected for this.
 	ProviderType pulumi.StringPtrInput
-	// Cloud provider management console login URL
+	// Cloud provider management console login URL.
+	// Note that drift cannot currently be detected for this.
 	SignInLoginUrl pulumi.StringPtrInput
 	// The current status of the account - `draft`, `pending` or `active`
 	Status pulumi.StringPtrInput
@@ -121,37 +149,47 @@ func (CloudAccountState) ElementType() reflect.Type {
 }
 
 type cloudAccountArgs struct {
-	// Cloud provider access key
+	// Cloud provider access key.
 	AccessKeyId string `pulumi:"accessKeyId"`
-	// Cloud provider secret key
+	// Cloud provider secret key.
+	// Note that drift cannot currently be detected for this.
 	AccessSecretKey string `pulumi:"accessSecretKey"`
-	// Cloud provider management console password
+	// Cloud provider management console password.
+	// Note that drift cannot currently be detected for this.
 	ConsolePassword string `pulumi:"consolePassword"`
-	// Cloud provider management console username
+	// Cloud provider management console username.
+	// Note that drift cannot currently be detected for this.
 	ConsoleUsername string `pulumi:"consoleUsername"`
-	// Display name of the account
+	// Display name of the account.
 	Name *string `pulumi:"name"`
-	// Cloud provider type - either `AWS` or `GCP`
+	// Cloud provider type - either `AWS` or `GCP`.
+	// Note that drift cannot currently be detected for this.
 	ProviderType string `pulumi:"providerType"`
-	// Cloud provider management console login URL
+	// Cloud provider management console login URL.
+	// Note that drift cannot currently be detected for this.
 	SignInLoginUrl string `pulumi:"signInLoginUrl"`
 }
 
 // The set of arguments for constructing a CloudAccount resource.
 type CloudAccountArgs struct {
-	// Cloud provider access key
+	// Cloud provider access key.
 	AccessKeyId pulumi.StringInput
-	// Cloud provider secret key
+	// Cloud provider secret key.
+	// Note that drift cannot currently be detected for this.
 	AccessSecretKey pulumi.StringInput
-	// Cloud provider management console password
+	// Cloud provider management console password.
+	// Note that drift cannot currently be detected for this.
 	ConsolePassword pulumi.StringInput
-	// Cloud provider management console username
+	// Cloud provider management console username.
+	// Note that drift cannot currently be detected for this.
 	ConsoleUsername pulumi.StringInput
-	// Display name of the account
+	// Display name of the account.
 	Name pulumi.StringPtrInput
-	// Cloud provider type - either `AWS` or `GCP`
+	// Cloud provider type - either `AWS` or `GCP`.
+	// Note that drift cannot currently be detected for this.
 	ProviderType pulumi.StringInput
-	// Cloud provider management console login URL
+	// Cloud provider management console login URL.
+	// Note that drift cannot currently be detected for this.
 	SignInLoginUrl pulumi.StringInput
 }
 
@@ -242,37 +280,42 @@ func (o CloudAccountOutput) ToCloudAccountOutputWithContext(ctx context.Context)
 	return o
 }
 
-// Cloud provider access key
+// Cloud provider access key.
 func (o CloudAccountOutput) AccessKeyId() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.AccessKeyId }).(pulumi.StringOutput)
 }
 
-// Cloud provider secret key
+// Cloud provider secret key.
+// Note that drift cannot currently be detected for this.
 func (o CloudAccountOutput) AccessSecretKey() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.AccessSecretKey }).(pulumi.StringOutput)
 }
 
-// Cloud provider management console password
+// Cloud provider management console password.
+// Note that drift cannot currently be detected for this.
 func (o CloudAccountOutput) ConsolePassword() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.ConsolePassword }).(pulumi.StringOutput)
 }
 
-// Cloud provider management console username
+// Cloud provider management console username.
+// Note that drift cannot currently be detected for this.
 func (o CloudAccountOutput) ConsoleUsername() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.ConsoleUsername }).(pulumi.StringOutput)
 }
 
-// Display name of the account
+// Display name of the account.
 func (o CloudAccountOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// Cloud provider type - either `AWS` or `GCP`
+// Cloud provider type - either `AWS` or `GCP`.
+// Note that drift cannot currently be detected for this.
 func (o CloudAccountOutput) ProviderType() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.ProviderType }).(pulumi.StringOutput)
 }
 
-// Cloud provider management console login URL
+// Cloud provider management console login URL.
+// Note that drift cannot currently be detected for this.
 func (o CloudAccountOutput) SignInLoginUrl() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.SignInLoginUrl }).(pulumi.StringOutput)
 }

@@ -11,40 +11,149 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Creates a Database within a specified Active-Active Subscription in your Redis Enterprise Cloud Account.
+//
+// ## Example Usage
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			card, err := rediscloud.GetPaymentMethod(ctx, &GetPaymentMethodArgs{
+//				CardType: pulumi.StringRef("Visa"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", &rediscloud.ActiveActiveSubscriptionArgs{
+//				PaymentMethodId: pulumi.String(card.Id),
+//				CloudProvider:   pulumi.String("AWS"),
+//				CreationPlan: &ActiveActiveSubscriptionCreationPlanArgs{
+//					MemoryLimitInGb: pulumi.Float64(1),
+//					Quantity:        pulumi.Int(1),
+//					Regions: ActiveActiveSubscriptionCreationPlanRegionArray{
+//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//							Region:                   pulumi.String("us-east-1"),
+//							NetworkingDeploymentCidr: pulumi.String("192.168.0.0/24"),
+//							WriteOperationsPerSecond: pulumi.Int(1000),
+//							ReadOperationsPerSecond:  pulumi.Int(1000),
+//						},
+//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//							Region:                   pulumi.String("us-east-2"),
+//							NetworkingDeploymentCidr: pulumi.String("10.0.1.0/24"),
+//							WriteOperationsPerSecond: pulumi.Int(1000),
+//							ReadOperationsPerSecond:  pulumi.Int(2000),
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewActiveActiveSubscriptionDatabase(ctx, "database-resource", &rediscloud.ActiveActiveSubscriptionDatabaseArgs{
+//				SubscriptionId:        subscription_resource.ID(),
+//				MemoryLimitInGb:       pulumi.Float64(1),
+//				GlobalDataPersistence: pulumi.String("aof-every-1-second"),
+//				GlobalPassword:        pulumi.String("some-random-pass-2"),
+//				GlobalSourceIps: pulumi.StringArray{
+//					pulumi.String("192.168.0.0/16"),
+//				},
+//				GlobalAlerts: ActiveActiveSubscriptionDatabaseGlobalAlertArray{
+//					&ActiveActiveSubscriptionDatabaseGlobalAlertArgs{
+//						Name:  pulumi.String("dataset-size"),
+//						Value: pulumi.Int(40),
+//					},
+//				},
+//				OverrideRegions: ActiveActiveSubscriptionDatabaseOverrideRegionArray{
+//					&ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
+//						Name: pulumi.String("us-east-2"),
+//						OverrideGlobalSourceIps: pulumi.StringArray{
+//							pulumi.String("192.10.0.0/16"),
+//						},
+//					},
+//					&ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
+//						Name:                          pulumi.String("us-east-1"),
+//						OverrideGlobalDataPersistence: pulumi.String("none"),
+//						OverrideGlobalPassword:        pulumi.String("region-specific-password"),
+//						OverrideGlobalAlerts: ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{
+//							&ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{
+//								Name:  pulumi.String("dataset-size"),
+//								Value: pulumi.Int(60),
+//							},
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("us-east-1-public-endpoints", database_resource.PublicEndpoint.ApplyT(func(publicEndpoint map[string]string) (string, error) {
+//				return publicEndpoint.Us - east - 1, nil
+//			}).(pulumi.StringOutput))
+//			ctx.Export("us-east-2-private-endpoints", database_resource.PrivateEndpoint.ApplyT(func(privateEndpoint map[string]string) (string, error) {
+//				return privateEndpoint.Us - east - 1, nil
+//			}).(pulumi.StringOutput))
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ## Import
+//
+// `rediscloud_active_active_subscription_database` can be imported using the ID of the Active-Active subscription and the ID of the database in the format {subscription ID}/{database ID}, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase database-resource 123456/12345678
+//
+// ```
+//
+//	NoteDue to constraints in the Redis Cloud API, the import process will not import global attributes or override region attributes. If you wish to use these attributes in your Terraform configuraton, you will need to manually add them to your Terraform configuration and run `terraform apply` to update the database.
 type ActiveActiveSubscriptionDatabase struct {
 	pulumi.CustomResourceState
 
 	// SSL certificate to authenticate user connections.
 	ClientSslCertificate pulumi.StringPtrOutput `pulumi:"clientSslCertificate"`
-	// Data eviction items policy
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 	DataEviction pulumi.StringPtrOutput `pulumi:"dataEviction"`
 	// Identifier of the database created
 	DbId pulumi.IntOutput `pulumi:"dbId"`
-	// Use TLS for authentication.
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrOutput `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrOutput `pulumi:"externalEndpointForOssClusterApi"`
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput `pulumi:"globalAlerts"`
-	// Rate of database data persistence (in persistent storage)
+	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrOutput `pulumi:"globalDataPersistence"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringOutput `pulumi:"globalPassword"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayOutput `pulumi:"globalSourceIps"`
-	// Maximum memory usage for this specific database
+	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// Alert name
 	Name pulumi.StringOutput `pulumi:"name"`
-	// Region-specific configuration parameters to override the global configuration
+	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput `pulumi:"overrideRegions"`
-	// Region public and private endpoints to access the database
+	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint pulumi.StringMapOutput `pulumi:"privateEndpoint"`
-	// Region public and private endpoints to access the database
+	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapOutput `pulumi:"publicEndpoint"`
 	// Identifier of the subscription
 	SubscriptionId pulumi.IntOutput `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
 }
 
@@ -61,6 +170,7 @@ func NewActiveActiveSubscriptionDatabase(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase", name, args, &resource, opts...)
 	if err != nil {
@@ -85,70 +195,72 @@ func GetActiveActiveSubscriptionDatabase(ctx *pulumi.Context,
 type activeActiveSubscriptionDatabaseState struct {
 	// SSL certificate to authenticate user connections.
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
-	// Data eviction items policy
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 	DataEviction *string `pulumi:"dataEviction"`
 	// Identifier of the database created
 	DbId *int `pulumi:"dbId"`
-	// Use TLS for authentication.
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls *bool `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 	GlobalAlerts []ActiveActiveSubscriptionDatabaseGlobalAlert `pulumi:"globalAlerts"`
-	// Rate of database data persistence (in persistent storage)
+	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence *string `pulumi:"globalDataPersistence"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 	GlobalPassword *string `pulumi:"globalPassword"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
-	// Maximum memory usage for this specific database
+	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// Alert name
 	Name *string `pulumi:"name"`
-	// Region-specific configuration parameters to override the global configuration
+	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
-	// Region public and private endpoints to access the database
+	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint map[string]string `pulumi:"privateEndpoint"`
-	// Region public and private endpoints to access the database
+	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint map[string]string `pulumi:"publicEndpoint"`
 	// Identifier of the subscription
 	SubscriptionId *int `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 }
 
 type ActiveActiveSubscriptionDatabaseState struct {
 	// SSL certificate to authenticate user connections.
 	ClientSslCertificate pulumi.StringPtrInput
-	// Data eviction items policy
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 	DataEviction pulumi.StringPtrInput
 	// Identifier of the database created
 	DbId pulumi.IntPtrInput
-	// Use TLS for authentication.
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrInput
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayInput
-	// Rate of database data persistence (in persistent storage)
+	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrInput
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringPtrInput
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayInput
-	// Maximum memory usage for this specific database
+	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64PtrInput
-	// A meaningful name to identify the database
+	// Alert name
 	Name pulumi.StringPtrInput
-	// Region-specific configuration parameters to override the global configuration
+	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
-	// Region public and private endpoints to access the database
+	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint pulumi.StringMapInput
-	// Region public and private endpoints to access the database
+	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapInput
 	// Identifier of the subscription
 	SubscriptionId pulumi.IntPtrInput
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 }
 
@@ -159,29 +271,30 @@ func (ActiveActiveSubscriptionDatabaseState) ElementType() reflect.Type {
 type activeActiveSubscriptionDatabaseArgs struct {
 	// SSL certificate to authenticate user connections.
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
-	// Data eviction items policy
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 	DataEviction *string `pulumi:"dataEviction"`
-	// Use TLS for authentication.
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls *bool `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 	GlobalAlerts []ActiveActiveSubscriptionDatabaseGlobalAlert `pulumi:"globalAlerts"`
-	// Rate of database data persistence (in persistent storage)
+	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence *string `pulumi:"globalDataPersistence"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 	GlobalPassword *string `pulumi:"globalPassword"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
-	// Maximum memory usage for this specific database
+	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// Alert name
 	Name *string `pulumi:"name"`
-	// Region-specific configuration parameters to override the global configuration
+	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
 	// Identifier of the subscription
 	SubscriptionId int `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 }
 
@@ -189,29 +302,30 @@ type activeActiveSubscriptionDatabaseArgs struct {
 type ActiveActiveSubscriptionDatabaseArgs struct {
 	// SSL certificate to authenticate user connections.
 	ClientSslCertificate pulumi.StringPtrInput
-	// Data eviction items policy
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 	DataEviction pulumi.StringPtrInput
-	// Use TLS for authentication.
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrInput
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayInput
-	// Rate of database data persistence (in persistent storage)
+	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrInput
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringPtrInput
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayInput
-	// Maximum memory usage for this specific database
+	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Input
-	// A meaningful name to identify the database
+	// Alert name
 	Name pulumi.StringPtrInput
-	// Region-specific configuration parameters to override the global configuration
+	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
 	// Identifier of the subscription
 	SubscriptionId pulumi.IntInput
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 }
 
@@ -307,7 +421,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) ClientSslCertificate() pulumi.St
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringPtrOutput { return v.ClientSslCertificate }).(pulumi.StringPtrOutput)
 }
 
-// Data eviction items policy
+// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
 func (o ActiveActiveSubscriptionDatabaseOutput) DataEviction() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringPtrOutput { return v.DataEviction }).(pulumi.StringPtrOutput)
 }
@@ -317,63 +431,64 @@ func (o ActiveActiveSubscriptionDatabaseOutput) DbId() pulumi.IntOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.IntOutput { return v.DbId }).(pulumi.IntOutput)
 }
 
-// Use TLS for authentication.
+// Use TLS for authentication. Default: ‘false’
 func (o ActiveActiveSubscriptionDatabaseOutput) EnableTls() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.BoolPtrOutput { return v.EnableTls }).(pulumi.BoolPtrOutput)
 }
 
-// Should use the external endpoint for open-source (OSS) Cluster API
+// Should use the external endpoint for open-source (OSS) Cluster API.
+// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 func (o ActiveActiveSubscriptionDatabaseOutput) ExternalEndpointForOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.BoolPtrOutput {
 		return v.ExternalEndpointForOssClusterApi
 	}).(pulumi.BoolPtrOutput)
 }
 
-// Set of alerts to enable on the database
+// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalAlerts() ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput {
 		return v.GlobalAlerts
 	}).(ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput)
 }
 
-// Rate of database data persistence (in persistent storage)
+// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalDataPersistence() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringPtrOutput { return v.GlobalDataPersistence }).(pulumi.StringPtrOutput)
 }
 
-// Password used to access the database. If left empty, the password will be generated automatically
+// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalPassword() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.GlobalPassword }).(pulumi.StringOutput)
 }
 
-// Set of CIDR addresses to allow access to the database
+// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalSourceIps() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringArrayOutput { return v.GlobalSourceIps }).(pulumi.StringArrayOutput)
 }
 
-// Maximum memory usage for this specific database
+// Maximum memory usage for this specific database, including replication and other overhead
 func (o ActiveActiveSubscriptionDatabaseOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.Float64Output { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
-// A meaningful name to identify the database
+// Alert name
 func (o ActiveActiveSubscriptionDatabaseOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// Region-specific configuration parameters to override the global configuration
+// Override region specific configuration, documented below
 func (o ActiveActiveSubscriptionDatabaseOutput) OverrideRegions() ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput {
 		return v.OverrideRegions
 	}).(ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput)
 }
 
-// Region public and private endpoints to access the database
+// A map of which private endpoints can to access the database per region, uses region name as key.
 func (o ActiveActiveSubscriptionDatabaseOutput) PrivateEndpoint() pulumi.StringMapOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringMapOutput { return v.PrivateEndpoint }).(pulumi.StringMapOutput)
 }
 
-// Region public and private endpoints to access the database
+// A map of which public endpoints can to access the database per region, uses region name as key.
 func (o ActiveActiveSubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringMapOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringMapOutput { return v.PublicEndpoint }).(pulumi.StringMapOutput)
 }
@@ -383,7 +498,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) SubscriptionId() pulumi.IntOutpu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.IntOutput { return v.SubscriptionId }).(pulumi.IntOutput)
 }
 
-// Support Redis open-source (OSS) Cluster API
+// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 func (o ActiveActiveSubscriptionDatabaseOutput) SupportOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.BoolPtrOutput { return v.SupportOssClusterApi }).(pulumi.BoolPtrOutput)
 }

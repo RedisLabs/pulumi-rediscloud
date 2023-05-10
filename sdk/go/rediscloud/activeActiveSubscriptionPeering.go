@@ -11,14 +11,128 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Creates an AWS or GCP VPC peering for an existing Redis Enterprise Cloud Active-Active Subscription, allowing access to your subscription databases as if they were on the same network.
+//
+// For AWS, peering should be accepted by the other side.
+// For GCP, the opposite peering request should be submitted.
+//
+// ## Example Usage
+// ### AWS
+//
+// The following example shows how an Active-Active subscription can be peered with an AWS VPC using the rediscloud and AWS providers.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewActiveActiveSubscriptionPeering(ctx, "peering-resource", &rediscloud.ActiveActiveSubscriptionPeeringArgs{
+//				SubscriptionId:    subscription_resource.ID(),
+//				SourceRegion:      pulumi.String("us-east-1"),
+//				DestinationRegion: pulumi.String("eu-west-2"),
+//				AwsAccountId:      pulumi.String("123456789012"),
+//				VpcId:             pulumi.String("vpc-01234567890"),
+//				VpcCidr:           pulumi.String("10.0.10.0/24"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = ec2.NewVpcPeeringConnectionAccepter(ctx, "aws-peering-resource", &ec2.VpcPeeringConnectionAccepterArgs{
+//				VpcPeeringConnectionId: peering_resource.AwsPeeringId,
+//				AutoAccept:             pulumi.Bool(true),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+// ### GCP
+//
+// The following example shows how an Active-Active subscription can be peered with a GCP project network using the rediscloud and google providers.
+// The example HCL locates the network details and creates/accepts the vpc peering connection through the Google provider.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"fmt"
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/compute"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", nil)
+//			if err != nil {
+//				return err
+//			}
+//			network, err := compute.LookupNetwork(ctx, &compute.LookupNetworkArgs{
+//				Project: pulumi.StringRef("my-gcp-project"),
+//				Name:    "my-gcp-vpc",
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewActiveActiveSubscriptionPeering(ctx, "peering-resource", &rediscloud.ActiveActiveSubscriptionPeeringArgs{
+//				SubscriptionId: subscription_resource.ID(),
+//				ProviderName:   pulumi.String("GCP"),
+//				GcpProjectId:   pulumi.String(network.Project),
+//				GcpNetworkName: pulumi.String(network.Name),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = compute.NewNetworkPeering(ctx, "gcp-peering-resource", &compute.NetworkPeeringArgs{
+//				Network: pulumi.String(network.SelfLink),
+//				PeerNetwork: peering_resource.GcpRedisProjectId.ApplyT(func(gcpRedisProjectId string) (string, error) {
+//					return fmt.Sprintf("https://www.googleapis.com/compute/v1/projects/%v/global/networks/%v", gcpRedisProjectId, rediscloud_active_active_subscription_peering.Example.Gcp_redis_network_name), nil
+//				}).(pulumi.StringOutput),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ## Import
+//
+// `rediscloud_active_active_subscription_peering` can be imported using the ID of the Active-Active subscription and the ID of the peering connection, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering peering-resource 12345678/1234
+//
+// ```
 type ActiveActiveSubscriptionPeering struct {
 	pulumi.CustomResourceState
 
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringOutput `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringOutput `pulumi:"awsPeeringId"`
-	// AWS Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering to
 	DestinationRegion pulumi.StringOutput `pulumi:"destinationRegion"`
 	// The name of the network to be peered
 	GcpNetworkName pulumi.StringOutput `pulumi:"gcpNetworkName"`
@@ -30,13 +144,13 @@ type ActiveActiveSubscriptionPeering struct {
 	GcpRedisNetworkName pulumi.StringOutput `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringOutput `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrOutput `pulumi:"providerName"`
-	// AWS or GCP Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering from
 	SourceRegion pulumi.StringOutput `pulumi:"sourceRegion"`
 	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
 	Status pulumi.StringOutput `pulumi:"status"`
-	// A valid subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 	// CIDR range of the VPC to be peered
 	VpcCidr pulumi.StringPtrOutput `pulumi:"vpcCidr"`
@@ -54,6 +168,7 @@ func NewActiveActiveSubscriptionPeering(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionPeering
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering", name, args, &resource, opts...)
 	if err != nil {
@@ -76,11 +191,11 @@ func GetActiveActiveSubscriptionPeering(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering ActiveActiveSubscriptionPeering resources.
 type activeActiveSubscriptionPeeringState struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId *string `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId *string `pulumi:"awsPeeringId"`
-	// AWS Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering to
 	DestinationRegion *string `pulumi:"destinationRegion"`
 	// The name of the network to be peered
 	GcpNetworkName *string `pulumi:"gcpNetworkName"`
@@ -92,13 +207,13 @@ type activeActiveSubscriptionPeeringState struct {
 	GcpRedisNetworkName *string `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId *string `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName *string `pulumi:"providerName"`
-	// AWS or GCP Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering from
 	SourceRegion *string `pulumi:"sourceRegion"`
 	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
 	Status *string `pulumi:"status"`
-	// A valid subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId *string `pulumi:"subscriptionId"`
 	// CIDR range of the VPC to be peered
 	VpcCidr *string `pulumi:"vpcCidr"`
@@ -107,11 +222,11 @@ type activeActiveSubscriptionPeeringState struct {
 }
 
 type ActiveActiveSubscriptionPeeringState struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringPtrInput
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringPtrInput
-	// AWS Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering to
 	DestinationRegion pulumi.StringPtrInput
 	// The name of the network to be peered
 	GcpNetworkName pulumi.StringPtrInput
@@ -123,13 +238,13 @@ type ActiveActiveSubscriptionPeeringState struct {
 	GcpRedisNetworkName pulumi.StringPtrInput
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrInput
-	// AWS or GCP Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering from
 	SourceRegion pulumi.StringPtrInput
 	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
 	Status pulumi.StringPtrInput
-	// A valid subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId pulumi.StringPtrInput
 	// CIDR range of the VPC to be peered
 	VpcCidr pulumi.StringPtrInput
@@ -142,19 +257,19 @@ func (ActiveActiveSubscriptionPeeringState) ElementType() reflect.Type {
 }
 
 type activeActiveSubscriptionPeeringArgs struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId *string `pulumi:"awsAccountId"`
-	// AWS Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering to
 	DestinationRegion *string `pulumi:"destinationRegion"`
 	// The name of the network to be peered
 	GcpNetworkName *string `pulumi:"gcpNetworkName"`
 	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId *string `pulumi:"gcpProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName *string `pulumi:"providerName"`
-	// AWS or GCP Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering from
 	SourceRegion *string `pulumi:"sourceRegion"`
-	// A valid subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId string `pulumi:"subscriptionId"`
 	// CIDR range of the VPC to be peered
 	VpcCidr *string `pulumi:"vpcCidr"`
@@ -164,19 +279,19 @@ type activeActiveSubscriptionPeeringArgs struct {
 
 // The set of arguments for constructing a ActiveActiveSubscriptionPeering resource.
 type ActiveActiveSubscriptionPeeringArgs struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringPtrInput
-	// AWS Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering to
 	DestinationRegion pulumi.StringPtrInput
 	// The name of the network to be peered
 	GcpNetworkName pulumi.StringPtrInput
 	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrInput
-	// AWS or GCP Region that the VPC to be peered lives in
+	// Name of the region to create the VPC peering from
 	SourceRegion pulumi.StringPtrInput
-	// A valid subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId pulumi.StringInput
 	// CIDR range of the VPC to be peered
 	VpcCidr pulumi.StringPtrInput
@@ -271,7 +386,7 @@ func (o ActiveActiveSubscriptionPeeringOutput) ToActiveActiveSubscriptionPeering
 	return o
 }
 
-// AWS account id that the VPC to be peered lives in
+// AWS account ID that the VPC to be peered lives in
 func (o ActiveActiveSubscriptionPeeringOutput) AwsAccountId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.AwsAccountId }).(pulumi.StringOutput)
 }
@@ -281,7 +396,7 @@ func (o ActiveActiveSubscriptionPeeringOutput) AwsPeeringId() pulumi.StringOutpu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.AwsPeeringId }).(pulumi.StringOutput)
 }
 
-// AWS Region that the VPC to be peered lives in
+// Name of the region to create the VPC peering to
 func (o ActiveActiveSubscriptionPeeringOutput) DestinationRegion() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.DestinationRegion }).(pulumi.StringOutput)
 }
@@ -311,12 +426,12 @@ func (o ActiveActiveSubscriptionPeeringOutput) GcpRedisProjectId() pulumi.String
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.GcpRedisProjectId }).(pulumi.StringOutput)
 }
 
-// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 func (o ActiveActiveSubscriptionPeeringOutput) ProviderName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringPtrOutput { return v.ProviderName }).(pulumi.StringPtrOutput)
 }
 
-// AWS or GCP Region that the VPC to be peered lives in
+// Name of the region to create the VPC peering from
 func (o ActiveActiveSubscriptionPeeringOutput) SourceRegion() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.SourceRegion }).(pulumi.StringOutput)
 }
@@ -326,7 +441,7 @@ func (o ActiveActiveSubscriptionPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
 }
 
-// A valid subscription predefined in the current account
+// A valid Active-Active subscription predefined in the current account
 func (o ActiveActiveSubscriptionPeeringOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }

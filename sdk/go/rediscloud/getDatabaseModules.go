@@ -7,7 +7,37 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The database modules data source allows access to a list of supported [Redis Enterprise Cloud modules](https://redislabs.com/redis-enterprise/modules).\
+// Each module represents an enrichment that can be applied to a Redis database.
+//
+// ## Example Usage
+//
+// The following example returns a list of all modules available within your Redis Enterprise Cloud account.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.GetDatabaseModules(ctx, nil, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("rediscloudDatabaseModules", example.Modules)
+//			return nil
+//		})
+//	}
+//
+// ```
 func GetDatabaseModules(ctx *pulumi.Context, opts ...pulumi.InvokeOption) (*GetDatabaseModulesResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetDatabaseModulesResult
 	err := ctx.Invoke("rediscloud:index/getDatabaseModules:getDatabaseModules", nil, &rv, opts...)
 	if err != nil {

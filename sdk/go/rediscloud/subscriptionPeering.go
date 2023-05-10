@@ -11,10 +11,121 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Creates an AWS or GCP VPC peering for an existing Redis Enterprise Cloud Subscription, allowing access to your subscription databases as if they were on the same network.
+//
+// For AWS, peering should be accepted by the other side.
+// For GCP, the opposite peering request should be submitted.
+//
+// ## Example Usage
+// ### AWS
+//
+// The following example shows how a subscription can be peered with a AWS VPC using the rediscloud and google providers.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			exampleSubscription, err := rediscloud.NewSubscription(ctx, "exampleSubscription", nil)
+//			if err != nil {
+//				return err
+//			}
+//			exampleSubscriptionPeering, err := rediscloud.NewSubscriptionPeering(ctx, "exampleSubscriptionPeering", &rediscloud.SubscriptionPeeringArgs{
+//				SubscriptionId: exampleSubscription.ID(),
+//				Region:         pulumi.String("eu-west-1"),
+//				AwsAccountId:   pulumi.String("123456789012"),
+//				VpcId:          pulumi.String("vpc-01234567890"),
+//				VpcCidr:        pulumi.String("10.0.0.0/8"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = ec2.NewVpcPeeringConnectionAccepter(ctx, "example-peering", &ec2.VpcPeeringConnectionAccepterArgs{
+//				VpcPeeringConnectionId: exampleSubscriptionPeering.AwsPeeringId,
+//				AutoAccept:             pulumi.Bool(true),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+// ### GCP
+//
+// The following example shows how a subscription can be peered with a GCP project network using the rediscloud and google providers.
+// The example HCL locates the network details and creates/accepts the vpc peering connection through the Google provider.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"fmt"
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/compute"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.NewSubscription(ctx, "example", nil)
+//			if err != nil {
+//				return err
+//			}
+//			network, err := compute.LookupNetwork(ctx, &compute.LookupNetworkArgs{
+//				Project: pulumi.StringRef("my-gcp-project"),
+//				Name:    "my-gcp-vpc",
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewSubscriptionPeering(ctx, "example-peeringSubscriptionPeering", &rediscloud.SubscriptionPeeringArgs{
+//				SubscriptionId: example.ID(),
+//				ProviderName:   pulumi.String("GCP"),
+//				GcpProjectId:   pulumi.String(network.Project),
+//				GcpNetworkName: pulumi.String(network.Name),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = compute.NewNetworkPeering(ctx, "example-peeringNetworkPeering", &compute.NetworkPeeringArgs{
+//				Network:     pulumi.String(network.SelfLink),
+//				PeerNetwork: pulumi.String(fmt.Sprintf("https://www.googleapis.com/compute/v1/projects/%v/global/networks/%v", rediscloud_subscription_peering.Example.Gcp_redis_project_id, rediscloud_subscription_peering.Example.Gcp_redis_network_name)),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ## Import
+//
+// `rediscloud_subscription_peering` can be imported using the ID of the subscription and the ID of the peering connection, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/subscriptionPeering:SubscriptionPeering example 12345678/1234
+//
+// ```
 type SubscriptionPeering struct {
 	pulumi.CustomResourceState
 
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringOutput `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringOutput `pulumi:"awsPeeringId"`
@@ -28,7 +139,7 @@ type SubscriptionPeering struct {
 	GcpRedisNetworkName pulumi.StringOutput `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringOutput `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrOutput `pulumi:"providerName"`
 	// AWS Region that the VPC to be peered lives in
 	Region pulumi.StringOutput `pulumi:"region"`
@@ -52,6 +163,7 @@ func NewSubscriptionPeering(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource SubscriptionPeering
 	err := ctx.RegisterResource("rediscloud:index/subscriptionPeering:SubscriptionPeering", name, args, &resource, opts...)
 	if err != nil {
@@ -74,7 +186,7 @@ func GetSubscriptionPeering(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering SubscriptionPeering resources.
 type subscriptionPeeringState struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId *string `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId *string `pulumi:"awsPeeringId"`
@@ -88,7 +200,7 @@ type subscriptionPeeringState struct {
 	GcpRedisNetworkName *string `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId *string `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName *string `pulumi:"providerName"`
 	// AWS Region that the VPC to be peered lives in
 	Region *string `pulumi:"region"`
@@ -103,7 +215,7 @@ type subscriptionPeeringState struct {
 }
 
 type SubscriptionPeeringState struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringPtrInput
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringPtrInput
@@ -117,7 +229,7 @@ type SubscriptionPeeringState struct {
 	GcpRedisNetworkName pulumi.StringPtrInput
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrInput
 	// AWS Region that the VPC to be peered lives in
 	Region pulumi.StringPtrInput
@@ -136,13 +248,13 @@ func (SubscriptionPeeringState) ElementType() reflect.Type {
 }
 
 type subscriptionPeeringArgs struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId *string `pulumi:"awsAccountId"`
 	// The name of the network to be peered
 	GcpNetworkName *string `pulumi:"gcpNetworkName"`
 	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId *string `pulumi:"gcpProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName *string `pulumi:"providerName"`
 	// AWS Region that the VPC to be peered lives in
 	Region *string `pulumi:"region"`
@@ -156,13 +268,13 @@ type subscriptionPeeringArgs struct {
 
 // The set of arguments for constructing a SubscriptionPeering resource.
 type SubscriptionPeeringArgs struct {
-	// AWS account id that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in
 	AwsAccountId pulumi.StringPtrInput
 	// The name of the network to be peered
 	GcpNetworkName pulumi.StringPtrInput
 	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 	ProviderName pulumi.StringPtrInput
 	// AWS Region that the VPC to be peered lives in
 	Region pulumi.StringPtrInput
@@ -261,7 +373,7 @@ func (o SubscriptionPeeringOutput) ToSubscriptionPeeringOutputWithContext(ctx co
 	return o
 }
 
-// AWS account id that the VPC to be peered lives in
+// AWS account ID that the VPC to be peered lives in
 func (o SubscriptionPeeringOutput) AwsAccountId() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionPeering) pulumi.StringOutput { return v.AwsAccountId }).(pulumi.StringOutput)
 }
@@ -296,7 +408,7 @@ func (o SubscriptionPeeringOutput) GcpRedisProjectId() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionPeering) pulumi.StringOutput { return v.GcpRedisProjectId }).(pulumi.StringOutput)
 }
 
-// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`)
+// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
 func (o SubscriptionPeeringOutput) ProviderName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionPeering) pulumi.StringPtrOutput { return v.ProviderName }).(pulumi.StringPtrOutput)
 }

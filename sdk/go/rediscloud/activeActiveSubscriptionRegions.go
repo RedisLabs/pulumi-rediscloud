@@ -11,12 +11,79 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Manages regions within your Redis Enterprise Cloud Active-Active subscription.
+// This resource is responsible for creating and managing regions within that subscription.
+// This allows Redis Enterprise Cloud to efficiently provision your cluster within each defined region in a separate block.
+//
+// ## Example Usage
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.NewActiveActiveSubscriptionRegions(ctx, "regions-resource", &rediscloud.ActiveActiveSubscriptionRegionsArgs{
+//				SubscriptionId: pulumi.Any(rediscloud_active_active_subscription.Subscription - resource.Id),
+//				DeleteRegions:  pulumi.Bool(false),
+//				Regions: ActiveActiveSubscriptionRegionsRegionArray{
+//					&ActiveActiveSubscriptionRegionsRegionArgs{
+//						Region:                   pulumi.String("us-east-1"),
+//						NetworkingDeploymentCidr: pulumi.String("192.168.0.0/24"),
+//						Databases: ActiveActiveSubscriptionRegionsRegionDatabaseArray{
+//							&ActiveActiveSubscriptionRegionsRegionDatabaseArgs{
+//								DatabaseId:                    pulumi.Any(rediscloud_active_active_subscription_database.Database - resource.Db_id),
+//								DatabaseName:                  pulumi.Any(rediscloud_active_active_subscription_database.Database - resource.Name),
+//								LocalWriteOperationsPerSecond: pulumi.Int(1000),
+//								LocalReadOperationsPerSecond:  pulumi.Int(1000),
+//							},
+//						},
+//					},
+//					&ActiveActiveSubscriptionRegionsRegionArgs{
+//						Region:                   pulumi.String("us-east-2"),
+//						NetworkingDeploymentCidr: pulumi.String("10.0.1.0/24"),
+//						Databases: ActiveActiveSubscriptionRegionsRegionDatabaseArray{
+//							&ActiveActiveSubscriptionRegionsRegionDatabaseArgs{
+//								DatabaseId:                    pulumi.Any(rediscloud_active_active_subscription_database.Database - resource.Db_id),
+//								DatabaseName:                  pulumi.Any(rediscloud_active_active_subscription_database.Database - resource.Name),
+//								LocalWriteOperationsPerSecond: pulumi.Int(2000),
+//								LocalReadOperationsPerSecond:  pulumi.Int(4000),
+//							},
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ## Import
+//
+// `rediscloud_active_active_regions` can be imported using the ID of the subscription, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions regions-resource 12345678
+//
+// ```
 type ActiveActiveSubscriptionRegions struct {
 	pulumi.CustomResourceState
 
-	// Delete regions flag has to be set for re-creating and deleting regions
+	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions pulumi.BoolPtrOutput `pulumi:"deleteRegions"`
-	// Cloud networking details, per region (multiple regions for Active-Active cluster)
+	// Region name
 	Regions ActiveActiveSubscriptionRegionsRegionArrayOutput `pulumi:"regions"`
 	// ID of the subscription that the regions belong to
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
@@ -35,6 +102,7 @@ func NewActiveActiveSubscriptionRegions(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionRegions
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions", name, args, &resource, opts...)
 	if err != nil {
@@ -57,18 +125,18 @@ func GetActiveActiveSubscriptionRegions(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering ActiveActiveSubscriptionRegions resources.
 type activeActiveSubscriptionRegionsState struct {
-	// Delete regions flag has to be set for re-creating and deleting regions
+	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions *bool `pulumi:"deleteRegions"`
-	// Cloud networking details, per region (multiple regions for Active-Active cluster)
+	// Region name
 	Regions []ActiveActiveSubscriptionRegionsRegion `pulumi:"regions"`
 	// ID of the subscription that the regions belong to
 	SubscriptionId *string `pulumi:"subscriptionId"`
 }
 
 type ActiveActiveSubscriptionRegionsState struct {
-	// Delete regions flag has to be set for re-creating and deleting regions
+	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions pulumi.BoolPtrInput
-	// Cloud networking details, per region (multiple regions for Active-Active cluster)
+	// Region name
 	Regions ActiveActiveSubscriptionRegionsRegionArrayInput
 	// ID of the subscription that the regions belong to
 	SubscriptionId pulumi.StringPtrInput
@@ -79,9 +147,9 @@ func (ActiveActiveSubscriptionRegionsState) ElementType() reflect.Type {
 }
 
 type activeActiveSubscriptionRegionsArgs struct {
-	// Delete regions flag has to be set for re-creating and deleting regions
+	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions *bool `pulumi:"deleteRegions"`
-	// Cloud networking details, per region (multiple regions for Active-Active cluster)
+	// Region name
 	Regions []ActiveActiveSubscriptionRegionsRegion `pulumi:"regions"`
 	// ID of the subscription that the regions belong to
 	SubscriptionId string `pulumi:"subscriptionId"`
@@ -89,9 +157,9 @@ type activeActiveSubscriptionRegionsArgs struct {
 
 // The set of arguments for constructing a ActiveActiveSubscriptionRegions resource.
 type ActiveActiveSubscriptionRegionsArgs struct {
-	// Delete regions flag has to be set for re-creating and deleting regions
+	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions pulumi.BoolPtrInput
-	// Cloud networking details, per region (multiple regions for Active-Active cluster)
+	// Region name
 	Regions ActiveActiveSubscriptionRegionsRegionArrayInput
 	// ID of the subscription that the regions belong to
 	SubscriptionId pulumi.StringInput
@@ -184,12 +252,12 @@ func (o ActiveActiveSubscriptionRegionsOutput) ToActiveActiveSubscriptionRegions
 	return o
 }
 
-// Delete regions flag has to be set for re-creating and deleting regions
+// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 func (o ActiveActiveSubscriptionRegionsOutput) DeleteRegions() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionRegions) pulumi.BoolPtrOutput { return v.DeleteRegions }).(pulumi.BoolPtrOutput)
 }
 
-// Cloud networking details, per region (multiple regions for Active-Active cluster)
+// Region name
 func (o ActiveActiveSubscriptionRegionsOutput) Regions() ActiveActiveSubscriptionRegionsRegionArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionRegions) ActiveActiveSubscriptionRegionsRegionArrayOutput {
 		return v.Regions

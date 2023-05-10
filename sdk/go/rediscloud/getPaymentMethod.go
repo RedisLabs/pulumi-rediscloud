@@ -10,7 +10,9 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Payment Method data source allows access to the ID of a Payment Method configured against your Redis Enterprise Cloud account. This ID can be used when creating Subscription resources.
 func GetPaymentMethod(ctx *pulumi.Context, args *GetPaymentMethodArgs, opts ...pulumi.InvokeOption) (*GetPaymentMethodResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetPaymentMethodResult
 	err := ctx.Invoke("rediscloud:index/getPaymentMethod:getPaymentMethod", args, &rv, opts...)
 	if err != nil {
@@ -21,8 +23,11 @@ func GetPaymentMethod(ctx *pulumi.Context, args *GetPaymentMethodArgs, opts ...p
 
 // A collection of arguments for invoking getPaymentMethod.
 type GetPaymentMethodArgs struct {
-	CardType        *string `pulumi:"cardType"`
-	ExcludeExpired  *bool   `pulumi:"excludeExpired"`
+	// Type of card that the payment method should be, such as `Visa`.
+	CardType *string `pulumi:"cardType"`
+	// Whether to exclude any expired cards or not. Default is `true`.
+	ExcludeExpired *bool `pulumi:"excludeExpired"`
+	// Last four numbers of the card of the payment method.
 	LastFourNumbers *string `pulumi:"lastFourNumbers"`
 }
 
@@ -50,8 +55,11 @@ func GetPaymentMethodOutput(ctx *pulumi.Context, args GetPaymentMethodOutputArgs
 
 // A collection of arguments for invoking getPaymentMethod.
 type GetPaymentMethodOutputArgs struct {
-	CardType        pulumi.StringPtrInput `pulumi:"cardType"`
-	ExcludeExpired  pulumi.BoolPtrInput   `pulumi:"excludeExpired"`
+	// Type of card that the payment method should be, such as `Visa`.
+	CardType pulumi.StringPtrInput `pulumi:"cardType"`
+	// Whether to exclude any expired cards or not. Default is `true`.
+	ExcludeExpired pulumi.BoolPtrInput `pulumi:"excludeExpired"`
+	// Last four numbers of the card of the payment method.
 	LastFourNumbers pulumi.StringPtrInput `pulumi:"lastFourNumbers"`
 }
 

@@ -10,7 +10,70 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Regions data source allows access to a list of supported cloud provider regions. These regions can be used with the subscription resource.
+//
+// ## Example Usage
+//
+// The following example returns all of the supported regions available within your Redis Enterprise Cloud account.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.GetRegions(ctx, nil, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("allRegions", example.Regions)
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// The following example show how the list of regions can be filtered by cloud provider, (`AWS` or `GCP`).
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.GetRegions(ctx, &GetRegionsArgs{
+//				ProviderName: pulumi.StringRef("AWS"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.GetRegions(ctx, &GetRegionsArgs{
+//				ProviderName: pulumi.StringRef("GCP"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 func GetRegions(ctx *pulumi.Context, args *GetRegionsArgs, opts ...pulumi.InvokeOption) (*GetRegionsResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetRegionsResult
 	err := ctx.Invoke("rediscloud:index/getRegions:getRegions", args, &rv, opts...)
 	if err != nil {
@@ -21,6 +84,7 @@ func GetRegions(ctx *pulumi.Context, args *GetRegionsArgs, opts ...pulumi.Invoke
 
 // A collection of arguments for invoking getRegions.
 type GetRegionsArgs struct {
+	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName *string `pulumi:"providerName"`
 }
 
@@ -47,6 +111,7 @@ func GetRegionsOutput(ctx *pulumi.Context, args GetRegionsOutputArgs, opts ...pu
 
 // A collection of arguments for invoking getRegions.
 type GetRegionsOutputArgs struct {
+	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName pulumi.StringPtrInput `pulumi:"providerName"`
 }
 

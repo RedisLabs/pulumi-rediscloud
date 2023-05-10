@@ -10,7 +10,39 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Subscription data source allows access to the details of an existing subscription within your Redis Enterprise Cloud account.
+//
+// ## Example Usage
+//
+// The following example shows how to use the name attribute to locate a subscription within your Redis Enterprise Cloud account.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.LookupSubscription(ctx, &GetSubscriptionArgs{
+//				Name: pulumi.StringRef("My Example Subscription"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("rediscloudSubscription", example.Id)
+//			return nil
+//		})
+//	}
+//
+// ```
 func LookupSubscription(ctx *pulumi.Context, args *LookupSubscriptionArgs, opts ...pulumi.InvokeOption) (*LookupSubscriptionResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv LookupSubscriptionResult
 	err := ctx.Invoke("rediscloud:index/getSubscription:getSubscription", args, &rv, opts...)
 	if err != nil {
@@ -21,20 +53,26 @@ func LookupSubscription(ctx *pulumi.Context, args *LookupSubscriptionArgs, opts 
 
 // A collection of arguments for invoking getSubscription.
 type LookupSubscriptionArgs struct {
+	// The name of the subscription to filter returned subscriptions
 	Name *string `pulumi:"name"`
 }
 
 // A collection of values returned by getSubscription.
 type LookupSubscriptionResult struct {
+	// A cloud provider object, documented below
 	CloudProviders []GetSubscriptionCloudProvider `pulumi:"cloudProviders"`
 	// The provider-assigned unique ID for this managed resource.
-	Id                string `pulumi:"id"`
-	MemoryStorage     string `pulumi:"memoryStorage"`
-	Name              string `pulumi:"name"`
+	Id string `pulumi:"id"`
+	// Memory storage preference: either ‘ram’ or a combination of 'ram-and-flash’
+	MemoryStorage string `pulumi:"memoryStorage"`
+	Name          string `pulumi:"name"`
+	// The number of databases that are linked to this subscription.
 	NumberOfDatabases int    `pulumi:"numberOfDatabases"`
 	PaymentMethod     string `pulumi:"paymentMethod"`
-	PaymentMethodId   string `pulumi:"paymentMethodId"`
-	Status            string `pulumi:"status"`
+	// A valid payment method pre-defined in the current account
+	PaymentMethodId string `pulumi:"paymentMethodId"`
+	// Current status of the subscription
+	Status string `pulumi:"status"`
 }
 
 func LookupSubscriptionOutput(ctx *pulumi.Context, args LookupSubscriptionOutputArgs, opts ...pulumi.InvokeOption) LookupSubscriptionResultOutput {
@@ -52,6 +90,7 @@ func LookupSubscriptionOutput(ctx *pulumi.Context, args LookupSubscriptionOutput
 
 // A collection of arguments for invoking getSubscription.
 type LookupSubscriptionOutputArgs struct {
+	// The name of the subscription to filter returned subscriptions
 	Name pulumi.StringPtrInput `pulumi:"name"`
 }
 
@@ -74,6 +113,7 @@ func (o LookupSubscriptionResultOutput) ToLookupSubscriptionResultOutputWithCont
 	return o
 }
 
+// A cloud provider object, documented below
 func (o LookupSubscriptionResultOutput) CloudProviders() GetSubscriptionCloudProviderArrayOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) []GetSubscriptionCloudProvider { return v.CloudProviders }).(GetSubscriptionCloudProviderArrayOutput)
 }
@@ -83,6 +123,7 @@ func (o LookupSubscriptionResultOutput) Id() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.Id }).(pulumi.StringOutput)
 }
 
+// Memory storage preference: either ‘ram’ or a combination of 'ram-and-flash’
 func (o LookupSubscriptionResultOutput) MemoryStorage() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.MemoryStorage }).(pulumi.StringOutput)
 }
@@ -91,6 +132,7 @@ func (o LookupSubscriptionResultOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// The number of databases that are linked to this subscription.
 func (o LookupSubscriptionResultOutput) NumberOfDatabases() pulumi.IntOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) int { return v.NumberOfDatabases }).(pulumi.IntOutput)
 }
@@ -99,10 +141,12 @@ func (o LookupSubscriptionResultOutput) PaymentMethod() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.PaymentMethod }).(pulumi.StringOutput)
 }
 
+// A valid payment method pre-defined in the current account
 func (o LookupSubscriptionResultOutput) PaymentMethodId() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.PaymentMethodId }).(pulumi.StringOutput)
 }
 
+// Current status of the subscription
 func (o LookupSubscriptionResultOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupSubscriptionResult) string { return v.Status }).(pulumi.StringOutput)
 }

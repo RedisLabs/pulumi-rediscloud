@@ -10,7 +10,66 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The Database data source allows access to the details of an existing database within your Redis Enterprise Cloud account.
+//
+// ## Example Usage
+//
+// The following example shows how to locate a single database within a Subscription.  This example assumes the subscription only contains a single database.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.GetDatabase(ctx, &GetDatabaseArgs{
+//				SubscriptionId: "1234",
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// The following example shows how to use the name to locate a single database within a subscription that has multiple databases.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_, err := rediscloud.GetDatabase(ctx, &GetDatabaseArgs{
+//				Name:           pulumi.StringRef("first-database"),
+//				SubscriptionId: "1234",
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 func GetDatabase(ctx *pulumi.Context, args *GetDatabaseArgs, opts ...pulumi.InvokeOption) (*GetDatabaseResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetDatabaseResult
 	err := ctx.Invoke("rediscloud:index/getDatabase:getDatabase", args, &rv, opts...)
 	if err != nil {
@@ -21,34 +80,56 @@ func GetDatabase(ctx *pulumi.Context, args *GetDatabaseArgs, opts ...pulumi.Invo
 
 // A collection of arguments for invoking getDatabase.
 type GetDatabaseArgs struct {
-	Name           *string `pulumi:"name"`
-	Protocol       *string `pulumi:"protocol"`
-	Region         *string `pulumi:"region"`
-	SubscriptionId string  `pulumi:"subscriptionId"`
+	// The name of the database to filter returned databases
+	Name *string `pulumi:"name"`
+	// The protocol of the database to filter returned databases
+	Protocol *string `pulumi:"protocol"`
+	// The region of the database to filter returned databases
+	Region *string `pulumi:"region"`
+	// ID of the subscription that the database belongs to
+	SubscriptionId string `pulumi:"subscriptionId"`
 }
 
 // A collection of values returned by getDatabase.
 type GetDatabaseResult struct {
-	Alerts          []GetDatabaseAlert `pulumi:"alerts"`
-	DataEviction    string             `pulumi:"dataEviction"`
-	DataPersistence string             `pulumi:"dataPersistence"`
-	HashingPolicies []string           `pulumi:"hashingPolicies"`
+	// Set of alerts to enable on the database, documented below.
+	Alerts []GetDatabaseAlert `pulumi:"alerts"`
+	// The data items eviction policy.
+	DataEviction string `pulumi:"dataEviction"`
+	// The rate of database data persistence (in persistent storage).
+	DataPersistence string `pulumi:"dataPersistence"`
+	// The list of regular expression rules the database is sharded by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy.
+	HashingPolicies []string `pulumi:"hashingPolicies"`
 	// The provider-assigned unique ID for this managed resource.
-	Id                         string              `pulumi:"id"`
-	MemoryLimitInGb            float64             `pulumi:"memoryLimitInGb"`
-	Modules                    []GetDatabaseModule `pulumi:"modules"`
-	Name                       string              `pulumi:"name"`
-	Password                   string              `pulumi:"password"`
-	PrivateEndpoint            string              `pulumi:"privateEndpoint"`
-	Protocol                   string              `pulumi:"protocol"`
-	PublicEndpoint             string              `pulumi:"publicEndpoint"`
-	Region                     string              `pulumi:"region"`
-	ReplicaOfs                 []string            `pulumi:"replicaOfs"`
-	Replication                bool                `pulumi:"replication"`
-	SubscriptionId             string              `pulumi:"subscriptionId"`
-	SupportOssClusterApi       bool                `pulumi:"supportOssClusterApi"`
-	ThroughputMeasurementBy    string              `pulumi:"throughputMeasurementBy"`
-	ThroughputMeasurementValue int                 `pulumi:"throughputMeasurementValue"`
+	Id string `pulumi:"id"`
+	// The maximum memory usage for the database.
+	MemoryLimitInGb float64             `pulumi:"memoryLimitInGb"`
+	Modules         []GetDatabaseModule `pulumi:"modules"`
+	// The name of the database
+	Name string `pulumi:"name"`
+	// The password used to access the database - not present on `memcached` protocol databases.
+	Password string `pulumi:"password"`
+	// Private endpoint to access the database
+	PrivateEndpoint string `pulumi:"privateEndpoint"`
+	// The protocol of the database.
+	Protocol string `pulumi:"protocol"`
+	// Public endpoint to access the database
+	PublicEndpoint string `pulumi:"publicEndpoint"`
+	Region         string `pulumi:"region"`
+	// The set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of.
+	ReplicaOfs []string `pulumi:"replicaOfs"`
+	// Database replication.
+	Replication    bool   `pulumi:"replication"`
+	SubscriptionId string `pulumi:"subscriptionId"`
+	// Supports the Redis open-source (OSS) Cluster API.
+	SupportOssClusterApi bool `pulumi:"supportOssClusterApi"`
+	// The throughput measurement method.
+	ThroughputMeasurementBy string `pulumi:"throughputMeasurementBy"`
+	// The throughput value.
+	ThroughputMeasurementValue int `pulumi:"throughputMeasurementValue"`
 }
 
 func GetDatabaseOutput(ctx *pulumi.Context, args GetDatabaseOutputArgs, opts ...pulumi.InvokeOption) GetDatabaseResultOutput {
@@ -66,10 +147,14 @@ func GetDatabaseOutput(ctx *pulumi.Context, args GetDatabaseOutputArgs, opts ...
 
 // A collection of arguments for invoking getDatabase.
 type GetDatabaseOutputArgs struct {
-	Name           pulumi.StringPtrInput `pulumi:"name"`
-	Protocol       pulumi.StringPtrInput `pulumi:"protocol"`
-	Region         pulumi.StringPtrInput `pulumi:"region"`
-	SubscriptionId pulumi.StringInput    `pulumi:"subscriptionId"`
+	// The name of the database to filter returned databases
+	Name pulumi.StringPtrInput `pulumi:"name"`
+	// The protocol of the database to filter returned databases
+	Protocol pulumi.StringPtrInput `pulumi:"protocol"`
+	// The region of the database to filter returned databases
+	Region pulumi.StringPtrInput `pulumi:"region"`
+	// ID of the subscription that the database belongs to
+	SubscriptionId pulumi.StringInput `pulumi:"subscriptionId"`
 }
 
 func (GetDatabaseOutputArgs) ElementType() reflect.Type {
@@ -91,18 +176,24 @@ func (o GetDatabaseResultOutput) ToGetDatabaseResultOutputWithContext(ctx contex
 	return o
 }
 
+// Set of alerts to enable on the database, documented below.
 func (o GetDatabaseResultOutput) Alerts() GetDatabaseAlertArrayOutput {
 	return o.ApplyT(func(v GetDatabaseResult) []GetDatabaseAlert { return v.Alerts }).(GetDatabaseAlertArrayOutput)
 }
 
+// The data items eviction policy.
 func (o GetDatabaseResultOutput) DataEviction() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.DataEviction }).(pulumi.StringOutput)
 }
 
+// The rate of database data persistence (in persistent storage).
 func (o GetDatabaseResultOutput) DataPersistence() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.DataPersistence }).(pulumi.StringOutput)
 }
 
+// The list of regular expression rules the database is sharded by. See
+// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+// hashing policy.
 func (o GetDatabaseResultOutput) HashingPolicies() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v GetDatabaseResult) []string { return v.HashingPolicies }).(pulumi.StringArrayOutput)
 }
@@ -112,6 +203,7 @@ func (o GetDatabaseResultOutput) Id() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Id }).(pulumi.StringOutput)
 }
 
+// The maximum memory usage for the database.
 func (o GetDatabaseResultOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v GetDatabaseResult) float64 { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
@@ -120,22 +212,27 @@ func (o GetDatabaseResultOutput) Modules() GetDatabaseModuleArrayOutput {
 	return o.ApplyT(func(v GetDatabaseResult) []GetDatabaseModule { return v.Modules }).(GetDatabaseModuleArrayOutput)
 }
 
+// The name of the database
 func (o GetDatabaseResultOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// The password used to access the database - not present on `memcached` protocol databases.
 func (o GetDatabaseResultOutput) Password() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Password }).(pulumi.StringOutput)
 }
 
+// Private endpoint to access the database
 func (o GetDatabaseResultOutput) PrivateEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.PrivateEndpoint }).(pulumi.StringOutput)
 }
 
+// The protocol of the database.
 func (o GetDatabaseResultOutput) Protocol() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Protocol }).(pulumi.StringOutput)
 }
 
+// Public endpoint to access the database
 func (o GetDatabaseResultOutput) PublicEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.PublicEndpoint }).(pulumi.StringOutput)
 }
@@ -144,10 +241,13 @@ func (o GetDatabaseResultOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Region }).(pulumi.StringOutput)
 }
 
+// The set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+// database will be a replica of.
 func (o GetDatabaseResultOutput) ReplicaOfs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v GetDatabaseResult) []string { return v.ReplicaOfs }).(pulumi.StringArrayOutput)
 }
 
+// Database replication.
 func (o GetDatabaseResultOutput) Replication() pulumi.BoolOutput {
 	return o.ApplyT(func(v GetDatabaseResult) bool { return v.Replication }).(pulumi.BoolOutput)
 }
@@ -156,14 +256,17 @@ func (o GetDatabaseResultOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.SubscriptionId }).(pulumi.StringOutput)
 }
 
+// Supports the Redis open-source (OSS) Cluster API.
 func (o GetDatabaseResultOutput) SupportOssClusterApi() pulumi.BoolOutput {
 	return o.ApplyT(func(v GetDatabaseResult) bool { return v.SupportOssClusterApi }).(pulumi.BoolOutput)
 }
 
+// The throughput measurement method.
 func (o GetDatabaseResultOutput) ThroughputMeasurementBy() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.ThroughputMeasurementBy }).(pulumi.StringOutput)
 }
 
+// The throughput value.
 func (o GetDatabaseResultOutput) ThroughputMeasurementValue() pulumi.IntOutput {
 	return o.ApplyT(func(v GetDatabaseResult) int { return v.ThroughputMeasurementValue }).(pulumi.IntOutput)
 }

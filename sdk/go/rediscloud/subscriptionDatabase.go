@@ -11,55 +11,69 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Creates a Database within a specified Subscription in your Redis Enterprise Cloud Account.
+//
+// ## Import
+//
+// `rediscloud_subscription_database` can be imported using the ID of the subscription and the ID of the database in the format {subscription ID}/{database ID}, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/subscriptionDatabase:SubscriptionDatabase database-resource 123456/12345678
+//
+// ```
 type SubscriptionDatabase struct {
 	pulumi.CustomResourceState
 
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts SubscriptionDatabaseAlertArrayOutput `pulumi:"alerts"`
-	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+	// of the items stored in the database. Default: 1000
 	AverageItemSizeInBytes pulumi.IntPtrOutput `pulumi:"averageItemSizeInBytes"`
 	// SSL certificate to authenticate user connections
 	ClientSslCertificate pulumi.StringPtrOutput `pulumi:"clientSslCertificate"`
-	// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-	// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrOutput `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage)
+	// Rate of database data persistence (in persistent storage). Default: ‘none’
 	DataPersistence pulumi.StringPtrOutput `pulumi:"dataPersistence"`
 	// Identifier of the database created
 	DbId pulumi.IntOutput `pulumi:"dbId"`
-	// Use TLS for authentication
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrOutput `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrOutput `pulumi:"externalEndpointForOssClusterApi"`
-	// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-	// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+	// List of regular expression rules to shard the database by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 	HashingPolicies pulumi.StringArrayOutput `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
-	// Modules to be provisioned in the database
+	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayOutput `pulumi:"modules"`
-	// A meaningful name to identify the database
+	// Name of the Redis database module to enable
 	Name pulumi.StringOutput `pulumi:"name"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringOutput `pulumi:"password"`
 	// Path that will be used to store database backup files
 	PeriodicBackupPath pulumi.StringPtrOutput `pulumi:"periodicBackupPath"`
 	// Private endpoint to access the database
 	PrivateEndpoint pulumi.StringOutput `pulumi:"privateEndpoint"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 	Protocol pulumi.StringOutput `pulumi:"protocol"`
 	// Public endpoint to access the database
 	PublicEndpoint pulumi.StringOutput `pulumi:"publicEndpoint"`
-	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-	// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+	// Cannot be enabled when `supportOssClusterApi` is enabled.
 	ReplicaOfs pulumi.StringArrayOutput `pulumi:"replicaOfs"`
-	// Databases replication
+	// Databases replication. Default: ‘true’
 	Replication pulumi.BoolPtrOutput `pulumi:"replication"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayOutput `pulumi:"sourceIps"`
-	// Identifier of the subscription
+	// The ID of the subscription to create the database in
 	SubscriptionId pulumi.IntOutput `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
 	ThroughputMeasurementBy pulumi.StringOutput `pulumi:"throughputMeasurementBy"`
@@ -89,6 +103,7 @@ func NewSubscriptionDatabase(ctx *pulumi.Context,
 	if args.ThroughputMeasurementValue == nil {
 		return nil, errors.New("invalid value for required argument 'ThroughputMeasurementValue'")
 	}
+	opts = pkgResourceDefaultOpts(opts)
 	var resource SubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/subscriptionDatabase:SubscriptionDatabase", name, args, &resource, opts...)
 	if err != nil {
@@ -111,52 +126,55 @@ func GetSubscriptionDatabase(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering SubscriptionDatabase resources.
 type subscriptionDatabaseState struct {
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts []SubscriptionDatabaseAlert `pulumi:"alerts"`
-	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+	// of the items stored in the database. Default: 1000
 	AverageItemSizeInBytes *int `pulumi:"averageItemSizeInBytes"`
 	// SSL certificate to authenticate user connections
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
-	// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-	// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction *string `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage)
+	// Rate of database data persistence (in persistent storage). Default: ‘none’
 	DataPersistence *string `pulumi:"dataPersistence"`
 	// Identifier of the database created
 	DbId *int `pulumi:"dbId"`
-	// Use TLS for authentication
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls *bool `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-	// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+	// List of regular expression rules to shard the database by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 	HashingPolicies []string `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
-	// Modules to be provisioned in the database
+	// A list of modules objects, documented below
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
-	// A meaningful name to identify the database
+	// Name of the Redis database module to enable
 	Name *string `pulumi:"name"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
 	// Path that will be used to store database backup files
 	PeriodicBackupPath *string `pulumi:"periodicBackupPath"`
 	// Private endpoint to access the database
 	PrivateEndpoint *string `pulumi:"privateEndpoint"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 	Protocol *string `pulumi:"protocol"`
 	// Public endpoint to access the database
 	PublicEndpoint *string `pulumi:"publicEndpoint"`
-	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-	// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+	// Cannot be enabled when `supportOssClusterApi` is enabled.
 	ReplicaOfs []string `pulumi:"replicaOfs"`
-	// Databases replication
+	// Databases replication. Default: ‘true’
 	Replication *bool `pulumi:"replication"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
-	// Identifier of the subscription
+	// The ID of the subscription to create the database in
 	SubscriptionId *int `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
 	ThroughputMeasurementBy *string `pulumi:"throughputMeasurementBy"`
@@ -165,52 +183,55 @@ type subscriptionDatabaseState struct {
 }
 
 type SubscriptionDatabaseState struct {
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts SubscriptionDatabaseAlertArrayInput
-	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+	// of the items stored in the database. Default: 1000
 	AverageItemSizeInBytes pulumi.IntPtrInput
 	// SSL certificate to authenticate user connections
 	ClientSslCertificate pulumi.StringPtrInput
-	// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-	// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrInput
-	// Rate of database data persistence (in persistent storage)
+	// Rate of database data persistence (in persistent storage). Default: ‘none’
 	DataPersistence pulumi.StringPtrInput
 	// Identifier of the database created
 	DbId pulumi.IntPtrInput
-	// Use TLS for authentication
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrInput
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-	// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+	// List of regular expression rules to shard the database by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 	HashingPolicies pulumi.StringArrayInput
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64PtrInput
-	// Modules to be provisioned in the database
+	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayInput
-	// A meaningful name to identify the database
+	// Name of the Redis database module to enable
 	Name pulumi.StringPtrInput
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
 	// Path that will be used to store database backup files
 	PeriodicBackupPath pulumi.StringPtrInput
 	// Private endpoint to access the database
 	PrivateEndpoint pulumi.StringPtrInput
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 	Protocol pulumi.StringPtrInput
 	// Public endpoint to access the database
 	PublicEndpoint pulumi.StringPtrInput
-	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-	// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+	// Cannot be enabled when `supportOssClusterApi` is enabled.
 	ReplicaOfs pulumi.StringArrayInput
-	// Databases replication
+	// Databases replication. Default: ‘true’
 	Replication pulumi.BoolPtrInput
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
-	// Identifier of the subscription
+	// The ID of the subscription to create the database in
 	SubscriptionId pulumi.IntPtrInput
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
 	ThroughputMeasurementBy pulumi.StringPtrInput
@@ -223,46 +244,49 @@ func (SubscriptionDatabaseState) ElementType() reflect.Type {
 }
 
 type subscriptionDatabaseArgs struct {
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts []SubscriptionDatabaseAlert `pulumi:"alerts"`
-	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+	// of the items stored in the database. Default: 1000
 	AverageItemSizeInBytes *int `pulumi:"averageItemSizeInBytes"`
 	// SSL certificate to authenticate user connections
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
-	// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-	// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction *string `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage)
+	// Rate of database data persistence (in persistent storage). Default: ‘none’
 	DataPersistence *string `pulumi:"dataPersistence"`
-	// Use TLS for authentication
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls *bool `pulumi:"enableTls"`
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-	// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+	// List of regular expression rules to shard the database by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 	HashingPolicies []string `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
-	// Modules to be provisioned in the database
+	// A list of modules objects, documented below
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
-	// A meaningful name to identify the database
+	// Name of the Redis database module to enable
 	Name *string `pulumi:"name"`
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
 	// Path that will be used to store database backup files
 	PeriodicBackupPath *string `pulumi:"periodicBackupPath"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 	Protocol string `pulumi:"protocol"`
-	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-	// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+	// Cannot be enabled when `supportOssClusterApi` is enabled.
 	ReplicaOfs []string `pulumi:"replicaOfs"`
-	// Databases replication
+	// Databases replication. Default: ‘true’
 	Replication *bool `pulumi:"replication"`
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
-	// Identifier of the subscription
+	// The ID of the subscription to create the database in
 	SubscriptionId int `pulumi:"subscriptionId"`
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
 	ThroughputMeasurementBy string `pulumi:"throughputMeasurementBy"`
@@ -272,46 +296,49 @@ type subscriptionDatabaseArgs struct {
 
 // The set of arguments for constructing a SubscriptionDatabase resource.
 type SubscriptionDatabaseArgs struct {
-	// Set of alerts to enable on the database
+	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts SubscriptionDatabaseAlertArrayInput
-	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+	// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+	// of the items stored in the database. Default: 1000
 	AverageItemSizeInBytes pulumi.IntPtrInput
 	// SSL certificate to authenticate user connections
 	ClientSslCertificate pulumi.StringPtrInput
-	// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-	// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrInput
-	// Rate of database data persistence (in persistent storage)
+	// Rate of database data persistence (in persistent storage). Default: ‘none’
 	DataPersistence pulumi.StringPtrInput
-	// Use TLS for authentication
+	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrInput
-	// Should use the external endpoint for open-source (OSS) Cluster API
+	// Should use the external endpoint for open-source (OSS) Cluster API.
+	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-	// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+	// List of regular expression rules to shard the database by. See
+	// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+	// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 	HashingPolicies pulumi.StringArrayInput
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64Input
-	// Modules to be provisioned in the database
+	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayInput
-	// A meaningful name to identify the database
+	// Name of the Redis database module to enable
 	Name pulumi.StringPtrInput
-	// Password used to access the database. If left empty, the password will be generated automatically
+	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
 	// Path that will be used to store database backup files
 	PeriodicBackupPath pulumi.StringPtrInput
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 	Protocol pulumi.StringInput
-	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-	// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+	// Cannot be enabled when `supportOssClusterApi` is enabled.
 	ReplicaOfs pulumi.StringArrayInput
-	// Databases replication
+	// Databases replication. Default: ‘true’
 	Replication pulumi.BoolPtrInput
-	// Set of CIDR addresses to allow access to the database
+	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
-	// Identifier of the subscription
+	// The ID of the subscription to create the database in
 	SubscriptionId pulumi.IntInput
-	// Support Redis open-source (OSS) Cluster API
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
 	ThroughputMeasurementBy pulumi.StringInput
@@ -406,12 +433,13 @@ func (o SubscriptionDatabaseOutput) ToSubscriptionDatabaseOutputWithContext(ctx 
 	return o
 }
 
-// Set of alerts to enable on the database
+// A block defining Redis database alert, documented below, can be specified multiple times
 func (o SubscriptionDatabaseOutput) Alerts() SubscriptionDatabaseAlertArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) SubscriptionDatabaseAlertArrayOutput { return v.Alerts }).(SubscriptionDatabaseAlertArrayOutput)
 }
 
-// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes) of the items stored in the database
+// Relevant only to ram-and-flash clusters. Estimated average size (measured in bytes)
+// of the items stored in the database. Default: 1000
 func (o SubscriptionDatabaseOutput) AverageItemSizeInBytes() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.IntPtrOutput { return v.AverageItemSizeInBytes }).(pulumi.IntPtrOutput)
 }
@@ -421,13 +449,12 @@ func (o SubscriptionDatabaseOutput) ClientSslCertificate() pulumi.StringPtrOutpu
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.ClientSslCertificate }).(pulumi.StringPtrOutput)
 }
 
-// (Optional) The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru',
-// 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'. Default: 'volatile-lru')
+// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 func (o SubscriptionDatabaseOutput) DataEviction() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.DataEviction }).(pulumi.StringPtrOutput)
 }
 
-// Rate of database data persistence (in persistent storage)
+// Rate of database data persistence (in persistent storage). Default: ‘none’
 func (o SubscriptionDatabaseOutput) DataPersistence() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.DataPersistence }).(pulumi.StringPtrOutput)
 }
@@ -437,18 +464,20 @@ func (o SubscriptionDatabaseOutput) DbId() pulumi.IntOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.IntOutput { return v.DbId }).(pulumi.IntOutput)
 }
 
-// Use TLS for authentication
+// Use TLS for authentication. Default: ‘false’
 func (o SubscriptionDatabaseOutput) EnableTls() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.BoolPtrOutput { return v.EnableTls }).(pulumi.BoolPtrOutput)
 }
 
-// Should use the external endpoint for open-source (OSS) Cluster API
+// Should use the external endpoint for open-source (OSS) Cluster API.
+// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 func (o SubscriptionDatabaseOutput) ExternalEndpointForOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.BoolPtrOutput { return v.ExternalEndpointForOssClusterApi }).(pulumi.BoolPtrOutput)
 }
 
-// List of regular expression rules to shard the database by. See the documentation on clustering for more information on
-// the hashing policy - https://docs.redislabs.com/latest/rc/concepts/clustering/
+// List of regular expression rules to shard the database by. See
+// [the documentation on clustering](https://docs.redislabs.com/latest/rc/concepts/clustering/) for more information on the
+// hashing policy. This cannot be set when `supportOssClusterApi` is set to true.
 func (o SubscriptionDatabaseOutput) HashingPolicies() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringArrayOutput { return v.HashingPolicies }).(pulumi.StringArrayOutput)
 }
@@ -458,17 +487,17 @@ func (o SubscriptionDatabaseOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.Float64Output { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
-// Modules to be provisioned in the database
+// A list of modules objects, documented below
 func (o SubscriptionDatabaseOutput) Modules() SubscriptionDatabaseModuleArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) SubscriptionDatabaseModuleArrayOutput { return v.Modules }).(SubscriptionDatabaseModuleArrayOutput)
 }
 
-// A meaningful name to identify the database
+// Name of the Redis database module to enable
 func (o SubscriptionDatabaseOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// Password used to access the database. If left empty, the password will be generated automatically
+// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 func (o SubscriptionDatabaseOutput) Password() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Password }).(pulumi.StringOutput)
 }
@@ -483,7 +512,7 @@ func (o SubscriptionDatabaseOutput) PrivateEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.PrivateEndpoint }).(pulumi.StringOutput)
 }
 
-// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’)
+// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
 func (o SubscriptionDatabaseOutput) Protocol() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Protocol }).(pulumi.StringOutput)
 }
@@ -493,28 +522,29 @@ func (o SubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.PublicEndpoint }).(pulumi.StringOutput)
 }
 
-// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this database will be a replica of. If
-// the URI provided is Redis Labs Cloud instance, only host and port should be provided
+// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
+// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
+// Cannot be enabled when `supportOssClusterApi` is enabled.
 func (o SubscriptionDatabaseOutput) ReplicaOfs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringArrayOutput { return v.ReplicaOfs }).(pulumi.StringArrayOutput)
 }
 
-// Databases replication
+// Databases replication. Default: ‘true’
 func (o SubscriptionDatabaseOutput) Replication() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.BoolPtrOutput { return v.Replication }).(pulumi.BoolPtrOutput)
 }
 
-// Set of CIDR addresses to allow access to the database
+// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 func (o SubscriptionDatabaseOutput) SourceIps() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringArrayOutput { return v.SourceIps }).(pulumi.StringArrayOutput)
 }
 
-// Identifier of the subscription
+// The ID of the subscription to create the database in
 func (o SubscriptionDatabaseOutput) SubscriptionId() pulumi.IntOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.IntOutput { return v.SubscriptionId }).(pulumi.IntOutput)
 }
 
-// Support Redis open-source (OSS) Cluster API
+// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 func (o SubscriptionDatabaseOutput) SupportOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.BoolPtrOutput { return v.SupportOssClusterApi }).(pulumi.BoolPtrOutput)
 }

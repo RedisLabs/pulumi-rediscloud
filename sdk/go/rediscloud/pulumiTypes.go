@@ -11,9 +11,12 @@ import (
 )
 
 type ActiveActiveSubscriptionCreationPlan struct {
-	MemoryLimitInGb float64                                      `pulumi:"memoryLimitInGb"`
-	Quantity        int                                          `pulumi:"quantity"`
-	Regions         []ActiveActiveSubscriptionCreationPlanRegion `pulumi:"regions"`
+	// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
+	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
+	// The planned number of databases in the subscription.
+	Quantity int `pulumi:"quantity"`
+	// Deployment region as defined by cloud provider
+	Regions []ActiveActiveSubscriptionCreationPlanRegion `pulumi:"regions"`
 }
 
 // ActiveActiveSubscriptionCreationPlanInput is an input type that accepts ActiveActiveSubscriptionCreationPlanArgs and ActiveActiveSubscriptionCreationPlanOutput values.
@@ -28,9 +31,12 @@ type ActiveActiveSubscriptionCreationPlanInput interface {
 }
 
 type ActiveActiveSubscriptionCreationPlanArgs struct {
-	MemoryLimitInGb pulumi.Float64Input                                  `pulumi:"memoryLimitInGb"`
-	Quantity        pulumi.IntInput                                      `pulumi:"quantity"`
-	Regions         ActiveActiveSubscriptionCreationPlanRegionArrayInput `pulumi:"regions"`
+	// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
+	MemoryLimitInGb pulumi.Float64Input `pulumi:"memoryLimitInGb"`
+	// The planned number of databases in the subscription.
+	Quantity pulumi.IntInput `pulumi:"quantity"`
+	// Deployment region as defined by cloud provider
+	Regions ActiveActiveSubscriptionCreationPlanRegionArrayInput `pulumi:"regions"`
 }
 
 func (ActiveActiveSubscriptionCreationPlanArgs) ElementType() reflect.Type {
@@ -110,14 +116,17 @@ func (o ActiveActiveSubscriptionCreationPlanOutput) ToActiveActiveSubscriptionCr
 	}).(ActiveActiveSubscriptionCreationPlanPtrOutput)
 }
 
+// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
 func (o ActiveActiveSubscriptionCreationPlanOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlan) float64 { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
+// The planned number of databases in the subscription.
 func (o ActiveActiveSubscriptionCreationPlanOutput) Quantity() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlan) int { return v.Quantity }).(pulumi.IntOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o ActiveActiveSubscriptionCreationPlanOutput) Regions() ActiveActiveSubscriptionCreationPlanRegionArrayOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlan) []ActiveActiveSubscriptionCreationPlanRegion {
 		return v.Regions
@@ -148,6 +157,7 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Elem() ActiveActiveSubscr
 	}).(ActiveActiveSubscriptionCreationPlanOutput)
 }
 
+// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) MemoryLimitInGb() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionCreationPlan) *float64 {
 		if v == nil {
@@ -157,6 +167,7 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) MemoryLimitInGb() pulumi.
 	}).(pulumi.Float64PtrOutput)
 }
 
+// The planned number of databases in the subscription.
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionCreationPlan) *int {
 		if v == nil {
@@ -166,6 +177,7 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrO
 	}).(pulumi.IntPtrOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Regions() ActiveActiveSubscriptionCreationPlanRegionArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionCreationPlan) []ActiveActiveSubscriptionCreationPlanRegion {
 		if v == nil {
@@ -176,10 +188,14 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Regions() ActiveActiveSub
 }
 
 type ActiveActiveSubscriptionCreationPlanRegion struct {
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
-	ReadOperationsPerSecond  int    `pulumi:"readOperationsPerSecond"`
-	Region                   string `pulumi:"region"`
-	WriteOperationsPerSecond int    `pulumi:"writeOperationsPerSecond"`
+	// Throughput measurement for an active-active subscription
+	ReadOperationsPerSecond int `pulumi:"readOperationsPerSecond"`
+	// Deployment region as defined by cloud provider
+	Region string `pulumi:"region"`
+	// Throughput measurement for an active-active subscription
+	WriteOperationsPerSecond int `pulumi:"writeOperationsPerSecond"`
 }
 
 // ActiveActiveSubscriptionCreationPlanRegionInput is an input type that accepts ActiveActiveSubscriptionCreationPlanRegionArgs and ActiveActiveSubscriptionCreationPlanRegionOutput values.
@@ -194,10 +210,14 @@ type ActiveActiveSubscriptionCreationPlanRegionInput interface {
 }
 
 type ActiveActiveSubscriptionCreationPlanRegionArgs struct {
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
-	ReadOperationsPerSecond  pulumi.IntInput    `pulumi:"readOperationsPerSecond"`
-	Region                   pulumi.StringInput `pulumi:"region"`
-	WriteOperationsPerSecond pulumi.IntInput    `pulumi:"writeOperationsPerSecond"`
+	// Throughput measurement for an active-active subscription
+	ReadOperationsPerSecond pulumi.IntInput `pulumi:"readOperationsPerSecond"`
+	// Deployment region as defined by cloud provider
+	Region pulumi.StringInput `pulumi:"region"`
+	// Throughput measurement for an active-active subscription
+	WriteOperationsPerSecond pulumi.IntInput `pulumi:"writeOperationsPerSecond"`
 }
 
 func (ActiveActiveSubscriptionCreationPlanRegionArgs) ElementType() reflect.Type {
@@ -251,18 +271,22 @@ func (o ActiveActiveSubscriptionCreationPlanRegionOutput) ToActiveActiveSubscrip
 	return o
 }
 
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
+// Throughput measurement for an active-active subscription
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) ReadOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) int { return v.ReadOperationsPerSecond }).(pulumi.IntOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) string { return v.Region }).(pulumi.StringOutput)
 }
 
+// Throughput measurement for an active-active subscription
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) WriteOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) int { return v.WriteOperationsPerSecond }).(pulumi.IntOutput)
 }
@@ -288,8 +312,10 @@ func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) Index(i pulumi.In
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlert struct {
-	Name  string `pulumi:"name"`
-	Value int    `pulumi:"value"`
+	// Alert name
+	Name string `pulumi:"name"`
+	// Alert value
+	Value int `pulumi:"value"`
 }
 
 // ActiveActiveSubscriptionDatabaseGlobalAlertInput is an input type that accepts ActiveActiveSubscriptionDatabaseGlobalAlertArgs and ActiveActiveSubscriptionDatabaseGlobalAlertOutput values.
@@ -304,8 +330,10 @@ type ActiveActiveSubscriptionDatabaseGlobalAlertInput interface {
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlertArgs struct {
-	Name  pulumi.StringInput `pulumi:"name"`
-	Value pulumi.IntInput    `pulumi:"value"`
+	// Alert name
+	Name pulumi.StringInput `pulumi:"name"`
+	// Alert value
+	Value pulumi.IntInput `pulumi:"value"`
 }
 
 func (ActiveActiveSubscriptionDatabaseGlobalAlertArgs) ElementType() reflect.Type {
@@ -359,10 +387,12 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) ToActiveActiveSubscri
 	return o
 }
 
+// Alert name
 func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseGlobalAlert) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// Alert value
 func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) Value() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseGlobalAlert) int { return v.Value }).(pulumi.IntOutput)
 }
@@ -388,11 +418,16 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) Index(i pulumi.I
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegion struct {
-	Name                          string                                                              `pulumi:"name"`
-	OverrideGlobalAlerts          []ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert `pulumi:"overrideGlobalAlerts"`
-	OverrideGlobalDataPersistence *string                                                             `pulumi:"overrideGlobalDataPersistence"`
-	OverrideGlobalPassword        *string                                                             `pulumi:"overrideGlobalPassword"`
-	OverrideGlobalSourceIps       []string                                                            `pulumi:"overrideGlobalSourceIps"`
+	// Alert name
+	Name string `pulumi:"name"`
+	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
+	OverrideGlobalAlerts []ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert `pulumi:"overrideGlobalAlerts"`
+	// Regional instance of an Active-Active database data persistence rate (in persistent storage)
+	OverrideGlobalDataPersistence *string `pulumi:"overrideGlobalDataPersistence"`
+	// If specified, this regional instance of an Active-Active database password will be used to access the database
+	OverrideGlobalPassword *string `pulumi:"overrideGlobalPassword"`
+	// List of regional instance of an Active-Active database source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'] )
+	OverrideGlobalSourceIps []string `pulumi:"overrideGlobalSourceIps"`
 }
 
 // ActiveActiveSubscriptionDatabaseOverrideRegionInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionArgs and ActiveActiveSubscriptionDatabaseOverrideRegionOutput values.
@@ -407,11 +442,16 @@ type ActiveActiveSubscriptionDatabaseOverrideRegionInput interface {
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegionArgs struct {
-	Name                          pulumi.StringInput                                                          `pulumi:"name"`
-	OverrideGlobalAlerts          ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput `pulumi:"overrideGlobalAlerts"`
-	OverrideGlobalDataPersistence pulumi.StringPtrInput                                                       `pulumi:"overrideGlobalDataPersistence"`
-	OverrideGlobalPassword        pulumi.StringPtrInput                                                       `pulumi:"overrideGlobalPassword"`
-	OverrideGlobalSourceIps       pulumi.StringArrayInput                                                     `pulumi:"overrideGlobalSourceIps"`
+	// Alert name
+	Name pulumi.StringInput `pulumi:"name"`
+	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
+	OverrideGlobalAlerts ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput `pulumi:"overrideGlobalAlerts"`
+	// Regional instance of an Active-Active database data persistence rate (in persistent storage)
+	OverrideGlobalDataPersistence pulumi.StringPtrInput `pulumi:"overrideGlobalDataPersistence"`
+	// If specified, this regional instance of an Active-Active database password will be used to access the database
+	OverrideGlobalPassword pulumi.StringPtrInput `pulumi:"overrideGlobalPassword"`
+	// List of regional instance of an Active-Active database source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'] )
+	OverrideGlobalSourceIps pulumi.StringArrayInput `pulumi:"overrideGlobalSourceIps"`
 }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionArgs) ElementType() reflect.Type {
@@ -465,24 +505,29 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToActiveActiveSubs
 	return o
 }
 
+// Alert name
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) OverrideGlobalAlerts() ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) []ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert {
 		return v.OverrideGlobalAlerts
 	}).(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput)
 }
 
+// Regional instance of an Active-Active database data persistence rate (in persistent storage)
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) OverrideGlobalDataPersistence() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *string { return v.OverrideGlobalDataPersistence }).(pulumi.StringPtrOutput)
 }
 
+// If specified, this regional instance of an Active-Active database password will be used to access the database
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) OverrideGlobalPassword() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *string { return v.OverrideGlobalPassword }).(pulumi.StringPtrOutput)
 }
 
+// List of regional instance of an Active-Active database source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'] )
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) OverrideGlobalSourceIps() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) []string { return v.OverrideGlobalSourceIps }).(pulumi.StringArrayOutput)
 }
@@ -508,8 +553,10 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) Index(i pulum
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert struct {
-	Name  string `pulumi:"name"`
-	Value int    `pulumi:"value"`
+	// Alert name
+	Name string `pulumi:"name"`
+	// Alert value
+	Value int `pulumi:"value"`
 }
 
 // ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs and ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput values.
@@ -524,8 +571,10 @@ type ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertInput inte
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs struct {
-	Name  pulumi.StringInput `pulumi:"name"`
-	Value pulumi.IntInput    `pulumi:"value"`
+	// Alert name
+	Name pulumi.StringInput `pulumi:"name"`
+	// Alert value
+	Value pulumi.IntInput `pulumi:"value"`
 }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs) ElementType() reflect.Type {
@@ -579,10 +628,12 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput)
 	return o
 }
 
+// Alert name
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// Alert value
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput) Value() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert) int { return v.Value }).(pulumi.IntOutput)
 }
@@ -608,12 +659,18 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOu
 }
 
 type ActiveActiveSubscriptionRegionsRegion struct {
-	Databases                []ActiveActiveSubscriptionRegionsRegionDatabase `pulumi:"databases"`
-	NetworkingDeploymentCidr string                                          `pulumi:"networkingDeploymentCidr"`
-	RecreateRegion           *bool                                           `pulumi:"recreateRegion"`
-	Region                   string                                          `pulumi:"region"`
-	RegionId                 *int                                            `pulumi:"regionId"`
-	VpcId                    *string                                         `pulumi:"vpcId"`
+	// A block defining the write and read operations in the region, per database, documented below
+	Databases []ActiveActiveSubscriptionRegionsRegionDatabase `pulumi:"databases"`
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
+	// Protection flag, needs to be set if a region has to be re-created. A region will need to be re-created in the case of a change on the `networkingDeploymentCidr` field. During re-create, the region will be deleted (so the `deleteRegions` flag also needs to be set) and then created again. Default: 'false'
+	RecreateRegion *bool `pulumi:"recreateRegion"`
+	// Region name
+	Region string `pulumi:"region"`
+	// The ID of the region, as created by the API
+	RegionId *int `pulumi:"regionId"`
+	// Identifier of the VPC to be peered, set by the API
+	VpcId *string `pulumi:"vpcId"`
 }
 
 // ActiveActiveSubscriptionRegionsRegionInput is an input type that accepts ActiveActiveSubscriptionRegionsRegionArgs and ActiveActiveSubscriptionRegionsRegionOutput values.
@@ -628,12 +685,18 @@ type ActiveActiveSubscriptionRegionsRegionInput interface {
 }
 
 type ActiveActiveSubscriptionRegionsRegionArgs struct {
-	Databases                ActiveActiveSubscriptionRegionsRegionDatabaseArrayInput `pulumi:"databases"`
-	NetworkingDeploymentCidr pulumi.StringInput                                      `pulumi:"networkingDeploymentCidr"`
-	RecreateRegion           pulumi.BoolPtrInput                                     `pulumi:"recreateRegion"`
-	Region                   pulumi.StringInput                                      `pulumi:"region"`
-	RegionId                 pulumi.IntPtrInput                                      `pulumi:"regionId"`
-	VpcId                    pulumi.StringPtrInput                                   `pulumi:"vpcId"`
+	// A block defining the write and read operations in the region, per database, documented below
+	Databases ActiveActiveSubscriptionRegionsRegionDatabaseArrayInput `pulumi:"databases"`
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
+	// Protection flag, needs to be set if a region has to be re-created. A region will need to be re-created in the case of a change on the `networkingDeploymentCidr` field. During re-create, the region will be deleted (so the `deleteRegions` flag also needs to be set) and then created again. Default: 'false'
+	RecreateRegion pulumi.BoolPtrInput `pulumi:"recreateRegion"`
+	// Region name
+	Region pulumi.StringInput `pulumi:"region"`
+	// The ID of the region, as created by the API
+	RegionId pulumi.IntPtrInput `pulumi:"regionId"`
+	// Identifier of the VPC to be peered, set by the API
+	VpcId pulumi.StringPtrInput `pulumi:"vpcId"`
 }
 
 func (ActiveActiveSubscriptionRegionsRegionArgs) ElementType() reflect.Type {
@@ -687,28 +750,34 @@ func (o ActiveActiveSubscriptionRegionsRegionOutput) ToActiveActiveSubscriptionR
 	return o
 }
 
+// A block defining the write and read operations in the region, per database, documented below
 func (o ActiveActiveSubscriptionRegionsRegionOutput) Databases() ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) []ActiveActiveSubscriptionRegionsRegionDatabase {
 		return v.Databases
 	}).(ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput)
 }
 
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 func (o ActiveActiveSubscriptionRegionsRegionOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
+// Protection flag, needs to be set if a region has to be re-created. A region will need to be re-created in the case of a change on the `networkingDeploymentCidr` field. During re-create, the region will be deleted (so the `deleteRegions` flag also needs to be set) and then created again. Default: 'false'
 func (o ActiveActiveSubscriptionRegionsRegionOutput) RecreateRegion() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) *bool { return v.RecreateRegion }).(pulumi.BoolPtrOutput)
 }
 
+// Region name
 func (o ActiveActiveSubscriptionRegionsRegionOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) string { return v.Region }).(pulumi.StringOutput)
 }
 
+// The ID of the region, as created by the API
 func (o ActiveActiveSubscriptionRegionsRegionOutput) RegionId() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) *int { return v.RegionId }).(pulumi.IntPtrOutput)
 }
 
+// Identifier of the VPC to be peered, set by the API
 func (o ActiveActiveSubscriptionRegionsRegionOutput) VpcId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegion) *string { return v.VpcId }).(pulumi.StringPtrOutput)
 }
@@ -734,10 +803,14 @@ func (o ActiveActiveSubscriptionRegionsRegionArrayOutput) Index(i pulumi.IntInpu
 }
 
 type ActiveActiveSubscriptionRegionsRegionDatabase struct {
-	DatabaseId                    int    `pulumi:"databaseId"`
-	DatabaseName                  string `pulumi:"databaseName"`
-	LocalReadOperationsPerSecond  int    `pulumi:"localReadOperationsPerSecond"`
-	LocalWriteOperationsPerSecond int    `pulumi:"localWriteOperationsPerSecond"`
+	// Database ID belonging to the subscription
+	DatabaseId int `pulumi:"databaseId"`
+	// Database name belonging to the subscription
+	DatabaseName string `pulumi:"databaseName"`
+	// Local read operations per second for this active-active region
+	LocalReadOperationsPerSecond int `pulumi:"localReadOperationsPerSecond"`
+	// Local write operations per second for this active-active region
+	LocalWriteOperationsPerSecond int `pulumi:"localWriteOperationsPerSecond"`
 }
 
 // ActiveActiveSubscriptionRegionsRegionDatabaseInput is an input type that accepts ActiveActiveSubscriptionRegionsRegionDatabaseArgs and ActiveActiveSubscriptionRegionsRegionDatabaseOutput values.
@@ -752,10 +825,14 @@ type ActiveActiveSubscriptionRegionsRegionDatabaseInput interface {
 }
 
 type ActiveActiveSubscriptionRegionsRegionDatabaseArgs struct {
-	DatabaseId                    pulumi.IntInput    `pulumi:"databaseId"`
-	DatabaseName                  pulumi.StringInput `pulumi:"databaseName"`
-	LocalReadOperationsPerSecond  pulumi.IntInput    `pulumi:"localReadOperationsPerSecond"`
-	LocalWriteOperationsPerSecond pulumi.IntInput    `pulumi:"localWriteOperationsPerSecond"`
+	// Database ID belonging to the subscription
+	DatabaseId pulumi.IntInput `pulumi:"databaseId"`
+	// Database name belonging to the subscription
+	DatabaseName pulumi.StringInput `pulumi:"databaseName"`
+	// Local read operations per second for this active-active region
+	LocalReadOperationsPerSecond pulumi.IntInput `pulumi:"localReadOperationsPerSecond"`
+	// Local write operations per second for this active-active region
+	LocalWriteOperationsPerSecond pulumi.IntInput `pulumi:"localWriteOperationsPerSecond"`
 }
 
 func (ActiveActiveSubscriptionRegionsRegionDatabaseArgs) ElementType() reflect.Type {
@@ -809,18 +886,22 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) ToActiveActiveSubsc
 	return o
 }
 
+// Database ID belonging to the subscription
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) DatabaseId() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegionDatabase) int { return v.DatabaseId }).(pulumi.IntOutput)
 }
 
+// Database name belonging to the subscription
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) DatabaseName() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegionDatabase) string { return v.DatabaseName }).(pulumi.StringOutput)
 }
 
+// Local read operations per second for this active-active region
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) LocalReadOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegionDatabase) int { return v.LocalReadOperationsPerSecond }).(pulumi.IntOutput)
 }
 
+// Local write operations per second for this active-active region
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) LocalWriteOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegionDatabase) int { return v.LocalWriteOperationsPerSecond }).(pulumi.IntOutput)
 }
@@ -846,7 +927,9 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) Index(i pulumi
 }
 
 type SubscriptionAllowlist struct {
-	Cidrs            []string `pulumi:"cidrs"`
+	// Set of CIDR ranges that are allowed to access the databases associated with this subscription
+	Cidrs []string `pulumi:"cidrs"`
+	// Set of security groups that are allowed to access the databases associated with this subscription
 	SecurityGroupIds []string `pulumi:"securityGroupIds"`
 }
 
@@ -862,7 +945,9 @@ type SubscriptionAllowlistInput interface {
 }
 
 type SubscriptionAllowlistArgs struct {
-	Cidrs            pulumi.StringArrayInput `pulumi:"cidrs"`
+	// Set of CIDR ranges that are allowed to access the databases associated with this subscription
+	Cidrs pulumi.StringArrayInput `pulumi:"cidrs"`
+	// Set of security groups that are allowed to access the databases associated with this subscription
 	SecurityGroupIds pulumi.StringArrayInput `pulumi:"securityGroupIds"`
 }
 
@@ -943,10 +1028,12 @@ func (o SubscriptionAllowlistOutput) ToSubscriptionAllowlistPtrOutputWithContext
 	}).(SubscriptionAllowlistPtrOutput)
 }
 
+// Set of CIDR ranges that are allowed to access the databases associated with this subscription
 func (o SubscriptionAllowlistOutput) Cidrs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionAllowlist) []string { return v.Cidrs }).(pulumi.StringArrayOutput)
 }
 
+// Set of security groups that are allowed to access the databases associated with this subscription
 func (o SubscriptionAllowlistOutput) SecurityGroupIds() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionAllowlist) []string { return v.SecurityGroupIds }).(pulumi.StringArrayOutput)
 }
@@ -975,6 +1062,7 @@ func (o SubscriptionAllowlistPtrOutput) Elem() SubscriptionAllowlistOutput {
 	}).(SubscriptionAllowlistOutput)
 }
 
+// Set of CIDR ranges that are allowed to access the databases associated with this subscription
 func (o SubscriptionAllowlistPtrOutput) Cidrs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionAllowlist) []string {
 		if v == nil {
@@ -984,6 +1072,7 @@ func (o SubscriptionAllowlistPtrOutput) Cidrs() pulumi.StringArrayOutput {
 	}).(pulumi.StringArrayOutput)
 }
 
+// Set of security groups that are allowed to access the databases associated with this subscription
 func (o SubscriptionAllowlistPtrOutput) SecurityGroupIds() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionAllowlist) []string {
 		if v == nil {
@@ -994,9 +1083,14 @@ func (o SubscriptionAllowlistPtrOutput) SecurityGroupIds() pulumi.StringArrayOut
 }
 
 type SubscriptionCloudProvider struct {
-	CloudAccountId *string                           `pulumi:"cloudAccountId"`
-	Provider       *string                           `pulumi:"provider"`
-	Regions        []SubscriptionCloudProviderRegion `pulumi:"regions"`
+	// Cloud account identifier. Default: Redis Labs internal cloud account
+	// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
+	// only with Redis Labs internal cloud account
+	CloudAccountId *string `pulumi:"cloudAccountId"`
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	Provider *string `pulumi:"provider"`
+	// Deployment region as defined by cloud provider
+	Regions []SubscriptionCloudProviderRegion `pulumi:"regions"`
 }
 
 // SubscriptionCloudProviderInput is an input type that accepts SubscriptionCloudProviderArgs and SubscriptionCloudProviderOutput values.
@@ -1011,9 +1105,14 @@ type SubscriptionCloudProviderInput interface {
 }
 
 type SubscriptionCloudProviderArgs struct {
-	CloudAccountId pulumi.StringPtrInput                     `pulumi:"cloudAccountId"`
-	Provider       pulumi.StringPtrInput                     `pulumi:"provider"`
-	Regions        SubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
+	// Cloud account identifier. Default: Redis Labs internal cloud account
+	// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
+	// only with Redis Labs internal cloud account
+	CloudAccountId pulumi.StringPtrInput `pulumi:"cloudAccountId"`
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	Provider pulumi.StringPtrInput `pulumi:"provider"`
+	// Deployment region as defined by cloud provider
+	Regions SubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
 }
 
 func (SubscriptionCloudProviderArgs) ElementType() reflect.Type {
@@ -1093,14 +1192,19 @@ func (o SubscriptionCloudProviderOutput) ToSubscriptionCloudProviderPtrOutputWit
 	}).(SubscriptionCloudProviderPtrOutput)
 }
 
+// Cloud account identifier. Default: Redis Labs internal cloud account
+// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
+// only with Redis Labs internal cloud account
 func (o SubscriptionCloudProviderOutput) CloudAccountId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) *string { return v.CloudAccountId }).(pulumi.StringPtrOutput)
 }
 
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 func (o SubscriptionCloudProviderOutput) Provider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) *string { return v.Provider }).(pulumi.StringPtrOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o SubscriptionCloudProviderOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) []SubscriptionCloudProviderRegion { return v.Regions }).(SubscriptionCloudProviderRegionArrayOutput)
 }
@@ -1129,6 +1233,9 @@ func (o SubscriptionCloudProviderPtrOutput) Elem() SubscriptionCloudProviderOutp
 	}).(SubscriptionCloudProviderOutput)
 }
 
+// Cloud account identifier. Default: Redis Labs internal cloud account
+// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
+// only with Redis Labs internal cloud account
 func (o SubscriptionCloudProviderPtrOutput) CloudAccountId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) *string {
 		if v == nil {
@@ -1138,6 +1245,7 @@ func (o SubscriptionCloudProviderPtrOutput) CloudAccountId() pulumi.StringPtrOut
 	}).(pulumi.StringPtrOutput)
 }
 
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 func (o SubscriptionCloudProviderPtrOutput) Provider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) *string {
 		if v == nil {
@@ -1147,6 +1255,7 @@ func (o SubscriptionCloudProviderPtrOutput) Provider() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o SubscriptionCloudProviderPtrOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) []SubscriptionCloudProviderRegion {
 		if v == nil {
@@ -1157,12 +1266,20 @@ func (o SubscriptionCloudProviderPtrOutput) Regions() SubscriptionCloudProviderR
 }
 
 type SubscriptionCloudProviderRegion struct {
-	MultipleAvailabilityZones  *bool                                    `pulumi:"multipleAvailabilityZones"`
-	NetworkingDeploymentCidr   string                                   `pulumi:"networkingDeploymentCidr"`
-	NetworkingVpcId            *string                                  `pulumi:"networkingVpcId"`
-	Networks                   []SubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
-	PreferredAvailabilityZones []string                                 `pulumi:"preferredAvailabilityZones"`
-	Region                     string                                   `pulumi:"region"`
+	// Support deployment on multiple availability zones within the selected region. Default: ‘false’
+	MultipleAvailabilityZones *bool `pulumi:"multipleAvailabilityZones"`
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
+	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+	// within the hosting account.
+	NetworkingVpcId *string `pulumi:"networkingVpcId"`
+	// List of generated network configuration
+	Networks []SubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
+	// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
+	PreferredAvailabilityZones []string `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider
+	Region string `pulumi:"region"`
 }
 
 // SubscriptionCloudProviderRegionInput is an input type that accepts SubscriptionCloudProviderRegionArgs and SubscriptionCloudProviderRegionOutput values.
@@ -1177,12 +1294,20 @@ type SubscriptionCloudProviderRegionInput interface {
 }
 
 type SubscriptionCloudProviderRegionArgs struct {
-	MultipleAvailabilityZones  pulumi.BoolPtrInput                              `pulumi:"multipleAvailabilityZones"`
-	NetworkingDeploymentCidr   pulumi.StringInput                               `pulumi:"networkingDeploymentCidr"`
-	NetworkingVpcId            pulumi.StringPtrInput                            `pulumi:"networkingVpcId"`
-	Networks                   SubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
-	PreferredAvailabilityZones pulumi.StringArrayInput                          `pulumi:"preferredAvailabilityZones"`
-	Region                     pulumi.StringInput                               `pulumi:"region"`
+	// Support deployment on multiple availability zones within the selected region. Default: ‘false’
+	MultipleAvailabilityZones pulumi.BoolPtrInput `pulumi:"multipleAvailabilityZones"`
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
+	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+	// within the hosting account.
+	NetworkingVpcId pulumi.StringPtrInput `pulumi:"networkingVpcId"`
+	// List of generated network configuration
+	Networks SubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
+	// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
+	PreferredAvailabilityZones pulumi.StringArrayInput `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider
+	Region pulumi.StringInput `pulumi:"region"`
 }
 
 func (SubscriptionCloudProviderRegionArgs) ElementType() reflect.Type {
@@ -1236,26 +1361,34 @@ func (o SubscriptionCloudProviderRegionOutput) ToSubscriptionCloudProviderRegion
 	return o
 }
 
+// Support deployment on multiple availability zones within the selected region. Default: ‘false’
 func (o SubscriptionCloudProviderRegionOutput) MultipleAvailabilityZones() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) *bool { return v.MultipleAvailabilityZones }).(pulumi.BoolPtrOutput)
 }
 
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 func (o SubscriptionCloudProviderRegionOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
+// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+// within the hosting account.
 func (o SubscriptionCloudProviderRegionOutput) NetworkingVpcId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) *string { return v.NetworkingVpcId }).(pulumi.StringPtrOutput)
 }
 
+// List of generated network configuration
 func (o SubscriptionCloudProviderRegionOutput) Networks() SubscriptionCloudProviderRegionNetworkArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) []SubscriptionCloudProviderRegionNetwork { return v.Networks }).(SubscriptionCloudProviderRegionNetworkArrayOutput)
 }
 
+// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
 func (o SubscriptionCloudProviderRegionOutput) PreferredAvailabilityZones() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) []string { return v.PreferredAvailabilityZones }).(pulumi.StringArrayOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o SubscriptionCloudProviderRegionOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) string { return v.Region }).(pulumi.StringOutput)
 }
@@ -1281,9 +1414,14 @@ func (o SubscriptionCloudProviderRegionArrayOutput) Index(i pulumi.IntInput) Sub
 }
 
 type SubscriptionCloudProviderRegionNetwork struct {
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr *string `pulumi:"networkingDeploymentCidr"`
-	NetworkingSubnetId       *string `pulumi:"networkingSubnetId"`
-	NetworkingVpcId          *string `pulumi:"networkingVpcId"`
+	// The subnet that the subscription deploys into
+	NetworkingSubnetId *string `pulumi:"networkingSubnetId"`
+	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+	// within the hosting account.
+	NetworkingVpcId *string `pulumi:"networkingVpcId"`
 }
 
 // SubscriptionCloudProviderRegionNetworkInput is an input type that accepts SubscriptionCloudProviderRegionNetworkArgs and SubscriptionCloudProviderRegionNetworkOutput values.
@@ -1298,9 +1436,14 @@ type SubscriptionCloudProviderRegionNetworkInput interface {
 }
 
 type SubscriptionCloudProviderRegionNetworkArgs struct {
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr pulumi.StringPtrInput `pulumi:"networkingDeploymentCidr"`
-	NetworkingSubnetId       pulumi.StringPtrInput `pulumi:"networkingSubnetId"`
-	NetworkingVpcId          pulumi.StringPtrInput `pulumi:"networkingVpcId"`
+	// The subnet that the subscription deploys into
+	NetworkingSubnetId pulumi.StringPtrInput `pulumi:"networkingSubnetId"`
+	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+	// within the hosting account.
+	NetworkingVpcId pulumi.StringPtrInput `pulumi:"networkingVpcId"`
 }
 
 func (SubscriptionCloudProviderRegionNetworkArgs) ElementType() reflect.Type {
@@ -1354,14 +1497,19 @@ func (o SubscriptionCloudProviderRegionNetworkOutput) ToSubscriptionCloudProvide
 	return o
 }
 
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingDeploymentCidr() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegionNetwork) *string { return v.NetworkingDeploymentCidr }).(pulumi.StringPtrOutput)
 }
 
+// The subnet that the subscription deploys into
 func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingSubnetId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegionNetwork) *string { return v.NetworkingSubnetId }).(pulumi.StringPtrOutput)
 }
 
+// Either an existing VPC Id (already exists in the specific region) or create a new VPC
+// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
+// within the hosting account.
 func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingVpcId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegionNetwork) *string { return v.NetworkingVpcId }).(pulumi.StringPtrOutput)
 }
@@ -1387,14 +1535,25 @@ func (o SubscriptionCloudProviderRegionNetworkArrayOutput) Index(i pulumi.IntInp
 }
 
 type SubscriptionCreationPlan struct {
-	AverageItemSizeInBytes     *int     `pulumi:"averageItemSizeInBytes"`
-	MemoryLimitInGb            float64  `pulumi:"memoryLimitInGb"`
-	Modules                    []string `pulumi:"modules"`
-	Quantity                   int      `pulumi:"quantity"`
-	Replication                bool     `pulumi:"replication"`
-	SupportOssClusterApi       *bool    `pulumi:"supportOssClusterApi"`
-	ThroughputMeasurementBy    string   `pulumi:"throughputMeasurementBy"`
-	ThroughputMeasurementValue int      `pulumi:"throughputMeasurementValue"`
+	// Relevant only to ram-and-flash clusters
+	// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
+	// be the maximum average item size defined in one of your databases.  Default: 1000
+	AverageItemSizeInBytes *int `pulumi:"averageItemSizeInBytes"`
+	// Maximum memory usage that will be used for your largest planned database.
+	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
+	// a list of modules that will be used by the databases in this subscription. Not currently compatible with ‘ram-and-flash’ memory storage.
+	// Example: `modules = ["RedisJSON", RedisBloom"]`
+	Modules []string `pulumi:"modules"`
+	// The planned number of databases in the subscription
+	Quantity int `pulumi:"quantity"`
+	// Databases replication. Set to `true` if any of your databases will use replication
+	Replication bool `pulumi:"replication"`
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
+	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
+	// Throughput measurement method that will be used by your databases, (either ‘number-of-shards’ or ‘operations-per-second’)
+	ThroughputMeasurementBy string `pulumi:"throughputMeasurementBy"`
+	// Throughput value that will be used by your databases (as applies to selected measurement method). The value needs to be the maximum throughput measurement value defined in one of your databases
+	ThroughputMeasurementValue int `pulumi:"throughputMeasurementValue"`
 }
 
 // SubscriptionCreationPlanInput is an input type that accepts SubscriptionCreationPlanArgs and SubscriptionCreationPlanOutput values.
@@ -1409,14 +1568,25 @@ type SubscriptionCreationPlanInput interface {
 }
 
 type SubscriptionCreationPlanArgs struct {
-	AverageItemSizeInBytes     pulumi.IntPtrInput      `pulumi:"averageItemSizeInBytes"`
-	MemoryLimitInGb            pulumi.Float64Input     `pulumi:"memoryLimitInGb"`
-	Modules                    pulumi.StringArrayInput `pulumi:"modules"`
-	Quantity                   pulumi.IntInput         `pulumi:"quantity"`
-	Replication                pulumi.BoolInput        `pulumi:"replication"`
-	SupportOssClusterApi       pulumi.BoolPtrInput     `pulumi:"supportOssClusterApi"`
-	ThroughputMeasurementBy    pulumi.StringInput      `pulumi:"throughputMeasurementBy"`
-	ThroughputMeasurementValue pulumi.IntInput         `pulumi:"throughputMeasurementValue"`
+	// Relevant only to ram-and-flash clusters
+	// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
+	// be the maximum average item size defined in one of your databases.  Default: 1000
+	AverageItemSizeInBytes pulumi.IntPtrInput `pulumi:"averageItemSizeInBytes"`
+	// Maximum memory usage that will be used for your largest planned database.
+	MemoryLimitInGb pulumi.Float64Input `pulumi:"memoryLimitInGb"`
+	// a list of modules that will be used by the databases in this subscription. Not currently compatible with ‘ram-and-flash’ memory storage.
+	// Example: `modules = ["RedisJSON", RedisBloom"]`
+	Modules pulumi.StringArrayInput `pulumi:"modules"`
+	// The planned number of databases in the subscription
+	Quantity pulumi.IntInput `pulumi:"quantity"`
+	// Databases replication. Set to `true` if any of your databases will use replication
+	Replication pulumi.BoolInput `pulumi:"replication"`
+	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
+	SupportOssClusterApi pulumi.BoolPtrInput `pulumi:"supportOssClusterApi"`
+	// Throughput measurement method that will be used by your databases, (either ‘number-of-shards’ or ‘operations-per-second’)
+	ThroughputMeasurementBy pulumi.StringInput `pulumi:"throughputMeasurementBy"`
+	// Throughput value that will be used by your databases (as applies to selected measurement method). The value needs to be the maximum throughput measurement value defined in one of your databases
+	ThroughputMeasurementValue pulumi.IntInput `pulumi:"throughputMeasurementValue"`
 }
 
 func (SubscriptionCreationPlanArgs) ElementType() reflect.Type {
@@ -1496,34 +1666,45 @@ func (o SubscriptionCreationPlanOutput) ToSubscriptionCreationPlanPtrOutputWithC
 	}).(SubscriptionCreationPlanPtrOutput)
 }
 
+// Relevant only to ram-and-flash clusters
+// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
+// be the maximum average item size defined in one of your databases.  Default: 1000
 func (o SubscriptionCreationPlanOutput) AverageItemSizeInBytes() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) *int { return v.AverageItemSizeInBytes }).(pulumi.IntPtrOutput)
 }
 
+// Maximum memory usage that will be used for your largest planned database.
 func (o SubscriptionCreationPlanOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v SubscriptionCreationPlan) float64 { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
+// a list of modules that will be used by the databases in this subscription. Not currently compatible with ‘ram-and-flash’ memory storage.
+// Example: `modules = ["RedisJSON", RedisBloom"]`
 func (o SubscriptionCreationPlanOutput) Modules() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) []string { return v.Modules }).(pulumi.StringArrayOutput)
 }
 
+// The planned number of databases in the subscription
 func (o SubscriptionCreationPlanOutput) Quantity() pulumi.IntOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) int { return v.Quantity }).(pulumi.IntOutput)
 }
 
+// Databases replication. Set to `true` if any of your databases will use replication
 func (o SubscriptionCreationPlanOutput) Replication() pulumi.BoolOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) bool { return v.Replication }).(pulumi.BoolOutput)
 }
 
+// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 func (o SubscriptionCreationPlanOutput) SupportOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) *bool { return v.SupportOssClusterApi }).(pulumi.BoolPtrOutput)
 }
 
+// Throughput measurement method that will be used by your databases, (either ‘number-of-shards’ or ‘operations-per-second’)
 func (o SubscriptionCreationPlanOutput) ThroughputMeasurementBy() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) string { return v.ThroughputMeasurementBy }).(pulumi.StringOutput)
 }
 
+// Throughput value that will be used by your databases (as applies to selected measurement method). The value needs to be the maximum throughput measurement value defined in one of your databases
 func (o SubscriptionCreationPlanOutput) ThroughputMeasurementValue() pulumi.IntOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) int { return v.ThroughputMeasurementValue }).(pulumi.IntOutput)
 }
@@ -1552,6 +1733,9 @@ func (o SubscriptionCreationPlanPtrOutput) Elem() SubscriptionCreationPlanOutput
 	}).(SubscriptionCreationPlanOutput)
 }
 
+// Relevant only to ram-and-flash clusters
+// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
+// be the maximum average item size defined in one of your databases.  Default: 1000
 func (o SubscriptionCreationPlanPtrOutput) AverageItemSizeInBytes() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *int {
 		if v == nil {
@@ -1561,6 +1745,7 @@ func (o SubscriptionCreationPlanPtrOutput) AverageItemSizeInBytes() pulumi.IntPt
 	}).(pulumi.IntPtrOutput)
 }
 
+// Maximum memory usage that will be used for your largest planned database.
 func (o SubscriptionCreationPlanPtrOutput) MemoryLimitInGb() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *float64 {
 		if v == nil {
@@ -1570,6 +1755,8 @@ func (o SubscriptionCreationPlanPtrOutput) MemoryLimitInGb() pulumi.Float64PtrOu
 	}).(pulumi.Float64PtrOutput)
 }
 
+// a list of modules that will be used by the databases in this subscription. Not currently compatible with ‘ram-and-flash’ memory storage.
+// Example: `modules = ["RedisJSON", RedisBloom"]`
 func (o SubscriptionCreationPlanPtrOutput) Modules() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) []string {
 		if v == nil {
@@ -1579,6 +1766,7 @@ func (o SubscriptionCreationPlanPtrOutput) Modules() pulumi.StringArrayOutput {
 	}).(pulumi.StringArrayOutput)
 }
 
+// The planned number of databases in the subscription
 func (o SubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *int {
 		if v == nil {
@@ -1588,6 +1776,7 @@ func (o SubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrOutput {
 	}).(pulumi.IntPtrOutput)
 }
 
+// Databases replication. Set to `true` if any of your databases will use replication
 func (o SubscriptionCreationPlanPtrOutput) Replication() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *bool {
 		if v == nil {
@@ -1597,6 +1786,7 @@ func (o SubscriptionCreationPlanPtrOutput) Replication() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
+// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 func (o SubscriptionCreationPlanPtrOutput) SupportOssClusterApi() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *bool {
 		if v == nil {
@@ -1606,6 +1796,7 @@ func (o SubscriptionCreationPlanPtrOutput) SupportOssClusterApi() pulumi.BoolPtr
 	}).(pulumi.BoolPtrOutput)
 }
 
+// Throughput measurement method that will be used by your databases, (either ‘number-of-shards’ or ‘operations-per-second’)
 func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementBy() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *string {
 		if v == nil {
@@ -1615,6 +1806,7 @@ func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementBy() pulumi.Stri
 	}).(pulumi.StringPtrOutput)
 }
 
+// Throughput value that will be used by your databases (as applies to selected measurement method). The value needs to be the maximum throughput measurement value defined in one of your databases
 func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementValue() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *int {
 		if v == nil {
@@ -1625,8 +1817,10 @@ func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementValue() pulumi.I
 }
 
 type SubscriptionDatabaseAlert struct {
-	Name  string `pulumi:"name"`
-	Value int    `pulumi:"value"`
+	// Name of the Redis database module to enable
+	Name string `pulumi:"name"`
+	// Alert value
+	Value int `pulumi:"value"`
 }
 
 // SubscriptionDatabaseAlertInput is an input type that accepts SubscriptionDatabaseAlertArgs and SubscriptionDatabaseAlertOutput values.
@@ -1641,8 +1835,10 @@ type SubscriptionDatabaseAlertInput interface {
 }
 
 type SubscriptionDatabaseAlertArgs struct {
-	Name  pulumi.StringInput `pulumi:"name"`
-	Value pulumi.IntInput    `pulumi:"value"`
+	// Name of the Redis database module to enable
+	Name pulumi.StringInput `pulumi:"name"`
+	// Alert value
+	Value pulumi.IntInput `pulumi:"value"`
 }
 
 func (SubscriptionDatabaseAlertArgs) ElementType() reflect.Type {
@@ -1696,10 +1892,12 @@ func (o SubscriptionDatabaseAlertOutput) ToSubscriptionDatabaseAlertOutputWithCo
 	return o
 }
 
+// Name of the Redis database module to enable
 func (o SubscriptionDatabaseAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseAlert) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// Alert value
 func (o SubscriptionDatabaseAlertOutput) Value() pulumi.IntOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseAlert) int { return v.Value }).(pulumi.IntOutput)
 }
@@ -1725,6 +1923,7 @@ func (o SubscriptionDatabaseAlertArrayOutput) Index(i pulumi.IntInput) Subscript
 }
 
 type SubscriptionDatabaseModule struct {
+	// Name of the Redis database module to enable
 	Name string `pulumi:"name"`
 }
 
@@ -1740,6 +1939,7 @@ type SubscriptionDatabaseModuleInput interface {
 }
 
 type SubscriptionDatabaseModuleArgs struct {
+	// Name of the Redis database module to enable
 	Name pulumi.StringInput `pulumi:"name"`
 }
 
@@ -1794,6 +1994,7 @@ func (o SubscriptionDatabaseModuleOutput) ToSubscriptionDatabaseModuleOutputWith
 	return o
 }
 
+// Name of the Redis database module to enable
 func (o SubscriptionDatabaseModuleOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseModule) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -1819,8 +2020,10 @@ func (o SubscriptionDatabaseModuleArrayOutput) Index(i pulumi.IntInput) Subscrip
 }
 
 type GetDataPersistenceDataPersistence struct {
+	// A meaningful description of the data persistence option.
 	Description string `pulumi:"description"`
-	Name        string `pulumi:"name"`
+	// The identifier of the data persistence option.
+	Name string `pulumi:"name"`
 }
 
 // GetDataPersistenceDataPersistenceInput is an input type that accepts GetDataPersistenceDataPersistenceArgs and GetDataPersistenceDataPersistenceOutput values.
@@ -1835,8 +2038,10 @@ type GetDataPersistenceDataPersistenceInput interface {
 }
 
 type GetDataPersistenceDataPersistenceArgs struct {
+	// A meaningful description of the data persistence option.
 	Description pulumi.StringInput `pulumi:"description"`
-	Name        pulumi.StringInput `pulumi:"name"`
+	// The identifier of the data persistence option.
+	Name pulumi.StringInput `pulumi:"name"`
 }
 
 func (GetDataPersistenceDataPersistenceArgs) ElementType() reflect.Type {
@@ -1890,10 +2095,12 @@ func (o GetDataPersistenceDataPersistenceOutput) ToGetDataPersistenceDataPersist
 	return o
 }
 
+// A meaningful description of the data persistence option.
 func (o GetDataPersistenceDataPersistenceOutput) Description() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDataPersistenceDataPersistence) string { return v.Description }).(pulumi.StringOutput)
 }
 
+// The identifier of the data persistence option.
 func (o GetDataPersistenceDataPersistenceOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDataPersistenceDataPersistence) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -1919,6 +2126,7 @@ func (o GetDataPersistenceDataPersistenceArrayOutput) Index(i pulumi.IntInput) G
 }
 
 type GetDatabaseAlert struct {
+	// The name of the database to filter returned databases
 	Name  string `pulumi:"name"`
 	Value int    `pulumi:"value"`
 }
@@ -1935,6 +2143,7 @@ type GetDatabaseAlertInput interface {
 }
 
 type GetDatabaseAlertArgs struct {
+	// The name of the database to filter returned databases
 	Name  pulumi.StringInput `pulumi:"name"`
 	Value pulumi.IntInput    `pulumi:"value"`
 }
@@ -1990,6 +2199,7 @@ func (o GetDatabaseAlertOutput) ToGetDatabaseAlertOutputWithContext(ctx context.
 	return o
 }
 
+// The name of the database to filter returned databases
 func (o GetDatabaseAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseAlert) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2019,6 +2229,7 @@ func (o GetDatabaseAlertArrayOutput) Index(i pulumi.IntInput) GetDatabaseAlertOu
 }
 
 type GetDatabaseModule struct {
+	// The name of the database to filter returned databases
 	Name string `pulumi:"name"`
 }
 
@@ -2034,6 +2245,7 @@ type GetDatabaseModuleInput interface {
 }
 
 type GetDatabaseModuleArgs struct {
+	// The name of the database to filter returned databases
 	Name pulumi.StringInput `pulumi:"name"`
 }
 
@@ -2088,6 +2300,7 @@ func (o GetDatabaseModuleOutput) ToGetDatabaseModuleOutputWithContext(ctx contex
 	return o
 }
 
+// The name of the database to filter returned databases
 func (o GetDatabaseModuleOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseModule) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2213,7 +2426,8 @@ func (o GetDatabaseModulesModuleArrayOutput) Index(i pulumi.IntInput) GetDatabas
 }
 
 type GetRegionsRegion struct {
-	Name         string `pulumi:"name"`
+	Name string `pulumi:"name"`
+	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName string `pulumi:"providerName"`
 }
 
@@ -2229,7 +2443,8 @@ type GetRegionsRegionInput interface {
 }
 
 type GetRegionsRegionArgs struct {
-	Name         pulumi.StringInput `pulumi:"name"`
+	Name pulumi.StringInput `pulumi:"name"`
+	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName pulumi.StringInput `pulumi:"providerName"`
 }
 
@@ -2288,6 +2503,7 @@ func (o GetRegionsRegionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetRegionsRegion) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 func (o GetRegionsRegionOutput) ProviderName() pulumi.StringOutput {
 	return o.ApplyT(func(v GetRegionsRegion) string { return v.ProviderName }).(pulumi.StringOutput)
 }
@@ -2313,9 +2529,12 @@ func (o GetRegionsRegionArrayOutput) Index(i pulumi.IntInput) GetRegionsRegionOu
 }
 
 type GetSubscriptionCloudProvider struct {
-	CloudAccountId string                               `pulumi:"cloudAccountId"`
-	Provider       string                               `pulumi:"provider"`
-	Regions        []GetSubscriptionCloudProviderRegion `pulumi:"regions"`
+	// Cloud account identifier, (A Cloud Account Id = 1 implies using Redis Labs internal cloud account)
+	CloudAccountId string `pulumi:"cloudAccountId"`
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`)
+	Provider string `pulumi:"provider"`
+	// Deployment region as defined by cloud provider
+	Regions []GetSubscriptionCloudProviderRegion `pulumi:"regions"`
 }
 
 // GetSubscriptionCloudProviderInput is an input type that accepts GetSubscriptionCloudProviderArgs and GetSubscriptionCloudProviderOutput values.
@@ -2330,9 +2549,12 @@ type GetSubscriptionCloudProviderInput interface {
 }
 
 type GetSubscriptionCloudProviderArgs struct {
-	CloudAccountId pulumi.StringInput                           `pulumi:"cloudAccountId"`
-	Provider       pulumi.StringInput                           `pulumi:"provider"`
-	Regions        GetSubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
+	// Cloud account identifier, (A Cloud Account Id = 1 implies using Redis Labs internal cloud account)
+	CloudAccountId pulumi.StringInput `pulumi:"cloudAccountId"`
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`)
+	Provider pulumi.StringInput `pulumi:"provider"`
+	// Deployment region as defined by cloud provider
+	Regions GetSubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
 }
 
 func (GetSubscriptionCloudProviderArgs) ElementType() reflect.Type {
@@ -2386,14 +2608,17 @@ func (o GetSubscriptionCloudProviderOutput) ToGetSubscriptionCloudProviderOutput
 	return o
 }
 
+// Cloud account identifier, (A Cloud Account Id = 1 implies using Redis Labs internal cloud account)
 func (o GetSubscriptionCloudProviderOutput) CloudAccountId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProvider) string { return v.CloudAccountId }).(pulumi.StringOutput)
 }
 
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`)
 func (o GetSubscriptionCloudProviderOutput) Provider() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProvider) string { return v.Provider }).(pulumi.StringOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o GetSubscriptionCloudProviderOutput) Regions() GetSubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProvider) []GetSubscriptionCloudProviderRegion { return v.Regions }).(GetSubscriptionCloudProviderRegionArrayOutput)
 }
@@ -2419,11 +2644,16 @@ func (o GetSubscriptionCloudProviderArrayOutput) Index(i pulumi.IntInput) GetSub
 }
 
 type GetSubscriptionCloudProviderRegion struct {
-	MultipleAvailabilityZones  bool                                        `pulumi:"multipleAvailabilityZones"`
-	NetworkingVpcId            string                                      `pulumi:"networkingVpcId"`
-	Networks                   []GetSubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
-	PreferredAvailabilityZones []string                                    `pulumi:"preferredAvailabilityZones"`
-	Region                     string                                      `pulumi:"region"`
+	// Support deployment on multiple availability zones within the selected region
+	MultipleAvailabilityZones bool `pulumi:"multipleAvailabilityZones"`
+	// VPC id for the generated network
+	NetworkingVpcId string `pulumi:"networkingVpcId"`
+	// List of generated network configuration
+	Networks []GetSubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
+	// List of availability zones used
+	PreferredAvailabilityZones []string `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider
+	Region string `pulumi:"region"`
 }
 
 // GetSubscriptionCloudProviderRegionInput is an input type that accepts GetSubscriptionCloudProviderRegionArgs and GetSubscriptionCloudProviderRegionOutput values.
@@ -2438,11 +2668,16 @@ type GetSubscriptionCloudProviderRegionInput interface {
 }
 
 type GetSubscriptionCloudProviderRegionArgs struct {
-	MultipleAvailabilityZones  pulumi.BoolInput                                    `pulumi:"multipleAvailabilityZones"`
-	NetworkingVpcId            pulumi.StringInput                                  `pulumi:"networkingVpcId"`
-	Networks                   GetSubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
-	PreferredAvailabilityZones pulumi.StringArrayInput                             `pulumi:"preferredAvailabilityZones"`
-	Region                     pulumi.StringInput                                  `pulumi:"region"`
+	// Support deployment on multiple availability zones within the selected region
+	MultipleAvailabilityZones pulumi.BoolInput `pulumi:"multipleAvailabilityZones"`
+	// VPC id for the generated network
+	NetworkingVpcId pulumi.StringInput `pulumi:"networkingVpcId"`
+	// List of generated network configuration
+	Networks GetSubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
+	// List of availability zones used
+	PreferredAvailabilityZones pulumi.StringArrayInput `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider
+	Region pulumi.StringInput `pulumi:"region"`
 }
 
 func (GetSubscriptionCloudProviderRegionArgs) ElementType() reflect.Type {
@@ -2496,24 +2731,29 @@ func (o GetSubscriptionCloudProviderRegionOutput) ToGetSubscriptionCloudProvider
 	return o
 }
 
+// Support deployment on multiple availability zones within the selected region
 func (o GetSubscriptionCloudProviderRegionOutput) MultipleAvailabilityZones() pulumi.BoolOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegion) bool { return v.MultipleAvailabilityZones }).(pulumi.BoolOutput)
 }
 
+// VPC id for the generated network
 func (o GetSubscriptionCloudProviderRegionOutput) NetworkingVpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegion) string { return v.NetworkingVpcId }).(pulumi.StringOutput)
 }
 
+// List of generated network configuration
 func (o GetSubscriptionCloudProviderRegionOutput) Networks() GetSubscriptionCloudProviderRegionNetworkArrayOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegion) []GetSubscriptionCloudProviderRegionNetwork {
 		return v.Networks
 	}).(GetSubscriptionCloudProviderRegionNetworkArrayOutput)
 }
 
+// List of availability zones used
 func (o GetSubscriptionCloudProviderRegionOutput) PreferredAvailabilityZones() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegion) []string { return v.PreferredAvailabilityZones }).(pulumi.StringArrayOutput)
 }
 
+// Deployment region as defined by cloud provider
 func (o GetSubscriptionCloudProviderRegionOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegion) string { return v.Region }).(pulumi.StringOutput)
 }
@@ -2539,9 +2779,12 @@ func (o GetSubscriptionCloudProviderRegionArrayOutput) Index(i pulumi.IntInput) 
 }
 
 type GetSubscriptionCloudProviderRegionNetwork struct {
+	// Deployment CIDR mask for the generated
 	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
-	NetworkingSubnetId       string `pulumi:"networkingSubnetId"`
-	NetworkingVpcId          string `pulumi:"networkingVpcId"`
+	// The subnet that the subscription deploys into
+	NetworkingSubnetId string `pulumi:"networkingSubnetId"`
+	// VPC id for the generated network
+	NetworkingVpcId string `pulumi:"networkingVpcId"`
 }
 
 // GetSubscriptionCloudProviderRegionNetworkInput is an input type that accepts GetSubscriptionCloudProviderRegionNetworkArgs and GetSubscriptionCloudProviderRegionNetworkOutput values.
@@ -2556,9 +2799,12 @@ type GetSubscriptionCloudProviderRegionNetworkInput interface {
 }
 
 type GetSubscriptionCloudProviderRegionNetworkArgs struct {
+	// Deployment CIDR mask for the generated
 	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
-	NetworkingSubnetId       pulumi.StringInput `pulumi:"networkingSubnetId"`
-	NetworkingVpcId          pulumi.StringInput `pulumi:"networkingVpcId"`
+	// The subnet that the subscription deploys into
+	NetworkingSubnetId pulumi.StringInput `pulumi:"networkingSubnetId"`
+	// VPC id for the generated network
+	NetworkingVpcId pulumi.StringInput `pulumi:"networkingVpcId"`
 }
 
 func (GetSubscriptionCloudProviderRegionNetworkArgs) ElementType() reflect.Type {
@@ -2612,14 +2858,17 @@ func (o GetSubscriptionCloudProviderRegionNetworkOutput) ToGetSubscriptionCloudP
 	return o
 }
 
+// Deployment CIDR mask for the generated
 func (o GetSubscriptionCloudProviderRegionNetworkOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegionNetwork) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
+// The subnet that the subscription deploys into
 func (o GetSubscriptionCloudProviderRegionNetworkOutput) NetworkingSubnetId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegionNetwork) string { return v.NetworkingSubnetId }).(pulumi.StringOutput)
 }
 
+// VPC id for the generated network
 func (o GetSubscriptionCloudProviderRegionNetworkOutput) NetworkingVpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionCloudProviderRegionNetwork) string { return v.NetworkingVpcId }).(pulumi.StringOutput)
 }
@@ -2645,19 +2894,25 @@ func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) Index(i pulumi.Int
 }
 
 type GetSubscriptionPeeringsPeering struct {
-	AwsAccountId        string `pulumi:"awsAccountId"`
-	AwsPeeringId        string `pulumi:"awsPeeringId"`
-	GcpNetworkName      string `pulumi:"gcpNetworkName"`
-	GcpPeeringId        string `pulumi:"gcpPeeringId"`
-	GcpProjectId        string `pulumi:"gcpProjectId"`
+	AwsAccountId   string `pulumi:"awsAccountId"`
+	AwsPeeringId   string `pulumi:"awsPeeringId"`
+	GcpNetworkName string `pulumi:"gcpNetworkName"`
+	// Identifier of the cloud peering
+	GcpPeeringId string `pulumi:"gcpPeeringId"`
+	GcpProjectId string `pulumi:"gcpProjectId"`
+	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName string `pulumi:"gcpRedisNetworkName"`
 	GcpRedisProjectId   string `pulumi:"gcpRedisProjectId"`
-	PeeringId           int    `pulumi:"peeringId"`
-	ProviderName        string `pulumi:"providerName"`
-	Region              string `pulumi:"region"`
-	Status              string `pulumi:"status"`
-	VpcCidr             string `pulumi:"vpcCidr"`
-	VpcId               string `pulumi:"vpcId"`
+	// ID of the subscription peering
+	PeeringId int `pulumi:"peeringId"`
+	// The name of the cloud provider. (either `AWS` or `GCP`)
+	// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	ProviderName string `pulumi:"providerName"`
+	Region       string `pulumi:"region"`
+	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	Status  string `pulumi:"status"`
+	VpcCidr string `pulumi:"vpcCidr"`
+	VpcId   string `pulumi:"vpcId"`
 }
 
 // GetSubscriptionPeeringsPeeringInput is an input type that accepts GetSubscriptionPeeringsPeeringArgs and GetSubscriptionPeeringsPeeringOutput values.
@@ -2672,19 +2927,25 @@ type GetSubscriptionPeeringsPeeringInput interface {
 }
 
 type GetSubscriptionPeeringsPeeringArgs struct {
-	AwsAccountId        pulumi.StringInput `pulumi:"awsAccountId"`
-	AwsPeeringId        pulumi.StringInput `pulumi:"awsPeeringId"`
-	GcpNetworkName      pulumi.StringInput `pulumi:"gcpNetworkName"`
-	GcpPeeringId        pulumi.StringInput `pulumi:"gcpPeeringId"`
-	GcpProjectId        pulumi.StringInput `pulumi:"gcpProjectId"`
+	AwsAccountId   pulumi.StringInput `pulumi:"awsAccountId"`
+	AwsPeeringId   pulumi.StringInput `pulumi:"awsPeeringId"`
+	GcpNetworkName pulumi.StringInput `pulumi:"gcpNetworkName"`
+	// Identifier of the cloud peering
+	GcpPeeringId pulumi.StringInput `pulumi:"gcpPeeringId"`
+	GcpProjectId pulumi.StringInput `pulumi:"gcpProjectId"`
+	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName pulumi.StringInput `pulumi:"gcpRedisNetworkName"`
 	GcpRedisProjectId   pulumi.StringInput `pulumi:"gcpRedisProjectId"`
-	PeeringId           pulumi.IntInput    `pulumi:"peeringId"`
-	ProviderName        pulumi.StringInput `pulumi:"providerName"`
-	Region              pulumi.StringInput `pulumi:"region"`
-	Status              pulumi.StringInput `pulumi:"status"`
-	VpcCidr             pulumi.StringInput `pulumi:"vpcCidr"`
-	VpcId               pulumi.StringInput `pulumi:"vpcId"`
+	// ID of the subscription peering
+	PeeringId pulumi.IntInput `pulumi:"peeringId"`
+	// The name of the cloud provider. (either `AWS` or `GCP`)
+	// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	ProviderName pulumi.StringInput `pulumi:"providerName"`
+	Region       pulumi.StringInput `pulumi:"region"`
+	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	Status  pulumi.StringInput `pulumi:"status"`
+	VpcCidr pulumi.StringInput `pulumi:"vpcCidr"`
+	VpcId   pulumi.StringInput `pulumi:"vpcId"`
 }
 
 func (GetSubscriptionPeeringsPeeringArgs) ElementType() reflect.Type {
@@ -2750,6 +3011,7 @@ func (o GetSubscriptionPeeringsPeeringOutput) GcpNetworkName() pulumi.StringOutp
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpNetworkName }).(pulumi.StringOutput)
 }
 
+// Identifier of the cloud peering
 func (o GetSubscriptionPeeringsPeeringOutput) GcpPeeringId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpPeeringId }).(pulumi.StringOutput)
 }
@@ -2758,6 +3020,7 @@ func (o GetSubscriptionPeeringsPeeringOutput) GcpProjectId() pulumi.StringOutput
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpProjectId }).(pulumi.StringOutput)
 }
 
+// The name of the Redis Enterprise Cloud network to be peered
 func (o GetSubscriptionPeeringsPeeringOutput) GcpRedisNetworkName() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpRedisNetworkName }).(pulumi.StringOutput)
 }
@@ -2766,10 +3029,13 @@ func (o GetSubscriptionPeeringsPeeringOutput) GcpRedisProjectId() pulumi.StringO
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpRedisProjectId }).(pulumi.StringOutput)
 }
 
+// ID of the subscription peering
 func (o GetSubscriptionPeeringsPeeringOutput) PeeringId() pulumi.IntOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) int { return v.PeeringId }).(pulumi.IntOutput)
 }
 
+// The name of the cloud provider. (either `AWS` or `GCP`)
+// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o GetSubscriptionPeeringsPeeringOutput) ProviderName() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.ProviderName }).(pulumi.StringOutput)
 }
@@ -2778,6 +3044,7 @@ func (o GetSubscriptionPeeringsPeeringOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.Region }).(pulumi.StringOutput)
 }
 
+// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o GetSubscriptionPeeringsPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.Status }).(pulumi.StringOutput)
 }

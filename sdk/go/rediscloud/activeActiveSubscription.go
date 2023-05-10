@@ -10,19 +10,79 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// ## Example Usage
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			card, err := rediscloud.GetPaymentMethod(ctx, &GetPaymentMethodArgs{
+//				CardType: pulumi.StringRef("Visa"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", &rediscloud.ActiveActiveSubscriptionArgs{
+//				PaymentMethodId: pulumi.String(card.Id),
+//				CloudProvider:   pulumi.String("AWS"),
+//				CreationPlan: &ActiveActiveSubscriptionCreationPlanArgs{
+//					MemoryLimitInGb: pulumi.Float64(1),
+//					Quantity:        pulumi.Int(1),
+//					Regions: ActiveActiveSubscriptionCreationPlanRegionArray{
+//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//							Region:                   pulumi.String("us-east-1"),
+//							NetworkingDeploymentCidr: pulumi.String("192.168.0.0/24"),
+//							WriteOperationsPerSecond: pulumi.Int(1000),
+//							ReadOperationsPerSecond:  pulumi.Int(1000),
+//						},
+//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//							Region:                   pulumi.String("us-east-2"),
+//							NetworkingDeploymentCidr: pulumi.String("10.0.1.0/24"),
+//							WriteOperationsPerSecond: pulumi.Int(1000),
+//							ReadOperationsPerSecond:  pulumi.Int(1000),
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ## Import
+//
+// `rediscloud_active_active_subscription` can be imported using the ID of the subscription, e.g.
+//
+// ```sh
+//
+//	$ pulumi import rediscloud:index/activeActiveSubscription:ActiveActiveSubscription subscription-resource 12345678
+//
+// ```
 type ActiveActiveSubscription struct {
 	pulumi.CustomResourceState
 
-	// A cloud provider string either GCP or AWS
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	CloudProvider pulumi.StringPtrOutput `pulumi:"cloudProvider"`
-	// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-	// creating a new subscription and any changes will be ignored after this.
+	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrOutput `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name pulumi.StringOutput `pulumi:"name"`
-	// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 	PaymentMethod pulumi.StringPtrOutput `pulumi:"paymentMethod"`
-	// A valid payment method pre-defined in the current account
+	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringOutput `pulumi:"paymentMethodId"`
 }
 
@@ -33,6 +93,7 @@ func NewActiveActiveSubscription(ctx *pulumi.Context,
 		args = &ActiveActiveSubscriptionArgs{}
 	}
 
+	opts = pkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscription
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscription:ActiveActiveSubscription", name, args, &resource, opts...)
 	if err != nil {
@@ -55,30 +116,28 @@ func GetActiveActiveSubscription(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering ActiveActiveSubscription resources.
 type activeActiveSubscriptionState struct {
-	// A cloud provider string either GCP or AWS
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	CloudProvider *string `pulumi:"cloudProvider"`
-	// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-	// creating a new subscription and any changes will be ignored after this.
+	// A creation plan object, documented below
 	CreationPlan *ActiveActiveSubscriptionCreationPlan `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 	PaymentMethod *string `pulumi:"paymentMethod"`
-	// A valid payment method pre-defined in the current account
+	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
 }
 
 type ActiveActiveSubscriptionState struct {
-	// A cloud provider string either GCP or AWS
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	CloudProvider pulumi.StringPtrInput
-	// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-	// creating a new subscription and any changes will be ignored after this.
+	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 	PaymentMethod pulumi.StringPtrInput
-	// A valid payment method pre-defined in the current account
+	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
 }
 
@@ -87,31 +146,29 @@ func (ActiveActiveSubscriptionState) ElementType() reflect.Type {
 }
 
 type activeActiveSubscriptionArgs struct {
-	// A cloud provider string either GCP or AWS
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	CloudProvider *string `pulumi:"cloudProvider"`
-	// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-	// creating a new subscription and any changes will be ignored after this.
+	// A creation plan object, documented below
 	CreationPlan *ActiveActiveSubscriptionCreationPlan `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 	PaymentMethod *string `pulumi:"paymentMethod"`
-	// A valid payment method pre-defined in the current account
+	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
 }
 
 // The set of arguments for constructing a ActiveActiveSubscription resource.
 type ActiveActiveSubscriptionArgs struct {
-	// A cloud provider string either GCP or AWS
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	CloudProvider pulumi.StringPtrInput
-	// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-	// creating a new subscription and any changes will be ignored after this.
+	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 	PaymentMethod pulumi.StringPtrInput
-	// A valid payment method pre-defined in the current account
+	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
 }
 
@@ -202,13 +259,12 @@ func (o ActiveActiveSubscriptionOutput) ToActiveActiveSubscriptionOutputWithCont
 	return o
 }
 
-// A cloud provider string either GCP or AWS
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 func (o ActiveActiveSubscriptionOutput) CloudProvider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringPtrOutput { return v.CloudProvider }).(pulumi.StringPtrOutput)
 }
 
-// Information about the planned databases used to optimise the database infrastructure. This information is only used when
-// creating a new subscription and any changes will be ignored after this.
+// A creation plan object, documented below
 func (o ActiveActiveSubscriptionOutput) CreationPlan() ActiveActiveSubscriptionCreationPlanPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) ActiveActiveSubscriptionCreationPlanPtrOutput { return v.CreationPlan }).(ActiveActiveSubscriptionCreationPlanPtrOutput)
 }
@@ -218,12 +274,12 @@ func (o ActiveActiveSubscriptionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// Payment method for the requested subscription. If credit card is specified, the payment method Id must be defined.
+// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
 func (o ActiveActiveSubscriptionOutput) PaymentMethod() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringPtrOutput { return v.PaymentMethod }).(pulumi.StringPtrOutput)
 }
 
-// A valid payment method pre-defined in the current account
+// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 func (o ActiveActiveSubscriptionOutput) PaymentMethodId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringOutput { return v.PaymentMethodId }).(pulumi.StringOutput)
 }

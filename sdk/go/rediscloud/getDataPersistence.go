@@ -7,7 +7,37 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// The data persistence data source allows access to a list of supported data persistence options.\
+// Each option represents the rate at which a database will persist its data to storage.
+//
+// ## Example Usage
+//
+// The following example returns all of the data persistence options available within your Redis Enterprise Cloud account.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			example, err := rediscloud.GetDataPersistence(ctx, nil, nil)
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("dataPersistenceOptions", example.DataPersistences)
+//			return nil
+//		})
+//	}
+//
+// ```
 func GetDataPersistence(ctx *pulumi.Context, opts ...pulumi.InvokeOption) (*GetDataPersistenceResult, error) {
+	opts = pkgInvokeDefaultOpts(opts)
 	var rv GetDataPersistenceResult
 	err := ctx.Invoke("rediscloud:index/getDataPersistence:getDataPersistence", nil, &rv, opts...)
 	if err != nil {
