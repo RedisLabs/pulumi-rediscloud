@@ -48,7 +48,7 @@ dotnet add package RedisLabs.PulumiRedisCloud
 
 The following configuration points are available for the `rediscloud` provider:
 
-- `apiKey` (environment: `REDISCLOUD_ACCESS_KEY`) - This is the Redis Enterprise Cloud API key. It must be provided but can also be set by the environment variable.
+- `apiKey` (environment: `REDISCLOUD_ACCESS_KEY`) - This is the Redis Enterprise Cloud API account key. It must be provided but can also be set by the environment variable.
 - `secretKey` (environment: `REDISCLOUD_SECRET_KEY`) - This is the Redis Enterprise Cloud API secret key. It must be provided but can also be set by the environment variable.
 
 ## Reference
