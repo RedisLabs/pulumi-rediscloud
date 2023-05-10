@@ -28,7 +28,7 @@ env:
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 
   # Python SDK
-  PYPI_PUBLISH: true
+  PYPI_PUBLISH: false
   PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
   PYPI_USERNAME: "__token__"
 
