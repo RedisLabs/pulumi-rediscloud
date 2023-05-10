@@ -25,7 +25,7 @@ yarn add @RedisLabs/pulumi-rediscloud
 To use from Python, install using `pip`:
 
 ```bash
-pip install redislabs_pulumi_rediscloud
+pip install pulumi_rediscloud
 ```
 
 ### Go
