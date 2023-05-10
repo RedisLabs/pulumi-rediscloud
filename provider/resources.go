@@ -120,6 +120,7 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_subscription_peerings": {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscriptionPeerings")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
+			PackageName: "@RedisLabs/pulumi-rediscloud",
 			// List any npm dependencies and their versions
 			Dependencies: map[string]string{
 				"@pulumi/pulumi": "^3.0.0",
@@ -134,6 +135,7 @@ func Provider() tfbridge.ProviderInfo {
 			//Overlay: &tfbridge.OverlayInfo{},
 		},
 		Python: &tfbridge.PythonInfo{
+			PackageName: "pulumi_rediscloud",
 			// List any Python dependencies and their version ranges
 			Requires: map[string]string{
 				"pulumi": ">=3.0.0,<4.0.0",
