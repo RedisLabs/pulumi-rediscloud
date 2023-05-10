@@ -51,13 +51,18 @@ jobs:
         with:
           go-version: ${{matrix.goversion}}
 
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
+        with:
+          repo: pulumi/pulumictl
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b # tag=v4.2.0
         with:
           args: -p 3 release --rm-dist
           version: latest
 
-      - name: Create Tag
+      - name: Create ag
         uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # tag=v6.4.1
         with:
           script: |
