@@ -48,6 +48,7 @@ func GetDataPersistence(ctx *pulumi.Context, opts ...pulumi.InvokeOption) (*GetD
 
 // A collection of values returned by getDataPersistence.
 type GetDataPersistenceResult struct {
+	// A list of data persistence option that can be applied to subscription databases
 	DataPersistences []GetDataPersistenceDataPersistence `pulumi:"dataPersistences"`
 	// The provider-assigned unique ID for this managed resource.
 	Id string `pulumi:"id"`

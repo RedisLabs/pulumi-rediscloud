@@ -49,6 +49,7 @@ func GetDatabaseModules(ctx *pulumi.Context, opts ...pulumi.InvokeOption) (*GetD
 // A collection of values returned by getDatabaseModules.
 type GetDatabaseModulesResult struct {
 	// The provider-assigned unique ID for this managed resource.
-	Id      string                     `pulumi:"id"`
+	Id string `pulumi:"id"`
+	// A list of database modules.
 	Modules []GetDatabaseModulesModule `pulumi:"modules"`
 }

@@ -18,33 +18,32 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			card, err := rediscloud.GetPaymentMethod(ctx, &GetPaymentMethodArgs{
+//			card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
 //				CardType: pulumi.StringRef("Visa"),
 //			}, nil)
 //			if err != nil {
 //				return err
 //			}
 //			_, err = rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", &rediscloud.ActiveActiveSubscriptionArgs{
-//				PaymentMethodId: pulumi.String(card.Id),
+//				PaymentMethodId: *pulumi.String(card.Id),
 //				CloudProvider:   pulumi.String("AWS"),
-//				CreationPlan: &ActiveActiveSubscriptionCreationPlanArgs{
+//				CreationPlan: &rediscloud.ActiveActiveSubscriptionCreationPlanArgs{
 //					MemoryLimitInGb: pulumi.Float64(1),
 //					Quantity:        pulumi.Int(1),
-//					Regions: ActiveActiveSubscriptionCreationPlanRegionArray{
-//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//					Regions: rediscloud.ActiveActiveSubscriptionCreationPlanRegionArray{
+//						&rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{
 //							Region:                   pulumi.String("us-east-1"),
 //							NetworkingDeploymentCidr: pulumi.String("192.168.0.0/24"),
 //							WriteOperationsPerSecond: pulumi.Int(1000),
 //							ReadOperationsPerSecond:  pulumi.Int(1000),
 //						},
-//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//						&rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{
 //							Region:                   pulumi.String("us-east-2"),
 //							NetworkingDeploymentCidr: pulumi.String("10.0.1.0/24"),
 //							WriteOperationsPerSecond: pulumi.Int(1000),

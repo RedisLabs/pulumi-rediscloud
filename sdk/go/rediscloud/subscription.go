@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -19,14 +19,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			card, err := rediscloud.GetPaymentMethod(ctx, &GetPaymentMethodArgs{
+//			card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
 //				CardType: pulumi.StringRef("Visa"),
 //			}, nil)
 //			if err != nil {
@@ -34,12 +33,12 @@ import (
 //			}
 //			_, err = rediscloud.NewSubscription(ctx, "subscription-resource", &rediscloud.SubscriptionArgs{
 //				PaymentMethod:   pulumi.String("credit-card"),
-//				PaymentMethodId: pulumi.String(card.Id),
+//				PaymentMethodId: *pulumi.String(card.Id),
 //				MemoryStorage:   pulumi.String("ram"),
-//				CloudProvider: &SubscriptionCloudProviderArgs{
+//				CloudProvider: &rediscloud.SubscriptionCloudProviderArgs{
 //					Provider: pulumi.Any(data.Rediscloud_cloud_account.Account.Provider_type),
-//					Regions: SubscriptionCloudProviderRegionArray{
-//						&SubscriptionCloudProviderRegionArgs{
+//					Regions: rediscloud.SubscriptionCloudProviderRegionArray{
+//						&rediscloud.SubscriptionCloudProviderRegionArgs{
 //							Region:                    pulumi.String("eu-west-1"),
 //							MultipleAvailabilityZones: pulumi.Bool(true),
 //							NetworkingDeploymentCidr:  pulumi.String("10.0.0.0/24"),
@@ -49,7 +48,7 @@ import (
 //						},
 //					},
 //				},
-//				CreationPlan: &SubscriptionCreationPlanArgs{
+//				CreationPlan: &rediscloud.SubscriptionCreationPlanArgs{
 //					MemoryLimitInGb:            pulumi.Float64(2),
 //					Quantity:                   pulumi.Int(1),
 //					Replication:                pulumi.Bool(false),

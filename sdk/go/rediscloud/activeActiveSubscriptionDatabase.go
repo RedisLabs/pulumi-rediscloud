@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -21,33 +21,32 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			card, err := rediscloud.GetPaymentMethod(ctx, &GetPaymentMethodArgs{
+//			card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
 //				CardType: pulumi.StringRef("Visa"),
 //			}, nil)
 //			if err != nil {
 //				return err
 //			}
 //			_, err = rediscloud.NewActiveActiveSubscription(ctx, "subscription-resource", &rediscloud.ActiveActiveSubscriptionArgs{
-//				PaymentMethodId: pulumi.String(card.Id),
+//				PaymentMethodId: *pulumi.String(card.Id),
 //				CloudProvider:   pulumi.String("AWS"),
-//				CreationPlan: &ActiveActiveSubscriptionCreationPlanArgs{
+//				CreationPlan: &rediscloud.ActiveActiveSubscriptionCreationPlanArgs{
 //					MemoryLimitInGb: pulumi.Float64(1),
 //					Quantity:        pulumi.Int(1),
-//					Regions: ActiveActiveSubscriptionCreationPlanRegionArray{
-//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//					Regions: rediscloud.ActiveActiveSubscriptionCreationPlanRegionArray{
+//						&rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{
 //							Region:                   pulumi.String("us-east-1"),
 //							NetworkingDeploymentCidr: pulumi.String("192.168.0.0/24"),
 //							WriteOperationsPerSecond: pulumi.Int(1000),
 //							ReadOperationsPerSecond:  pulumi.Int(1000),
 //						},
-//						&ActiveActiveSubscriptionCreationPlanRegionArgs{
+//						&rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{
 //							Region:                   pulumi.String("us-east-2"),
 //							NetworkingDeploymentCidr: pulumi.String("10.0.1.0/24"),
 //							WriteOperationsPerSecond: pulumi.Int(1000),
@@ -67,25 +66,25 @@ import (
 //				GlobalSourceIps: pulumi.StringArray{
 //					pulumi.String("192.168.0.0/16"),
 //				},
-//				GlobalAlerts: ActiveActiveSubscriptionDatabaseGlobalAlertArray{
-//					&ActiveActiveSubscriptionDatabaseGlobalAlertArgs{
+//				GlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArray{
+//					&rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArgs{
 //						Name:  pulumi.String("dataset-size"),
 //						Value: pulumi.Int(40),
 //					},
 //				},
-//				OverrideRegions: ActiveActiveSubscriptionDatabaseOverrideRegionArray{
-//					&ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
+//				OverrideRegions: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArray{
+//					&rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
 //						Name: pulumi.String("us-east-2"),
 //						OverrideGlobalSourceIps: pulumi.StringArray{
 //							pulumi.String("192.10.0.0/16"),
 //						},
 //					},
-//					&ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
+//					&rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{
 //						Name:                          pulumi.String("us-east-1"),
 //						OverrideGlobalDataPersistence: pulumi.String("none"),
 //						OverrideGlobalPassword:        pulumi.String("region-specific-password"),
-//						OverrideGlobalAlerts: ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{
-//							&ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{
+//						OverrideGlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{
+//							&rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{
 //								Name:  pulumi.String("dataset-size"),
 //								Value: pulumi.Int(60),
 //							},
@@ -97,10 +96,10 @@ import (
 //				return err
 //			}
 //			ctx.Export("us-east-1-public-endpoints", database_resource.PublicEndpoint.ApplyT(func(publicEndpoint map[string]string) (string, error) {
-//				return publicEndpoint.Us - east - 1, nil
+//				return publicEndpoint.UsEast1, nil
 //			}).(pulumi.StringOutput))
 //			ctx.Export("us-east-2-private-endpoints", database_resource.PrivateEndpoint.ApplyT(func(privateEndpoint map[string]string) (string, error) {
-//				return privateEndpoint.Us - east - 1, nil
+//				return privateEndpoint.UsEast1, nil
 //			}).(pulumi.StringOutput))
 //			return nil
 //		})
@@ -143,7 +142,7 @@ type ActiveActiveSubscriptionDatabase struct {
 	GlobalSourceIps pulumi.StringArrayOutput `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
-	// Alert name
+	// A meaningful name to identify the database
 	Name pulumi.StringOutput `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput `pulumi:"overrideRegions"`
@@ -151,7 +150,7 @@ type ActiveActiveSubscriptionDatabase struct {
 	PrivateEndpoint pulumi.StringMapOutput `pulumi:"privateEndpoint"`
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapOutput `pulumi:"publicEndpoint"`
-	// Identifier of the subscription
+	// The ID of the Active-Active subscription to create the database in
 	SubscriptionId pulumi.IntOutput `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
@@ -170,6 +169,13 @@ func NewActiveActiveSubscriptionDatabase(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
+	if args.GlobalPassword != nil {
+		args.GlobalPassword = pulumi.ToSecret(args.GlobalPassword).(pulumi.StringPtrInput)
+	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"globalPassword",
+	})
+	opts = append(opts, secrets)
 	opts = pkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase", name, args, &resource, opts...)
@@ -214,7 +220,7 @@ type activeActiveSubscriptionDatabaseState struct {
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
-	// Alert name
+	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
@@ -222,7 +228,7 @@ type activeActiveSubscriptionDatabaseState struct {
 	PrivateEndpoint map[string]string `pulumi:"privateEndpoint"`
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint map[string]string `pulumi:"publicEndpoint"`
-	// Identifier of the subscription
+	// The ID of the Active-Active subscription to create the database in
 	SubscriptionId *int `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -250,7 +256,7 @@ type ActiveActiveSubscriptionDatabaseState struct {
 	GlobalSourceIps pulumi.StringArrayInput
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64PtrInput
-	// Alert name
+	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
@@ -258,7 +264,7 @@ type ActiveActiveSubscriptionDatabaseState struct {
 	PrivateEndpoint pulumi.StringMapInput
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapInput
-	// Identifier of the subscription
+	// The ID of the Active-Active subscription to create the database in
 	SubscriptionId pulumi.IntPtrInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -288,11 +294,11 @@ type activeActiveSubscriptionDatabaseArgs struct {
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
-	// Alert name
+	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
-	// Identifier of the subscription
+	// The ID of the Active-Active subscription to create the database in
 	SubscriptionId int `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -319,11 +325,11 @@ type ActiveActiveSubscriptionDatabaseArgs struct {
 	GlobalSourceIps pulumi.StringArrayInput
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Input
-	// Alert name
+	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
-	// Identifier of the subscription
+	// The ID of the Active-Active subscription to create the database in
 	SubscriptionId pulumi.IntInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -471,7 +477,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) MemoryLimitInGb() pulumi.Float64
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.Float64Output { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
-// Alert name
+// A meaningful name to identify the database
 func (o ActiveActiveSubscriptionDatabaseOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
@@ -493,7 +499,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringMa
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringMapOutput { return v.PublicEndpoint }).(pulumi.StringMapOutput)
 }
 
-// Identifier of the subscription
+// The ID of the Active-Active subscription to create the database in
 func (o ActiveActiveSubscriptionDatabaseOutput) SubscriptionId() pulumi.IntOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.IntOutput { return v.SubscriptionId }).(pulumi.IntOutput)
 }

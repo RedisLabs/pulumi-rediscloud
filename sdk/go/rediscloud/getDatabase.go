@@ -22,14 +22,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			_, err := rediscloud.GetDatabase(ctx, &GetDatabaseArgs{
+//			_, err := rediscloud.GetDatabase(ctx, &rediscloud.GetDatabaseArgs{
 //				SubscriptionId: "1234",
 //			}, nil)
 //			if err != nil {
@@ -49,14 +48,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			_, err := rediscloud.GetDatabase(ctx, &GetDatabaseArgs{
+//			_, err := rediscloud.GetDatabase(ctx, &rediscloud.GetDatabaseArgs{
 //				Name:           pulumi.StringRef("first-database"),
 //				SubscriptionId: "1234",
 //			}, nil)
@@ -107,7 +105,7 @@ type GetDatabaseResult struct {
 	// The maximum memory usage for the database.
 	MemoryLimitInGb float64             `pulumi:"memoryLimitInGb"`
 	Modules         []GetDatabaseModule `pulumi:"modules"`
-	// The name of the database
+	// The alert name
 	Name string `pulumi:"name"`
 	// The password used to access the database - not present on `memcached` protocol databases.
 	Password string `pulumi:"password"`
@@ -212,7 +210,7 @@ func (o GetDatabaseResultOutput) Modules() GetDatabaseModuleArrayOutput {
 	return o.ApplyT(func(v GetDatabaseResult) []GetDatabaseModule { return v.Modules }).(GetDatabaseModuleArrayOutput)
 }
 
-// The name of the database
+// The alert name
 func (o GetDatabaseResultOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseResult) string { return v.Name }).(pulumi.StringOutput)
 }

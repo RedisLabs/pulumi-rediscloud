@@ -22,7 +22,6 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
@@ -48,20 +47,19 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			_, err := rediscloud.GetRegions(ctx, &GetRegionsArgs{
+//			_, err := rediscloud.GetRegions(ctx, &rediscloud.GetRegionsArgs{
 //				ProviderName: pulumi.StringRef("AWS"),
 //			}, nil)
 //			if err != nil {
 //				return err
 //			}
-//			_, err = rediscloud.GetRegions(ctx, &GetRegionsArgs{
+//			_, err = rediscloud.GetRegions(ctx, &rediscloud.GetRegionsArgs{
 //				ProviderName: pulumi.StringRef("GCP"),
 //			}, nil)
 //			if err != nil {
@@ -91,9 +89,11 @@ type GetRegionsArgs struct {
 // A collection of values returned by getRegions.
 type GetRegionsResult struct {
 	// The provider-assigned unique ID for this managed resource.
-	Id           string             `pulumi:"id"`
-	ProviderName *string            `pulumi:"providerName"`
-	Regions      []GetRegionsRegion `pulumi:"regions"`
+	Id string `pulumi:"id"`
+	// The identifier of the owning cloud provider, (either `AWS` or `GCP`)
+	ProviderName *string `pulumi:"providerName"`
+	// A list of regions from either a single or multiple cloud providers.
+	Regions []GetRegionsRegion `pulumi:"regions"`
 }
 
 func GetRegionsOutput(ctx *pulumi.Context, args GetRegionsOutputArgs, opts ...pulumi.InvokeOption) GetRegionsResultOutput {
@@ -139,10 +139,12 @@ func (o GetRegionsResultOutput) Id() pulumi.StringOutput {
 	return o.ApplyT(func(v GetRegionsResult) string { return v.Id }).(pulumi.StringOutput)
 }
 
+// The identifier of the owning cloud provider, (either `AWS` or `GCP`)
 func (o GetRegionsResultOutput) ProviderName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v GetRegionsResult) *string { return v.ProviderName }).(pulumi.StringPtrOutput)
 }
 
+// A list of regions from either a single or multiple cloud providers.
 func (o GetRegionsResultOutput) Regions() GetRegionsRegionArrayOutput {
 	return o.ApplyT(func(v GetRegionsResult) []GetRegionsRegion { return v.Regions }).(GetRegionsRegionArrayOutput)
 }

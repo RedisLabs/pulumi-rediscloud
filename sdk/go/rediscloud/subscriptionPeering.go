@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -94,14 +94,14 @@ import (
 //			_, err = rediscloud.NewSubscriptionPeering(ctx, "example-peeringSubscriptionPeering", &rediscloud.SubscriptionPeeringArgs{
 //				SubscriptionId: example.ID(),
 //				ProviderName:   pulumi.String("GCP"),
-//				GcpProjectId:   pulumi.String(network.Project),
-//				GcpNetworkName: pulumi.String(network.Name),
+//				GcpProjectId:   *pulumi.String(network.Project),
+//				GcpNetworkName: *pulumi.String(network.Name),
 //			})
 //			if err != nil {
 //				return err
 //			}
 //			_, err = compute.NewNetworkPeering(ctx, "example-peeringNetworkPeering", &compute.NetworkPeeringArgs{
-//				Network:     pulumi.String(network.SelfLink),
+//				Network:     *pulumi.String(network.SelfLink),
 //				PeerNetwork: pulumi.String(fmt.Sprintf("https://www.googleapis.com/compute/v1/projects/%v/global/networks/%v", rediscloud_subscription_peering.Example.Gcp_redis_project_id, rediscloud_subscription_peering.Example.Gcp_redis_network_name)),
 //			})
 //			if err != nil {
@@ -143,7 +143,7 @@ type SubscriptionPeering struct {
 	ProviderName pulumi.StringPtrOutput `pulumi:"providerName"`
 	// AWS Region that the VPC to be peered lives in
 	Region pulumi.StringOutput `pulumi:"region"`
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringOutput `pulumi:"status"`
 	// A valid subscription predefined in the current account
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
@@ -204,7 +204,7 @@ type subscriptionPeeringState struct {
 	ProviderName *string `pulumi:"providerName"`
 	// AWS Region that the VPC to be peered lives in
 	Region *string `pulumi:"region"`
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status *string `pulumi:"status"`
 	// A valid subscription predefined in the current account
 	SubscriptionId *string `pulumi:"subscriptionId"`
@@ -233,7 +233,7 @@ type SubscriptionPeeringState struct {
 	ProviderName pulumi.StringPtrInput
 	// AWS Region that the VPC to be peered lives in
 	Region pulumi.StringPtrInput
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringPtrInput
 	// A valid subscription predefined in the current account
 	SubscriptionId pulumi.StringPtrInput
@@ -418,7 +418,7 @@ func (o SubscriptionPeeringOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionPeering) pulumi.StringOutput { return v.Region }).(pulumi.StringOutput)
 }
 
-// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o SubscriptionPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionPeering) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
 }

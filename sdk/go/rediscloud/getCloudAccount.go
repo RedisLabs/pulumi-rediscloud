@@ -24,14 +24,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			_, err := rediscloud.LookupCloudAccount(ctx, &GetCloudAccountArgs{
+//			_, err := rediscloud.LookupCloudAccount(ctx, &rediscloud.LookupCloudAccountArgs{
 //				ExcludeInternalAccount: pulumi.BoolRef(true),
 //				ProviderType:           pulumi.StringRef("AWS"),
 //			}, nil)
@@ -53,14 +52,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			example, err := rediscloud.LookupCloudAccount(ctx, &GetCloudAccountArgs{
+//			example, err := rediscloud.LookupCloudAccount(ctx, &rediscloud.LookupCloudAccountArgs{
 //				ExcludeInternalAccount: pulumi.BoolRef(true),
 //				ProviderType:           pulumi.StringRef("AWS"),
 //				Name:                   pulumi.StringRef("test"),
@@ -97,6 +95,7 @@ type LookupCloudAccountArgs struct {
 
 // A collection of values returned by getCloudAccount.
 type LookupCloudAccountResult struct {
+	// The access key ID associated with the cloud account
 	AccessKeyId            string `pulumi:"accessKeyId"`
 	ExcludeInternalAccount *bool  `pulumi:"excludeInternalAccount"`
 	// The provider-assigned unique ID for this managed resource.
@@ -147,6 +146,7 @@ func (o LookupCloudAccountResultOutput) ToLookupCloudAccountResultOutputWithCont
 	return o
 }
 
+// The access key ID associated with the cloud account
 func (o LookupCloudAccountResultOutput) AccessKeyId() pulumi.StringOutput {
 	return o.ApplyT(func(v LookupCloudAccountResult) string { return v.AccessKeyId }).(pulumi.StringOutput)
 }

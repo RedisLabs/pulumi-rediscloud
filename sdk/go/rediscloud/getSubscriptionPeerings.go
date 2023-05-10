@@ -22,14 +22,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			example, err := rediscloud.GetSubscriptionPeerings(ctx, &GetSubscriptionPeeringsArgs{
+//			example, err := rediscloud.GetSubscriptionPeerings(ctx, &rediscloud.GetSubscriptionPeeringsArgs{
 //				SubscriptionId: "1234",
 //			}, nil)
 //			if err != nil {
@@ -62,10 +61,12 @@ type GetSubscriptionPeeringsArgs struct {
 // A collection of values returned by getSubscriptionPeerings.
 type GetSubscriptionPeeringsResult struct {
 	// The provider-assigned unique ID for this managed resource.
-	Id             string                           `pulumi:"id"`
-	Peerings       []GetSubscriptionPeeringsPeering `pulumi:"peerings"`
-	Status         *string                          `pulumi:"status"`
-	SubscriptionId string                           `pulumi:"subscriptionId"`
+	Id string `pulumi:"id"`
+	// A list of subscription peerings.
+	Peerings []GetSubscriptionPeeringsPeering `pulumi:"peerings"`
+	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
+	Status         *string `pulumi:"status"`
+	SubscriptionId string  `pulumi:"subscriptionId"`
 }
 
 func GetSubscriptionPeeringsOutput(ctx *pulumi.Context, args GetSubscriptionPeeringsOutputArgs, opts ...pulumi.InvokeOption) GetSubscriptionPeeringsResultOutput {
@@ -113,10 +114,12 @@ func (o GetSubscriptionPeeringsResultOutput) Id() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsResult) string { return v.Id }).(pulumi.StringOutput)
 }
 
+// A list of subscription peerings.
 func (o GetSubscriptionPeeringsResultOutput) Peerings() GetSubscriptionPeeringsPeeringArrayOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsResult) []GetSubscriptionPeeringsPeering { return v.Peerings }).(GetSubscriptionPeeringsPeeringArrayOutput)
 }
 
+// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o GetSubscriptionPeeringsResultOutput) Status() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsResult) *string { return v.Status }).(pulumi.StringPtrOutput)
 }

@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -74,6 +74,17 @@ func NewCloudAccount(ctx *pulumi.Context,
 	if args.SignInLoginUrl == nil {
 		return nil, errors.New("invalid value for required argument 'SignInLoginUrl'")
 	}
+	if args.AccessSecretKey != nil {
+		args.AccessSecretKey = pulumi.ToSecret(args.AccessSecretKey).(pulumi.StringInput)
+	}
+	if args.ConsolePassword != nil {
+		args.ConsolePassword = pulumi.ToSecret(args.ConsolePassword).(pulumi.StringInput)
+	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"accessSecretKey",
+		"consolePassword",
+	})
+	opts = append(opts, secrets)
 	opts = pkgResourceDefaultOpts(opts)
 	var resource CloudAccount
 	err := ctx.RegisterResource("rediscloud:index/cloudAccount:CloudAccount", name, args, &resource, opts...)

@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -51,7 +51,7 @@ type SubscriptionDatabase struct {
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
 	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayOutput `pulumi:"modules"`
-	// Name of the Redis database module to enable
+	// A meaningful name to identify the database
 	Name pulumi.StringOutput `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringOutput `pulumi:"password"`
@@ -103,6 +103,13 @@ func NewSubscriptionDatabase(ctx *pulumi.Context,
 	if args.ThroughputMeasurementValue == nil {
 		return nil, errors.New("invalid value for required argument 'ThroughputMeasurementValue'")
 	}
+	if args.Password != nil {
+		args.Password = pulumi.ToSecret(args.Password).(pulumi.StringPtrInput)
+	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"password",
+	})
+	opts = append(opts, secrets)
 	opts = pkgResourceDefaultOpts(opts)
 	var resource SubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/subscriptionDatabase:SubscriptionDatabase", name, args, &resource, opts...)
@@ -152,7 +159,7 @@ type subscriptionDatabaseState struct {
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
 	// A list of modules objects, documented below
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
-	// Name of the Redis database module to enable
+	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
@@ -209,7 +216,7 @@ type SubscriptionDatabaseState struct {
 	MemoryLimitInGb pulumi.Float64PtrInput
 	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayInput
-	// Name of the Redis database module to enable
+	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
@@ -268,7 +275,7 @@ type subscriptionDatabaseArgs struct {
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
 	// A list of modules objects, documented below
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
-	// Name of the Redis database module to enable
+	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
@@ -320,7 +327,7 @@ type SubscriptionDatabaseArgs struct {
 	MemoryLimitInGb pulumi.Float64Input
 	// A list of modules objects, documented below
 	Modules SubscriptionDatabaseModuleArrayInput
-	// Name of the Redis database module to enable
+	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
@@ -492,7 +499,7 @@ func (o SubscriptionDatabaseOutput) Modules() SubscriptionDatabaseModuleArrayOut
 	return o.ApplyT(func(v *SubscriptionDatabase) SubscriptionDatabaseModuleArrayOutput { return v.Modules }).(SubscriptionDatabaseModuleArrayOutput)
 }
 
-// Name of the Redis database module to enable
+// A meaningful name to identify the database
 func (o SubscriptionDatabaseOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }

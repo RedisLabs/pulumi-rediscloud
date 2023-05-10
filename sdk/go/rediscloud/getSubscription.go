@@ -22,14 +22,13 @@ import (
 // import (
 //
 //	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
-//	"github.com/pulumi/pulumi-rediscloud/sdk/go/rediscloud"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//			example, err := rediscloud.LookupSubscription(ctx, &GetSubscriptionArgs{
+//			example, err := rediscloud.LookupSubscription(ctx, &rediscloud.LookupSubscriptionArgs{
 //				Name: pulumi.StringRef("My Example Subscription"),
 //			}, nil)
 //			if err != nil {

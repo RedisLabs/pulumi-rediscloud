@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -95,14 +95,14 @@ import (
 //			_, err = rediscloud.NewActiveActiveSubscriptionPeering(ctx, "peering-resource", &rediscloud.ActiveActiveSubscriptionPeeringArgs{
 //				SubscriptionId: subscription_resource.ID(),
 //				ProviderName:   pulumi.String("GCP"),
-//				GcpProjectId:   pulumi.String(network.Project),
-//				GcpNetworkName: pulumi.String(network.Name),
+//				GcpProjectId:   *pulumi.String(network.Project),
+//				GcpNetworkName: *pulumi.String(network.Name),
 //			})
 //			if err != nil {
 //				return err
 //			}
 //			_, err = compute.NewNetworkPeering(ctx, "gcp-peering-resource", &compute.NetworkPeeringArgs{
-//				Network: pulumi.String(network.SelfLink),
+//				Network: *pulumi.String(network.SelfLink),
 //				PeerNetwork: peering_resource.GcpRedisProjectId.ApplyT(func(gcpRedisProjectId string) (string, error) {
 //					return fmt.Sprintf("https://www.googleapis.com/compute/v1/projects/%v/global/networks/%v", gcpRedisProjectId, rediscloud_active_active_subscription_peering.Example.Gcp_redis_network_name), nil
 //				}).(pulumi.StringOutput),
@@ -148,7 +148,7 @@ type ActiveActiveSubscriptionPeering struct {
 	ProviderName pulumi.StringPtrOutput `pulumi:"providerName"`
 	// Name of the region to create the VPC peering from
 	SourceRegion pulumi.StringOutput `pulumi:"sourceRegion"`
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringOutput `pulumi:"status"`
 	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
@@ -211,7 +211,7 @@ type activeActiveSubscriptionPeeringState struct {
 	ProviderName *string `pulumi:"providerName"`
 	// Name of the region to create the VPC peering from
 	SourceRegion *string `pulumi:"sourceRegion"`
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status *string `pulumi:"status"`
 	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId *string `pulumi:"subscriptionId"`
@@ -242,7 +242,7 @@ type ActiveActiveSubscriptionPeeringState struct {
 	ProviderName pulumi.StringPtrInput
 	// Name of the region to create the VPC peering from
 	SourceRegion pulumi.StringPtrInput
-	// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringPtrInput
 	// A valid Active-Active subscription predefined in the current account
 	SubscriptionId pulumi.StringPtrInput
@@ -436,7 +436,7 @@ func (o ActiveActiveSubscriptionPeeringOutput) SourceRegion() pulumi.StringOutpu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.SourceRegion }).(pulumi.StringOutput)
 }
 
-// Current status of the account - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`
+// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o ActiveActiveSubscriptionPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
 }

@@ -14,9 +14,8 @@ type ActiveActiveSubscriptionCreationPlan struct {
 	// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
 	// The planned number of databases in the subscription.
-	Quantity int `pulumi:"quantity"`
-	// Deployment region as defined by cloud provider
-	Regions []ActiveActiveSubscriptionCreationPlanRegion `pulumi:"regions"`
+	Quantity int                                          `pulumi:"quantity"`
+	Regions  []ActiveActiveSubscriptionCreationPlanRegion `pulumi:"regions"`
 }
 
 // ActiveActiveSubscriptionCreationPlanInput is an input type that accepts ActiveActiveSubscriptionCreationPlanArgs and ActiveActiveSubscriptionCreationPlanOutput values.
@@ -34,9 +33,8 @@ type ActiveActiveSubscriptionCreationPlanArgs struct {
 	// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Input `pulumi:"memoryLimitInGb"`
 	// The planned number of databases in the subscription.
-	Quantity pulumi.IntInput `pulumi:"quantity"`
-	// Deployment region as defined by cloud provider
-	Regions ActiveActiveSubscriptionCreationPlanRegionArrayInput `pulumi:"regions"`
+	Quantity pulumi.IntInput                                      `pulumi:"quantity"`
+	Regions  ActiveActiveSubscriptionCreationPlanRegionArrayInput `pulumi:"regions"`
 }
 
 func (ActiveActiveSubscriptionCreationPlanArgs) ElementType() reflect.Type {
@@ -126,7 +124,6 @@ func (o ActiveActiveSubscriptionCreationPlanOutput) Quantity() pulumi.IntOutput 
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlan) int { return v.Quantity }).(pulumi.IntOutput)
 }
 
-// Deployment region as defined by cloud provider
 func (o ActiveActiveSubscriptionCreationPlanOutput) Regions() ActiveActiveSubscriptionCreationPlanRegionArrayOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlan) []ActiveActiveSubscriptionCreationPlanRegion {
 		return v.Regions
@@ -177,7 +174,6 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrO
 	}).(pulumi.IntPtrOutput)
 }
 
-// Deployment region as defined by cloud provider
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Regions() ActiveActiveSubscriptionCreationPlanRegionArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionCreationPlan) []ActiveActiveSubscriptionCreationPlanRegion {
 		if v == nil {
@@ -312,7 +308,7 @@ func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) Index(i pulumi.In
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlert struct {
-	// Alert name
+	// A meaningful name to identify the database
 	Name string `pulumi:"name"`
 	// Alert value
 	Value int `pulumi:"value"`
@@ -330,7 +326,7 @@ type ActiveActiveSubscriptionDatabaseGlobalAlertInput interface {
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlertArgs struct {
-	// Alert name
+	// A meaningful name to identify the database
 	Name pulumi.StringInput `pulumi:"name"`
 	// Alert value
 	Value pulumi.IntInput `pulumi:"value"`
@@ -387,7 +383,7 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) ToActiveActiveSubscri
 	return o
 }
 
-// Alert name
+// A meaningful name to identify the database
 func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseGlobalAlert) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -418,7 +414,7 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) Index(i pulumi.I
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegion struct {
-	// Alert name
+	// Region name.
 	Name string `pulumi:"name"`
 	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
 	OverrideGlobalAlerts []ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert `pulumi:"overrideGlobalAlerts"`
@@ -442,7 +438,7 @@ type ActiveActiveSubscriptionDatabaseOverrideRegionInput interface {
 }
 
 type ActiveActiveSubscriptionDatabaseOverrideRegionArgs struct {
-	// Alert name
+	// Region name.
 	Name pulumi.StringInput `pulumi:"name"`
 	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
 	OverrideGlobalAlerts ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput `pulumi:"overrideGlobalAlerts"`
@@ -505,7 +501,7 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToActiveActiveSubs
 	return o
 }
 
-// Alert name
+// Region name.
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -1089,7 +1085,7 @@ type SubscriptionCloudProvider struct {
 	CloudAccountId *string `pulumi:"cloudAccountId"`
 	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	Provider *string `pulumi:"provider"`
-	// Deployment region as defined by cloud provider
+	// A region object, documented below
 	Regions []SubscriptionCloudProviderRegion `pulumi:"regions"`
 }
 
@@ -1111,7 +1107,7 @@ type SubscriptionCloudProviderArgs struct {
 	CloudAccountId pulumi.StringPtrInput `pulumi:"cloudAccountId"`
 	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
 	Provider pulumi.StringPtrInput `pulumi:"provider"`
-	// Deployment region as defined by cloud provider
+	// A region object, documented below
 	Regions SubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
 }
 
@@ -1204,7 +1200,7 @@ func (o SubscriptionCloudProviderOutput) Provider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) *string { return v.Provider }).(pulumi.StringPtrOutput)
 }
 
-// Deployment region as defined by cloud provider
+// A region object, documented below
 func (o SubscriptionCloudProviderOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) []SubscriptionCloudProviderRegion { return v.Regions }).(SubscriptionCloudProviderRegionArrayOutput)
 }
@@ -1255,7 +1251,7 @@ func (o SubscriptionCloudProviderPtrOutput) Provider() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// Deployment region as defined by cloud provider
+// A region object, documented below
 func (o SubscriptionCloudProviderPtrOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) []SubscriptionCloudProviderRegion {
 		if v == nil {
@@ -1817,7 +1813,7 @@ func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementValue() pulumi.I
 }
 
 type SubscriptionDatabaseAlert struct {
-	// Name of the Redis database module to enable
+	// Alert name
 	Name string `pulumi:"name"`
 	// Alert value
 	Value int `pulumi:"value"`
@@ -1835,7 +1831,7 @@ type SubscriptionDatabaseAlertInput interface {
 }
 
 type SubscriptionDatabaseAlertArgs struct {
-	// Name of the Redis database module to enable
+	// Alert name
 	Name pulumi.StringInput `pulumi:"name"`
 	// Alert value
 	Value pulumi.IntInput `pulumi:"value"`
@@ -1892,7 +1888,7 @@ func (o SubscriptionDatabaseAlertOutput) ToSubscriptionDatabaseAlertOutputWithCo
 	return o
 }
 
-// Name of the Redis database module to enable
+// Alert name
 func (o SubscriptionDatabaseAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseAlert) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2127,8 +2123,9 @@ func (o GetDataPersistenceDataPersistenceArrayOutput) Index(i pulumi.IntInput) G
 
 type GetDatabaseAlert struct {
 	// The name of the database to filter returned databases
-	Name  string `pulumi:"name"`
-	Value int    `pulumi:"value"`
+	Name string `pulumi:"name"`
+	// The alert value
+	Value int `pulumi:"value"`
 }
 
 // GetDatabaseAlertInput is an input type that accepts GetDatabaseAlertArgs and GetDatabaseAlertOutput values.
@@ -2144,8 +2141,9 @@ type GetDatabaseAlertInput interface {
 
 type GetDatabaseAlertArgs struct {
 	// The name of the database to filter returned databases
-	Name  pulumi.StringInput `pulumi:"name"`
-	Value pulumi.IntInput    `pulumi:"value"`
+	Name pulumi.StringInput `pulumi:"name"`
+	// The alert value
+	Value pulumi.IntInput `pulumi:"value"`
 }
 
 func (GetDatabaseAlertArgs) ElementType() reflect.Type {
@@ -2204,6 +2202,7 @@ func (o GetDatabaseAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseAlert) string { return v.Name }).(pulumi.StringOutput)
 }
 
+// The alert value
 func (o GetDatabaseAlertOutput) Value() pulumi.IntOutput {
 	return o.ApplyT(func(v GetDatabaseAlert) int { return v.Value }).(pulumi.IntOutput)
 }
@@ -2326,8 +2325,10 @@ func (o GetDatabaseModuleArrayOutput) Index(i pulumi.IntInput) GetDatabaseModule
 }
 
 type GetDatabaseModulesModule struct {
+	// A meaningful description of the database module
 	Description string `pulumi:"description"`
-	Name        string `pulumi:"name"`
+	// The identifier assigned by the database module
+	Name string `pulumi:"name"`
 }
 
 // GetDatabaseModulesModuleInput is an input type that accepts GetDatabaseModulesModuleArgs and GetDatabaseModulesModuleOutput values.
@@ -2342,8 +2343,10 @@ type GetDatabaseModulesModuleInput interface {
 }
 
 type GetDatabaseModulesModuleArgs struct {
+	// A meaningful description of the database module
 	Description pulumi.StringInput `pulumi:"description"`
-	Name        pulumi.StringInput `pulumi:"name"`
+	// The identifier assigned by the database module
+	Name pulumi.StringInput `pulumi:"name"`
 }
 
 func (GetDatabaseModulesModuleArgs) ElementType() reflect.Type {
@@ -2397,10 +2400,12 @@ func (o GetDatabaseModulesModuleOutput) ToGetDatabaseModulesModuleOutputWithCont
 	return o
 }
 
+// A meaningful description of the database module
 func (o GetDatabaseModulesModuleOutput) Description() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseModulesModule) string { return v.Description }).(pulumi.StringOutput)
 }
 
+// The identifier assigned by the database module
 func (o GetDatabaseModulesModuleOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetDatabaseModulesModule) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2426,6 +2431,7 @@ func (o GetDatabaseModulesModuleArrayOutput) Index(i pulumi.IntInput) GetDatabas
 }
 
 type GetRegionsRegion struct {
+	// The identifier assigned by the cloud provider, (for example `eu-west-1` for `AWS`)
 	Name string `pulumi:"name"`
 	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName string `pulumi:"providerName"`
@@ -2443,6 +2449,7 @@ type GetRegionsRegionInput interface {
 }
 
 type GetRegionsRegionArgs struct {
+	// The identifier assigned by the cloud provider, (for example `eu-west-1` for `AWS`)
 	Name pulumi.StringInput `pulumi:"name"`
 	// The name of the cloud provider to filter returned regions, (accepted values are `AWS` or `GCP`).
 	ProviderName pulumi.StringInput `pulumi:"providerName"`
@@ -2499,6 +2506,7 @@ func (o GetRegionsRegionOutput) ToGetRegionsRegionOutputWithContext(ctx context.
 	return o
 }
 
+// The identifier assigned by the cloud provider, (for example `eu-west-1` for `AWS`)
 func (o GetRegionsRegionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v GetRegionsRegion) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2894,25 +2902,32 @@ func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) Index(i pulumi.Int
 }
 
 type GetSubscriptionPeeringsPeering struct {
-	AwsAccountId   string `pulumi:"awsAccountId"`
-	AwsPeeringId   string `pulumi:"awsPeeringId"`
+	// AWS account id that the VPC to be peered lives in
+	AwsAccountId string `pulumi:"awsAccountId"`
+	// Identifier of the AWS cloud peering
+	AwsPeeringId string `pulumi:"awsPeeringId"`
+	// The name of the network to be peered
 	GcpNetworkName string `pulumi:"gcpNetworkName"`
 	// Identifier of the cloud peering
 	GcpPeeringId string `pulumi:"gcpPeeringId"`
+	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId string `pulumi:"gcpProjectId"`
 	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName string `pulumi:"gcpRedisNetworkName"`
-	GcpRedisProjectId   string `pulumi:"gcpRedisProjectId"`
+	// Identifier of the Redis Enterprise Cloud GCP project to be peered
+	GcpRedisProjectId string `pulumi:"gcpRedisProjectId"`
 	// ID of the subscription peering
 	PeeringId int `pulumi:"peeringId"`
 	// The name of the cloud provider. (either `AWS` or `GCP`)
-	// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	ProviderName string `pulumi:"providerName"`
-	Region       string `pulumi:"region"`
+	// AWS Region that the VPC to be peered lives in
+	Region string `pulumi:"region"`
 	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
-	Status  string `pulumi:"status"`
+	Status string `pulumi:"status"`
+	// CIDR range of the VPC to be peered
 	VpcCidr string `pulumi:"vpcCidr"`
-	VpcId   string `pulumi:"vpcId"`
+	// Identifier of the VPC to be peered
+	VpcId string `pulumi:"vpcId"`
 }
 
 // GetSubscriptionPeeringsPeeringInput is an input type that accepts GetSubscriptionPeeringsPeeringArgs and GetSubscriptionPeeringsPeeringOutput values.
@@ -2927,25 +2942,32 @@ type GetSubscriptionPeeringsPeeringInput interface {
 }
 
 type GetSubscriptionPeeringsPeeringArgs struct {
-	AwsAccountId   pulumi.StringInput `pulumi:"awsAccountId"`
-	AwsPeeringId   pulumi.StringInput `pulumi:"awsPeeringId"`
+	// AWS account id that the VPC to be peered lives in
+	AwsAccountId pulumi.StringInput `pulumi:"awsAccountId"`
+	// Identifier of the AWS cloud peering
+	AwsPeeringId pulumi.StringInput `pulumi:"awsPeeringId"`
+	// The name of the network to be peered
 	GcpNetworkName pulumi.StringInput `pulumi:"gcpNetworkName"`
 	// Identifier of the cloud peering
 	GcpPeeringId pulumi.StringInput `pulumi:"gcpPeeringId"`
+	// GCP project ID that the VPC to be peered lives in
 	GcpProjectId pulumi.StringInput `pulumi:"gcpProjectId"`
 	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName pulumi.StringInput `pulumi:"gcpRedisNetworkName"`
-	GcpRedisProjectId   pulumi.StringInput `pulumi:"gcpRedisProjectId"`
+	// Identifier of the Redis Enterprise Cloud GCP project to be peered
+	GcpRedisProjectId pulumi.StringInput `pulumi:"gcpRedisProjectId"`
 	// ID of the subscription peering
 	PeeringId pulumi.IntInput `pulumi:"peeringId"`
 	// The name of the cloud provider. (either `AWS` or `GCP`)
-	// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	ProviderName pulumi.StringInput `pulumi:"providerName"`
-	Region       pulumi.StringInput `pulumi:"region"`
+	// AWS Region that the VPC to be peered lives in
+	Region pulumi.StringInput `pulumi:"region"`
 	// Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
-	Status  pulumi.StringInput `pulumi:"status"`
+	Status pulumi.StringInput `pulumi:"status"`
+	// CIDR range of the VPC to be peered
 	VpcCidr pulumi.StringInput `pulumi:"vpcCidr"`
-	VpcId   pulumi.StringInput `pulumi:"vpcId"`
+	// Identifier of the VPC to be peered
+	VpcId pulumi.StringInput `pulumi:"vpcId"`
 }
 
 func (GetSubscriptionPeeringsPeeringArgs) ElementType() reflect.Type {
@@ -2999,14 +3021,17 @@ func (o GetSubscriptionPeeringsPeeringOutput) ToGetSubscriptionPeeringsPeeringOu
 	return o
 }
 
+// AWS account id that the VPC to be peered lives in
 func (o GetSubscriptionPeeringsPeeringOutput) AwsAccountId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.AwsAccountId }).(pulumi.StringOutput)
 }
 
+// Identifier of the AWS cloud peering
 func (o GetSubscriptionPeeringsPeeringOutput) AwsPeeringId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.AwsPeeringId }).(pulumi.StringOutput)
 }
 
+// The name of the network to be peered
 func (o GetSubscriptionPeeringsPeeringOutput) GcpNetworkName() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpNetworkName }).(pulumi.StringOutput)
 }
@@ -3016,6 +3041,7 @@ func (o GetSubscriptionPeeringsPeeringOutput) GcpPeeringId() pulumi.StringOutput
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpPeeringId }).(pulumi.StringOutput)
 }
 
+// GCP project ID that the VPC to be peered lives in
 func (o GetSubscriptionPeeringsPeeringOutput) GcpProjectId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpProjectId }).(pulumi.StringOutput)
 }
@@ -3025,6 +3051,7 @@ func (o GetSubscriptionPeeringsPeeringOutput) GcpRedisNetworkName() pulumi.Strin
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpRedisNetworkName }).(pulumi.StringOutput)
 }
 
+// Identifier of the Redis Enterprise Cloud GCP project to be peered
 func (o GetSubscriptionPeeringsPeeringOutput) GcpRedisProjectId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.GcpRedisProjectId }).(pulumi.StringOutput)
 }
@@ -3035,11 +3062,11 @@ func (o GetSubscriptionPeeringsPeeringOutput) PeeringId() pulumi.IntOutput {
 }
 
 // The name of the cloud provider. (either `AWS` or `GCP`)
-// * `status` Current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 func (o GetSubscriptionPeeringsPeeringOutput) ProviderName() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.ProviderName }).(pulumi.StringOutput)
 }
 
+// AWS Region that the VPC to be peered lives in
 func (o GetSubscriptionPeeringsPeeringOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.Region }).(pulumi.StringOutput)
 }
@@ -3049,10 +3076,12 @@ func (o GetSubscriptionPeeringsPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.Status }).(pulumi.StringOutput)
 }
 
+// CIDR range of the VPC to be peered
 func (o GetSubscriptionPeeringsPeeringOutput) VpcCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.VpcCidr }).(pulumi.StringOutput)
 }
 
+// Identifier of the VPC to be peered
 func (o GetSubscriptionPeeringsPeeringOutput) VpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v GetSubscriptionPeeringsPeering) string { return v.VpcId }).(pulumi.StringOutput)
 }
