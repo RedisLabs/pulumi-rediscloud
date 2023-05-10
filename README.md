@@ -11,13 +11,13 @@ This package is available for several languages/platforms:
 To use from JavaScript or TypeScript in Node.js, install using either `npm`:
 
 ```bash
-npm install @RedisLabs/pulumi-rediscloud
+npm install @redislabs/pulumi-rediscloud
 ```
 
 or `yarn`:
 
 ```bash
-yarn add @RedisLabs/pulumi-rediscloud
+yarn add @redislabs/pulumi-rediscloud
 ```
 
 ### Python
@@ -37,6 +37,8 @@ go get github.com/RedisLabs/pulumi-rediscloud/sdk/go/...
 ```
 
 ### .NET
+
+**NOT PUBLISHED YET**
 
 To use from .NET, install using `dotnet add package`:
 

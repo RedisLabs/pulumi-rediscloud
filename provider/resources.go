@@ -120,7 +120,7 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_subscription_peerings": {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscriptionPeerings")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
-			PackageName: "@RedisLabs/pulumi-rediscloud",
+			PackageName: "@redislabs/pulumi-rediscloud",
 			// List any npm dependencies and their versions
 			Dependencies: map[string]string{
 				"@pulumi/pulumi": "^3.0.0",
