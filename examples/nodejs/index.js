@@ -1,13 +1,10 @@
 "use strict";
 import pulumi from "@pulumi/pulumi";
-import rediscloud from "@RedisLabs/rediscloud";
+import rediscloud from "@rediscloud/pulumi-rediscloud";
 
 const config = new pulumi.Config();
 
-const redisCloudProvider = new rediscloud.Provider("rediscloud", {
-	apiKey: config.requireSecret("apiKey"),
-	secretKey: config.requireSecret("secretKey"),
-});
+const redisCloudProvider = new rediscloud.Provider("rediscloud", {});
 
 const card = await rediscloud.getPaymentMethod(
 	{

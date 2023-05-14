@@ -11,13 +11,21 @@ import (
 // This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment
 // variable.
 func GetApiKey(ctx *pulumi.Context) string {
-	return config.Get(ctx, "rediscloud:apiKey")
+	v, err := config.Try(ctx, "rediscloud:apiKey")
+	if err == nil {
+		return v
+	}
+	return getEnvOrDefault("", nil, "REDISCLOUD_API_KEY").(string)
 }
 
 // This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY`
 // environment variable.
 func GetSecretKey(ctx *pulumi.Context) string {
-	return config.Get(ctx, "rediscloud:secretKey")
+	v, err := config.Try(ctx, "rediscloud:secretKey")
+	if err == nil {
+		return v
+	}
+	return getEnvOrDefault("", nil, "REDISCLOUD_SECRET_KEY").(string)
 }
 
 // This is the URL of Redis Cloud and will default to `https://api.redislabs.com/v1`. This can also be set by the

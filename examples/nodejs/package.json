@@ -3,6 +3,7 @@
     "type": "module",
     "main": "index.js",
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0"
+        "@pulumi/pulumi": "^3.0.0",
+        "@rediscloud/pulumi-rediscloud": "1.1.2"
     }
 }

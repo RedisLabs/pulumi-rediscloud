@@ -80,8 +80,21 @@ func Provider() tfbridge.ProviderInfo {
 		Repository: "https://github.com/RedisLabs/pulumi-rediscloud",
 		// The GitHub Org for the provider - defaults to `terraform-providers`. Note that this
 		// should match the TF provider module's require directive, not any replace directives.
-		GitHubOrg:            "RedisLabs",
-		Config:               map[string]*tfbridge.SchemaInfo{},
+		GitHubOrg: "RedisLabs",
+		Config: map[string]*tfbridge.SchemaInfo{
+			"api_key": {
+				Secret: tfbridge.True(),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"REDISCLOUD_API_KEY"},
+				},
+			},
+			"secret_key": {
+				Secret: tfbridge.True(),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"REDISCLOUD_SECRET_KEY"},
+				},
+			},
+		},
 		PreConfigureCallback: preConfigureCallback,
 		Resources: map[string]*tfbridge.ResourceInfo{
 			"rediscloud_cloud_account": {

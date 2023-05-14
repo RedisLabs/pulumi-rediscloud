@@ -35,6 +35,23 @@ func NewProvider(ctx *pulumi.Context,
 		args = &ProviderArgs{}
 	}
 
+	if args.ApiKey == nil {
+		args.ApiKey = pulumi.StringPtr(getEnvOrDefault("", nil, "REDISCLOUD_API_KEY").(string))
+	}
+	if args.SecretKey == nil {
+		args.SecretKey = pulumi.StringPtr(getEnvOrDefault("", nil, "REDISCLOUD_SECRET_KEY").(string))
+	}
+	if args.ApiKey != nil {
+		args.ApiKey = pulumi.ToSecret(args.ApiKey).(pulumi.StringPtrInput)
+	}
+	if args.SecretKey != nil {
+		args.SecretKey = pulumi.ToSecret(args.SecretKey).(pulumi.StringPtrInput)
+	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiKey",
+		"secretKey",
+	})
+	opts = append(opts, secrets)
 	opts = pkgResourceDefaultOpts(opts)
 	var resource Provider
 	err := ctx.RegisterResource("pulumi:providers:rediscloud", name, args, &resource, opts...)
