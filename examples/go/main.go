@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -42,14 +44,14 @@ func main() {
 				SupportOssClusterApi:       pulumi.Bool(false),
 				ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
 				ThroughputMeasurementValue: pulumi.Int(20000),
-				Modules:                    pulumi.StringArray{"RedisJSON"},
+				Modules:                    pulumi.StringArray{pulumi.String("RedisJSON")},
 			},
 		})
 		if err != nil {
 			return err
 		}
 		_, err = rediscloud.NewSubscriptionDatabase(ctx, "database", &rediscloud.SubscriptionDatabaseArgs{
-			SubscriptionId:             subscription.ID(),
+			SubscriptionId:             subscription.ID().ApplyT(strconv.Atoi).(pulumi.IntOutput),
 			Protocol:                   pulumi.String("redis"),
 			MemoryLimitInGb:            pulumi.Float64(10),
 			DataPersistence:            pulumi.String("aof-every-1-second"),
