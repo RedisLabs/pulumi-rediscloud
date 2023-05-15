@@ -9,6 +9,8 @@ github.com/RedisLabs/pulumi-rediscloud v1.1.2-0.20230514161242-16a6b64d506f h1:+
 github.com/RedisLabs/pulumi-rediscloud v1.1.2-0.20230514161242-16a6b64d506f/go.mod h1:v+aAE2hkeN5wysMfz/e7PliNK8EIsmSjlfCljzQM4YQ=
 github.com/RedisLabs/pulumi-rediscloud/sdk v1.1.2 h1:CJ3ivz2CzdNs4n9E50yAw+e+SZYRLojtc7PxnoMYtPg=
 github.com/RedisLabs/pulumi-rediscloud/sdk v1.1.2/go.mod h1:dZFJcI1jJwCEqqcdJTP+1U+HoSlbWvTZHOkG3WMS8sQ=
+github.com/RedisLabs/pulumi-rediscloud/sdk v1.2.0 h1:hPz2XgGWnDc1RxbZRcnzB478WDmymmnDBAYpU0pHETQ=
+github.com/RedisLabs/pulumi-rediscloud/sdk v1.2.0/go.mod h1:dZFJcI1jJwCEqqcdJTP+1U+HoSlbWvTZHOkG3WMS8sQ=
 github.com/acomagu/bufpipe v1.0.3 h1:fxAGrHZTgQ9w5QqVItgzwj235/uYZYgbXitB+dLupOk=
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da h1:KjTM2ks9d14ZYCvmHS9iAKVt9AyzRSqNU1qabPih5BY=
