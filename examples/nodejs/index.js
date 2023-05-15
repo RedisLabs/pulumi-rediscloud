@@ -1,68 +1,49 @@
 "use strict";
-import pulumi from "@pulumi/pulumi";
 import rediscloud from "@rediscloud/pulumi-rediscloud";
-
-const config = new pulumi.Config();
-
-const redisCloudProvider = new rediscloud.Provider("rediscloud", {});
 
 const card = await rediscloud.getPaymentMethod(
 	{
 		cardType: "Visa",
-		lastFourNumbers: "3209",
-	},
-	{
-		provider: redisCloudProvider,
+		lastFourNumbers: "1234",
 	},
 );
 
 const subscription = new rediscloud.Subscription(
-	"one",
+	"my-subscription",
 	{
-		name: "one",
+		name: "my-subscription",
 		paymentMethod: "credit-card",
 		paymentMethodId: card.id,
-
-
 		cloudProvider: {
 			regions: [
 				{
-					region: "eu-west-2",
+					region: "us-east-1",
 					multipleAvailabilityZones: false,
 					networkingDeploymentCidr: "10.0.0.0/24",
-					preferredAvailabilityZones: ["euw2-az1"],
+					preferredAvailabilityZones: ["use1-az1", "use1-az2", "use1-az5"],
 				},
 			],
 		},
 
 		creationPlan: {
-			averageItemSizeInBytes: 1,
-			memoryLimitInGb: 2,
+			memoryLimitInGb: 10,
 			quantity: 1,
-			replication: false,
+			replication: true,
 			supportOssClusterApi: false,
 			throughputMeasurementBy: "operations-per-second",
-			throughputMeasurementValue: 10000,
-			modules: [],
+			throughputMeasurementValue: 20000,
+			modules: ["RedisJSON"],
 		},
-	},
-	{
-		provider: redisCloudProvider,
 	},
 );
 
-const database = new rediscloud.SubscriptionDatabase("one", {
-	name: "one",
+const database = new rediscloud.SubscriptionDatabase("my-db", {
+	name: "my-db",
 	subscriptionId: subscription.id,
 	protocol: "redis",
-
-	memoryLimitInGb: 1,
-	dataPersistence: "none",
+	memoryLimitInGb: 10,
+	dataPersistence: "aof-every-1-second",
 	throughputMeasurementBy: "operations-per-second",
-	throughputMeasurementValue: 10000,
-	supportOssClusterApi: false,
-	externalEndpointForOssClusterApi: false,
+	throughputMeasurementValue: 20000,
 	replication: true,
-}, {
-	provider: redisCloudProvider,
 });

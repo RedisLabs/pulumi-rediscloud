@@ -1,0 +1,3 @@
+name: rediscloud-yaml
+runtime: go
+description: A minimal Pulumi YAML program
