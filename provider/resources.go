@@ -105,6 +105,12 @@ func Provider() tfbridge.ProviderInfo {
 			},
 			"rediscloud_subscription_database": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "SubscriptionDatabase"),
+				Fields: map[string]*tfbridge.SchemaInfo{
+					"subscription_id": {
+						Name: "subscriptionId",
+						Type: "string",
+					},
+				},
 			},
 			"rediscloud_subscription_peering": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "SubscriptionPeering"),
@@ -115,7 +121,8 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_active_active_subscription_database": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "ActiveActiveSubscriptionDatabase"),
 				Fields: map[string]*tfbridge.SchemaInfo{
-					"subscriptionId": {
+					"subscription_id": {
+						Name: "subscriptionId",
 						Type: "string",
 					},
 				},

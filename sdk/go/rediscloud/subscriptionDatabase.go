@@ -72,7 +72,7 @@ type SubscriptionDatabase struct {
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayOutput `pulumi:"sourceIps"`
 	// The ID of the subscription to create the database in
-	SubscriptionId pulumi.IntOutput `pulumi:"subscriptionId"`
+	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
@@ -180,7 +180,7 @@ type subscriptionDatabaseState struct {
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
 	// The ID of the subscription to create the database in
-	SubscriptionId *int `pulumi:"subscriptionId"`
+	SubscriptionId *string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
@@ -237,7 +237,7 @@ type SubscriptionDatabaseState struct {
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
 	// The ID of the subscription to create the database in
-	SubscriptionId pulumi.IntPtrInput
+	SubscriptionId pulumi.StringPtrInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
@@ -292,7 +292,7 @@ type subscriptionDatabaseArgs struct {
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
 	// The ID of the subscription to create the database in
-	SubscriptionId int `pulumi:"subscriptionId"`
+	SubscriptionId string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
@@ -344,7 +344,7 @@ type SubscriptionDatabaseArgs struct {
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
 	// The ID of the subscription to create the database in
-	SubscriptionId pulumi.IntInput
+	SubscriptionId pulumi.StringInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 	// Throughput measurement method, (either ‘number-of-shards’ or ‘operations-per-second’)
@@ -547,8 +547,8 @@ func (o SubscriptionDatabaseOutput) SourceIps() pulumi.StringArrayOutput {
 }
 
 // The ID of the subscription to create the database in
-func (o SubscriptionDatabaseOutput) SubscriptionId() pulumi.IntOutput {
-	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.IntOutput { return v.SubscriptionId }).(pulumi.IntOutput)
+func (o SubscriptionDatabaseOutput) SubscriptionId() pulumi.StringOutput {
+	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
 
 // Support Redis open-source (OSS) Cluster API. Default: ‘false’

@@ -151,7 +151,7 @@ type ActiveActiveSubscriptionDatabase struct {
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapOutput `pulumi:"publicEndpoint"`
 	// The ID of the Active-Active subscription to create the database in
-	SubscriptionId pulumi.IntOutput `pulumi:"subscriptionId"`
+	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
 }
@@ -229,7 +229,7 @@ type activeActiveSubscriptionDatabaseState struct {
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint map[string]string `pulumi:"publicEndpoint"`
 	// The ID of the Active-Active subscription to create the database in
-	SubscriptionId *int `pulumi:"subscriptionId"`
+	SubscriptionId *string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 }
@@ -265,7 +265,7 @@ type ActiveActiveSubscriptionDatabaseState struct {
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapInput
 	// The ID of the Active-Active subscription to create the database in
-	SubscriptionId pulumi.IntPtrInput
+	SubscriptionId pulumi.StringPtrInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 }
@@ -299,7 +299,7 @@ type activeActiveSubscriptionDatabaseArgs struct {
 	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
 	// The ID of the Active-Active subscription to create the database in
-	SubscriptionId int `pulumi:"subscriptionId"`
+	SubscriptionId string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
 }
@@ -330,7 +330,7 @@ type ActiveActiveSubscriptionDatabaseArgs struct {
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
 	// The ID of the Active-Active subscription to create the database in
-	SubscriptionId pulumi.IntInput
+	SubscriptionId pulumi.StringInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
 }
@@ -500,8 +500,8 @@ func (o ActiveActiveSubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringMa
 }
 
 // The ID of the Active-Active subscription to create the database in
-func (o ActiveActiveSubscriptionDatabaseOutput) SubscriptionId() pulumi.IntOutput {
-	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.IntOutput { return v.SubscriptionId }).(pulumi.IntOutput)
+func (o ActiveActiveSubscriptionDatabaseOutput) SubscriptionId() pulumi.StringOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
 
 // Support Redis open-source (OSS) Cluster API. Default: ‘false’
