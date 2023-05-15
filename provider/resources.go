@@ -102,6 +102,12 @@ func Provider() tfbridge.ProviderInfo {
 			},
 			"rediscloud_subscription": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "Subscription"),
+				Fields: map[string]*tfbridge.SchemaInfo{
+					"id": {
+						Name: "id",
+						Type: "int",
+					},
+				},
 			},
 			"rediscloud_subscription_database": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "SubscriptionDatabase"),
