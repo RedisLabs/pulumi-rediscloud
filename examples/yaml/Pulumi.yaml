@@ -44,3 +44,5 @@ resources:
     throughputMeasurementBy: "operations-per-second"
     throughputMeasurementValue: 20000
     replication: true
+    modules:
+    - name: RedisJSON

@@ -59,6 +59,11 @@ func main() {
 			ThroughputMeasurementValue: pulumi.Int(20000),
 			SupportOssClusterApi:       pulumi.Bool(false),
 			Replication:                pulumi.Bool(true),
+			Modules: rediscloud.SubscriptionDatabaseModuleArray{
+				&rediscloud.SubscriptionDatabaseModuleArgs{
+					Name: pulumi.String("RedisJSON"),
+				},
+			},
 		})
 		if err != nil {
 			return err

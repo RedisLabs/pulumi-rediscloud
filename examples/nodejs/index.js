@@ -46,4 +46,9 @@ const database = new rediscloud.SubscriptionDatabase("my-db", {
 	throughputMeasurementBy: "operations-per-second",
 	throughputMeasurementValue: 20000,
 	replication: true,
+	modules: [
+		{
+			name: "RedisJSON",
+		}
+	]
 });

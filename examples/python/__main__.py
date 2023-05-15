@@ -41,4 +41,9 @@ database = pulumi_rediscloud.SubscriptionDatabase(
     throughput_measurement_by="operations-per-second",
     throughput_measurement_value=20000,
     replication=True,
+    modules=[
+        pulumi_rediscloud.SubscriptionDatabaseModuleArgs(
+            name="RedisJSON",
+        )
+    ],
 )
