@@ -61,6 +61,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
         with:
           repo: pulumi/pulumictl
+          tag: v0.0.43
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b # tag=v4.2.0
@@ -111,6 +112,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
         with:
           repo: pulumi/pulumictl
+          tag: v0.0.43
 
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
