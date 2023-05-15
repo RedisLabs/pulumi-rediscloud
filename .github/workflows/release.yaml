@@ -101,13 +101,6 @@ jobs:
         with:
           go-version: ${{ matrix.goversion }}
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          cache: gradle
-          distribution: temurin
-          java-version: ${{matrix.javaversion}}
-
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
         with:
@@ -173,14 +166,6 @@ jobs:
           dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_API_KEY }}
           echo "done publishing packages"
 
-      - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
-        name: Publish Java SDK
-        uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
-        with:
-          arguments: publish
-          build-root-directory: ./sdk/java
-          gradle-version: 7.4.1
-
     strategy:
       fail-fast: true
       matrix:
@@ -193,10 +178,7 @@ jobs:
           - python
           - dotnet
           - go
-          - java
         nodeversion:
           - 16.x
         pythonversion:
           - "3.9"
-        javaversion:
-          - "11"
