@@ -1,6 +1,6 @@
 # Redis Cloud Resource Provider
 
-The Redis Cloud Resource Provider lets you manage [Redis Cloud](https://redislabs.com/redis-enterprise-cloud/overview) resources.
+The Redis Cloud Resource Provider lets you manage [Redis Cloud](https://redislabs.com/redis-enterprise-cloud/overview) resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. Please note that the provider is available only for Flexible or Annual subscriptions. It is not supported for Fixed or Free subscriptions.
 
 ## Installing
 
