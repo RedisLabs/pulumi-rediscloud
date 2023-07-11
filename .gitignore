@@ -7,6 +7,7 @@
 # These SDKs don't need to be commited
 # to be published.
 /sdk/dotnet
+/sdk/java
 /sdk/nodejs
 /sdk/python
 
