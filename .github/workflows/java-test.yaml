@@ -32,7 +32,7 @@ env:
   PYPI_USERNAME: "__token__"
 
   # Java SDK
-  JAVA_VERSION: "11"
+  JAVAVERSION: "11"
   JAVA_GEN_VERSION: v0.9.4
   JAVA_PUBLISH: true
   PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -79,8 +79,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ env.JAVAVERSION }}
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
