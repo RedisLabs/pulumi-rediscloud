@@ -133,6 +133,15 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_active_active_subscription_regions": {
 				Tok: tfbridge.MakeResource(mainPkg, mainMod, "ActiveActiveSubscriptionRegions"),
 			},
+			"rediscloud_acl_user": {
+				Tok: tfbridge.MakeResource(mainPkg, mainMod, "AclUser"),
+			},
+			"rediscloud_acl_role": {
+				Tok: tfbridge.MakeResource(mainPkg, mainMod, "AclRole"),
+			},
+			"rediscloud_acl_rule": {
+				Tok: tfbridge.MakeResource(mainPkg, mainMod, "AclRule"),
+			},
 		},
 		DataSources: map[string]*tfbridge.DataSourceInfo{
 			"rediscloud_cloud_account":         {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getCloudAccount")},
@@ -143,6 +152,9 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_regions":               {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getRegions")},
 			"rediscloud_subscription":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscription")},
 			"rediscloud_subscription_peerings": {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscriptionPeerings")},
+			"rediscloud_acl_user":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclUser")},
+			"rediscloud_acl_role":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRole")},
+			"rediscloud_acl_rule":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRule")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
 			PackageName: "@rediscloud/pulumi-rediscloud",
