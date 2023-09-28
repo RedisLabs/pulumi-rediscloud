@@ -39,8 +39,9 @@ env:
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
   SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
   SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
-  SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}\
+  SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
 
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 jobs:
    publish-sdks:
     name: Publish ${{ matrix.language }} SDK
