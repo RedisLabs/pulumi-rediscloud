@@ -101,10 +101,32 @@ jobs:
           fi
 
       - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
-        name: Publish Java SDK
-        uses: pulumi/pulumi-package-publisher@0058a106b68d8277f17bbea0cd29b2ff6e671adc
+        name: Download java SDK
+        uses: actions/download-artifact@v2
         with:
-          sdk: java
+          name: java-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/
+
+      - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
+        name: Uncompress java SDK
+        run: tar -zxf ${{github.workspace}}/sdk/java.tar.gz -C
+          ${{github.workspace}}/sdk/java
+        shell: bash
+
+      - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
+        name: Set PACKAGE_VERSION to Env
+        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
+          $GITHUB_ENV
+        shell: bash
+
+      - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
+        name: Publish Java SDK
+        continue-on-error: true
+        uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
+        with:
+          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
+          build-root-directory: ./sdk/java
+          gradle-version: 7.4.1
 
     strategy:
       fail-fast: true
