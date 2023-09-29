@@ -34,7 +34,8 @@ env:
   PYPI_USERNAME: "__token__"
 
   # Java SDK
-  JAVA_VERSION: "11"
+  JAVAVERSION: "11"
+  JAVA_GEN_VERSION: v0.9.4
   JAVA_PUBLISH: "false"
   PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -114,6 +115,9 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
 
+      - name: pulumi-java-gen
+        run: mkdir -p bin && pulumictl download-binary -n pulumi-language-java -v v0.9.4 -r pulumi/pulumi-java
+
       - name: AWS Provider
         run: pulumi plugin install resource aws 5.40.0
 
@@ -139,9 +143,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          cache: gradle
           distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ env.JAVAVERSION }}
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -183,10 +186,19 @@ jobs:
           echo "done publishing packages"
 
       - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
+        name: Set PACKAGE_VERSION to Env
+        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
+          $GITHUB_ENV
+        shell: bash
+
+      - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
         name: Publish Java SDK
-        uses: pulumi/pulumi-package-publisher@0058a106b68d8277f17bbea0cd29b2ff6e671adc
+        continue-on-error: true
+        uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
         with:
-          sdk: java
+          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
+          build-root-directory: ./sdk/java
+          gradle-version: 7.4.1
 
     strategy:
       fail-fast: true
