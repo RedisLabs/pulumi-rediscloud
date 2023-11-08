@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Subscription data source allows access to the details of an existing subscription within your Redis Enterprise Cloud account.
@@ -41,7 +43,7 @@ import (
 //
 // ```
 func LookupSubscription(ctx *pulumi.Context, args *LookupSubscriptionArgs, opts ...pulumi.InvokeOption) (*LookupSubscriptionResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv LookupSubscriptionResult
 	err := ctx.Invoke("rediscloud:index/getSubscription:getSubscription", args, &rv, opts...)
 	if err != nil {
@@ -110,6 +112,12 @@ func (o LookupSubscriptionResultOutput) ToLookupSubscriptionResultOutput() Looku
 
 func (o LookupSubscriptionResultOutput) ToLookupSubscriptionResultOutputWithContext(ctx context.Context) LookupSubscriptionResultOutput {
 	return o
+}
+
+func (o LookupSubscriptionResultOutput) ToOutput(ctx context.Context) pulumix.Output[LookupSubscriptionResult] {
+	return pulumix.Output[LookupSubscriptionResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A cloud provider object, documented below

@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Database data source allows access to the details of an existing database within your Redis Enterprise Cloud account.
@@ -67,7 +69,7 @@ import (
 //
 // ```
 func GetDatabase(ctx *pulumi.Context, args *GetDatabaseArgs, opts ...pulumi.InvokeOption) (*GetDatabaseResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv GetDatabaseResult
 	err := ctx.Invoke("rediscloud:index/getDatabase:getDatabase", args, &rv, opts...)
 	if err != nil {
@@ -172,6 +174,12 @@ func (o GetDatabaseResultOutput) ToGetDatabaseResultOutput() GetDatabaseResultOu
 
 func (o GetDatabaseResultOutput) ToGetDatabaseResultOutputWithContext(ctx context.Context) GetDatabaseResultOutput {
 	return o
+}
+
+func (o GetDatabaseResultOutput) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseResult] {
+	return pulumix.Output[GetDatabaseResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Set of alerts to enable on the database, documented below.

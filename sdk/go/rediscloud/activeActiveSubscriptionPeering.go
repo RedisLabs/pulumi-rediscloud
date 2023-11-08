@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Creates an AWS or GCP VPC peering for an existing Redis Enterprise Cloud Active-Active Subscription, allowing access to your subscription databases as if they were on the same network.
@@ -94,6 +96,7 @@ import (
 //			}
 //			_, err = rediscloud.NewActiveActiveSubscriptionPeering(ctx, "peering-resource", &rediscloud.ActiveActiveSubscriptionPeeringArgs{
 //				SubscriptionId: subscription_resource.ID(),
+//				SourceRegion:   pulumi.String("us-central1"),
 //				ProviderName:   pulumi.String("GCP"),
 //				GcpProjectId:   *pulumi.String(network.Project),
 //				GcpNetworkName: *pulumi.String(network.Name),
@@ -128,33 +131,39 @@ import (
 type ActiveActiveSubscriptionPeering struct {
 	pulumi.CustomResourceState
 
-	// AWS account ID that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId pulumi.StringOutput `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringOutput `pulumi:"awsPeeringId"`
-	// Name of the region to create the VPC peering to
+	// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 	DestinationRegion pulumi.StringOutput `pulumi:"destinationRegion"`
-	// The name of the network to be peered
+	// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 	GcpNetworkName pulumi.StringOutput `pulumi:"gcpNetworkName"`
 	// Identifier of the cloud peering
 	GcpPeeringId pulumi.StringOutput `pulumi:"gcpPeeringId"`
-	// GCP project ID that the VPC to be peered lives in
+	// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	GcpProjectId pulumi.StringOutput `pulumi:"gcpProjectId"`
 	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName pulumi.StringOutput `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringOutput `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	ProviderName pulumi.StringPtrOutput `pulumi:"providerName"`
-	// Name of the region to create the VPC peering from
+	// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **AWS ONLY:**
 	SourceRegion pulumi.StringOutput `pulumi:"sourceRegion"`
 	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringOutput `pulumi:"status"`
-	// A valid Active-Active subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
-	// CIDR range of the VPC to be peered
-	VpcCidr pulumi.StringPtrOutput `pulumi:"vpcCidr"`
-	// Identifier of the VPC to be peered
+	// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
+	VpcCidr pulumi.StringOutput `pulumi:"vpcCidr"`
+	// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **GCP ONLY:**
+	VpcCidrs pulumi.StringArrayOutput `pulumi:"vpcCidrs"`
+	// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 	VpcId pulumi.StringOutput `pulumi:"vpcId"`
 }
 
@@ -168,7 +177,7 @@ func NewActiveActiveSubscriptionPeering(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionPeering
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering", name, args, &resource, opts...)
 	if err != nil {
@@ -191,64 +200,76 @@ func GetActiveActiveSubscriptionPeering(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering ActiveActiveSubscriptionPeering resources.
 type activeActiveSubscriptionPeeringState struct {
-	// AWS account ID that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId *string `pulumi:"awsAccountId"`
 	// Identifier of the AWS cloud peering
 	AwsPeeringId *string `pulumi:"awsPeeringId"`
-	// Name of the region to create the VPC peering to
+	// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 	DestinationRegion *string `pulumi:"destinationRegion"`
-	// The name of the network to be peered
+	// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 	GcpNetworkName *string `pulumi:"gcpNetworkName"`
 	// Identifier of the cloud peering
 	GcpPeeringId *string `pulumi:"gcpPeeringId"`
-	// GCP project ID that the VPC to be peered lives in
+	// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	GcpProjectId *string `pulumi:"gcpProjectId"`
 	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName *string `pulumi:"gcpRedisNetworkName"`
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId *string `pulumi:"gcpRedisProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	ProviderName *string `pulumi:"providerName"`
-	// Name of the region to create the VPC peering from
+	// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **AWS ONLY:**
 	SourceRegion *string `pulumi:"sourceRegion"`
 	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status *string `pulumi:"status"`
-	// A valid Active-Active subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId *string `pulumi:"subscriptionId"`
-	// CIDR range of the VPC to be peered
+	// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
 	VpcCidr *string `pulumi:"vpcCidr"`
-	// Identifier of the VPC to be peered
+	// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **GCP ONLY:**
+	VpcCidrs []string `pulumi:"vpcCidrs"`
+	// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 	VpcId *string `pulumi:"vpcId"`
 }
 
 type ActiveActiveSubscriptionPeeringState struct {
-	// AWS account ID that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId pulumi.StringPtrInput
 	// Identifier of the AWS cloud peering
 	AwsPeeringId pulumi.StringPtrInput
-	// Name of the region to create the VPC peering to
+	// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 	DestinationRegion pulumi.StringPtrInput
-	// The name of the network to be peered
+	// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 	GcpNetworkName pulumi.StringPtrInput
 	// Identifier of the cloud peering
 	GcpPeeringId pulumi.StringPtrInput
-	// GCP project ID that the VPC to be peered lives in
+	// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	GcpProjectId pulumi.StringPtrInput
 	// The name of the Redis Enterprise Cloud network to be peered
 	GcpRedisNetworkName pulumi.StringPtrInput
 	// Identifier of the Redis Enterprise Cloud GCP project to be peered
 	GcpRedisProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	ProviderName pulumi.StringPtrInput
-	// Name of the region to create the VPC peering from
+	// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **AWS ONLY:**
 	SourceRegion pulumi.StringPtrInput
 	// is set to the current status of the peering - `initiating-request`, `pending-acceptance`, `active`, `inactive` or `failed`.
 	Status pulumi.StringPtrInput
-	// A valid Active-Active subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringPtrInput
-	// CIDR range of the VPC to be peered
+	// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
 	VpcCidr pulumi.StringPtrInput
-	// Identifier of the VPC to be peered
+	// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **GCP ONLY:**
+	VpcCidrs pulumi.StringArrayInput
+	// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 	VpcId pulumi.StringPtrInput
 }
 
@@ -257,45 +278,57 @@ func (ActiveActiveSubscriptionPeeringState) ElementType() reflect.Type {
 }
 
 type activeActiveSubscriptionPeeringArgs struct {
-	// AWS account ID that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId *string `pulumi:"awsAccountId"`
-	// Name of the region to create the VPC peering to
+	// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 	DestinationRegion *string `pulumi:"destinationRegion"`
-	// The name of the network to be peered
+	// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 	GcpNetworkName *string `pulumi:"gcpNetworkName"`
-	// GCP project ID that the VPC to be peered lives in
+	// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	GcpProjectId *string `pulumi:"gcpProjectId"`
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	ProviderName *string `pulumi:"providerName"`
-	// Name of the region to create the VPC peering from
+	// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **AWS ONLY:**
 	SourceRegion *string `pulumi:"sourceRegion"`
-	// A valid Active-Active subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId string `pulumi:"subscriptionId"`
-	// CIDR range of the VPC to be peered
+	// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
 	VpcCidr *string `pulumi:"vpcCidr"`
-	// Identifier of the VPC to be peered
+	// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **GCP ONLY:**
+	VpcCidrs []string `pulumi:"vpcCidrs"`
+	// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 	VpcId *string `pulumi:"vpcId"`
 }
 
 // The set of arguments for constructing a ActiveActiveSubscriptionPeering resource.
 type ActiveActiveSubscriptionPeeringArgs struct {
-	// AWS account ID that the VPC to be peered lives in
+	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId pulumi.StringPtrInput
-	// Name of the region to create the VPC peering to
+	// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 	DestinationRegion pulumi.StringPtrInput
-	// The name of the network to be peered
+	// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 	GcpNetworkName pulumi.StringPtrInput
-	// GCP project ID that the VPC to be peered lives in
+	// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	GcpProjectId pulumi.StringPtrInput
-	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	ProviderName pulumi.StringPtrInput
-	// Name of the region to create the VPC peering from
+	// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **AWS ONLY:**
 	SourceRegion pulumi.StringPtrInput
-	// A valid Active-Active subscription predefined in the current account
+	// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringInput
-	// CIDR range of the VPC to be peered
+	// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
 	VpcCidr pulumi.StringPtrInput
-	// Identifier of the VPC to be peered
+	// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+	//
+	// **GCP ONLY:**
+	VpcCidrs pulumi.StringArrayInput
+	// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 	VpcId pulumi.StringPtrInput
 }
 
@@ -320,6 +353,12 @@ func (i *ActiveActiveSubscriptionPeering) ToActiveActiveSubscriptionPeeringOutpu
 
 func (i *ActiveActiveSubscriptionPeering) ToActiveActiveSubscriptionPeeringOutputWithContext(ctx context.Context) ActiveActiveSubscriptionPeeringOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionPeeringOutput)
+}
+
+func (i *ActiveActiveSubscriptionPeering) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[*ActiveActiveSubscriptionPeering]{
+		OutputState: i.ToActiveActiveSubscriptionPeeringOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionPeeringArrayInput is an input type that accepts ActiveActiveSubscriptionPeeringArray and ActiveActiveSubscriptionPeeringArrayOutput values.
@@ -347,6 +386,12 @@ func (i ActiveActiveSubscriptionPeeringArray) ToActiveActiveSubscriptionPeeringA
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionPeeringArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionPeeringArray) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionPeering]{
+		OutputState: i.ToActiveActiveSubscriptionPeeringArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionPeeringMapInput is an input type that accepts ActiveActiveSubscriptionPeeringMap and ActiveActiveSubscriptionPeeringMapOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionPeeringMapInput` via:
 //
@@ -372,6 +417,12 @@ func (i ActiveActiveSubscriptionPeeringMap) ToActiveActiveSubscriptionPeeringMap
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionPeeringMapOutput)
 }
 
+func (i ActiveActiveSubscriptionPeeringMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionPeering]{
+		OutputState: i.ToActiveActiveSubscriptionPeeringMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionPeeringOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionPeeringOutput) ElementType() reflect.Type {
@@ -386,7 +437,13 @@ func (o ActiveActiveSubscriptionPeeringOutput) ToActiveActiveSubscriptionPeering
 	return o
 }
 
-// AWS account ID that the VPC to be peered lives in
+func (o ActiveActiveSubscriptionPeeringOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[*ActiveActiveSubscriptionPeering]{
+		OutputState: o.OutputState,
+	}
+}
+
+// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) AwsAccountId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.AwsAccountId }).(pulumi.StringOutput)
 }
@@ -396,12 +453,12 @@ func (o ActiveActiveSubscriptionPeeringOutput) AwsPeeringId() pulumi.StringOutpu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.AwsPeeringId }).(pulumi.StringOutput)
 }
 
-// Name of the region to create the VPC peering to
+// Name of the region to create the VPC peering to. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) DestinationRegion() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.DestinationRegion }).(pulumi.StringOutput)
 }
 
-// The name of the network to be peered
+// The name of the network to be peered. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) GcpNetworkName() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.GcpNetworkName }).(pulumi.StringOutput)
 }
@@ -411,7 +468,7 @@ func (o ActiveActiveSubscriptionPeeringOutput) GcpPeeringId() pulumi.StringOutpu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.GcpPeeringId }).(pulumi.StringOutput)
 }
 
-// GCP project ID that the VPC to be peered lives in
+// GCP project ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) GcpProjectId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.GcpProjectId }).(pulumi.StringOutput)
 }
@@ -426,12 +483,14 @@ func (o ActiveActiveSubscriptionPeeringOutput) GcpRedisProjectId() pulumi.String
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.GcpRedisProjectId }).(pulumi.StringOutput)
 }
 
-// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’
+// The cloud provider to use with the vpc peering, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) ProviderName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringPtrOutput { return v.ProviderName }).(pulumi.StringPtrOutput)
 }
 
-// Name of the region to create the VPC peering from
+// Name of the region to create the VPC peering from. **Modifying this attribute will force creation of a new resource.**
+//
+// **AWS ONLY:**
 func (o ActiveActiveSubscriptionPeeringOutput) SourceRegion() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.SourceRegion }).(pulumi.StringOutput)
 }
@@ -441,17 +500,24 @@ func (o ActiveActiveSubscriptionPeeringOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
 }
 
-// A valid Active-Active subscription predefined in the current account
+// A valid Active-Active subscription predefined in the current account. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
 
-// CIDR range of the VPC to be peered
-func (o ActiveActiveSubscriptionPeeringOutput) VpcCidr() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringPtrOutput { return v.VpcCidr }).(pulumi.StringPtrOutput)
+// CIDR range of the VPC to be peered. Either this or `vpcCidrs` must be specified. **Modifying this attribute will force creation of a new resource.**
+func (o ActiveActiveSubscriptionPeeringOutput) VpcCidr() pulumi.StringOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.VpcCidr }).(pulumi.StringOutput)
 }
 
-// Identifier of the VPC to be peered
+// CIDR ranges of the VPC to be peered. Either this or `vpcCidr` must be specified. **Modifying this attribute will force creation of a new resource.**
+//
+// **GCP ONLY:**
+func (o ActiveActiveSubscriptionPeeringOutput) VpcCidrs() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringArrayOutput { return v.VpcCidrs }).(pulumi.StringArrayOutput)
+}
+
+// Identifier of the VPC to be peered. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionPeeringOutput) VpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionPeering) pulumi.StringOutput { return v.VpcId }).(pulumi.StringOutput)
 }
@@ -468,6 +534,12 @@ func (o ActiveActiveSubscriptionPeeringArrayOutput) ToActiveActiveSubscriptionPe
 
 func (o ActiveActiveSubscriptionPeeringArrayOutput) ToActiveActiveSubscriptionPeeringArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionPeeringArrayOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionPeeringArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionPeering]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionPeeringArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionPeeringOutput {
@@ -488,6 +560,12 @@ func (o ActiveActiveSubscriptionPeeringMapOutput) ToActiveActiveSubscriptionPeer
 
 func (o ActiveActiveSubscriptionPeeringMapOutput) ToActiveActiveSubscriptionPeeringMapOutputWithContext(ctx context.Context) ActiveActiveSubscriptionPeeringMapOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionPeeringMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionPeering] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionPeering]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionPeeringMapOutput) MapIndex(k pulumi.StringInput) ActiveActiveSubscriptionPeeringOutput {

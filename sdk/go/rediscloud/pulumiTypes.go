@@ -7,8 +7,281 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
+
+var _ = internal.GetEnvOrDefault
+
+type AclRoleRule struct {
+	// a set of database association objects, documented below.
+	Databases []AclRoleRuleDatabase `pulumi:"databases"`
+	// Name of the Rule.
+	Name string `pulumi:"name"`
+}
+
+// AclRoleRuleInput is an input type that accepts AclRoleRuleArgs and AclRoleRuleOutput values.
+// You can construct a concrete instance of `AclRoleRuleInput` via:
+//
+//	AclRoleRuleArgs{...}
+type AclRoleRuleInput interface {
+	pulumi.Input
+
+	ToAclRoleRuleOutput() AclRoleRuleOutput
+	ToAclRoleRuleOutputWithContext(context.Context) AclRoleRuleOutput
+}
+
+type AclRoleRuleArgs struct {
+	// a set of database association objects, documented below.
+	Databases AclRoleRuleDatabaseArrayInput `pulumi:"databases"`
+	// Name of the Rule.
+	Name pulumi.StringInput `pulumi:"name"`
+}
+
+func (AclRoleRuleArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AclRoleRule)(nil)).Elem()
+}
+
+func (i AclRoleRuleArgs) ToAclRoleRuleOutput() AclRoleRuleOutput {
+	return i.ToAclRoleRuleOutputWithContext(context.Background())
+}
+
+func (i AclRoleRuleArgs) ToAclRoleRuleOutputWithContext(ctx context.Context) AclRoleRuleOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AclRoleRuleOutput)
+}
+
+func (i AclRoleRuleArgs) ToOutput(ctx context.Context) pulumix.Output[AclRoleRule] {
+	return pulumix.Output[AclRoleRule]{
+		OutputState: i.ToAclRoleRuleOutputWithContext(ctx).OutputState,
+	}
+}
+
+// AclRoleRuleArrayInput is an input type that accepts AclRoleRuleArray and AclRoleRuleArrayOutput values.
+// You can construct a concrete instance of `AclRoleRuleArrayInput` via:
+//
+//	AclRoleRuleArray{ AclRoleRuleArgs{...} }
+type AclRoleRuleArrayInput interface {
+	pulumi.Input
+
+	ToAclRoleRuleArrayOutput() AclRoleRuleArrayOutput
+	ToAclRoleRuleArrayOutputWithContext(context.Context) AclRoleRuleArrayOutput
+}
+
+type AclRoleRuleArray []AclRoleRuleInput
+
+func (AclRoleRuleArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AclRoleRule)(nil)).Elem()
+}
+
+func (i AclRoleRuleArray) ToAclRoleRuleArrayOutput() AclRoleRuleArrayOutput {
+	return i.ToAclRoleRuleArrayOutputWithContext(context.Background())
+}
+
+func (i AclRoleRuleArray) ToAclRoleRuleArrayOutputWithContext(ctx context.Context) AclRoleRuleArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AclRoleRuleArrayOutput)
+}
+
+func (i AclRoleRuleArray) ToOutput(ctx context.Context) pulumix.Output[[]AclRoleRule] {
+	return pulumix.Output[[]AclRoleRule]{
+		OutputState: i.ToAclRoleRuleArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
+type AclRoleRuleOutput struct{ *pulumi.OutputState }
+
+func (AclRoleRuleOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AclRoleRule)(nil)).Elem()
+}
+
+func (o AclRoleRuleOutput) ToAclRoleRuleOutput() AclRoleRuleOutput {
+	return o
+}
+
+func (o AclRoleRuleOutput) ToAclRoleRuleOutputWithContext(ctx context.Context) AclRoleRuleOutput {
+	return o
+}
+
+func (o AclRoleRuleOutput) ToOutput(ctx context.Context) pulumix.Output[AclRoleRule] {
+	return pulumix.Output[AclRoleRule]{
+		OutputState: o.OutputState,
+	}
+}
+
+// a set of database association objects, documented below.
+func (o AclRoleRuleOutput) Databases() AclRoleRuleDatabaseArrayOutput {
+	return o.ApplyT(func(v AclRoleRule) []AclRoleRuleDatabase { return v.Databases }).(AclRoleRuleDatabaseArrayOutput)
+}
+
+// Name of the Rule.
+func (o AclRoleRuleOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v AclRoleRule) string { return v.Name }).(pulumi.StringOutput)
+}
+
+type AclRoleRuleArrayOutput struct{ *pulumi.OutputState }
+
+func (AclRoleRuleArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AclRoleRule)(nil)).Elem()
+}
+
+func (o AclRoleRuleArrayOutput) ToAclRoleRuleArrayOutput() AclRoleRuleArrayOutput {
+	return o
+}
+
+func (o AclRoleRuleArrayOutput) ToAclRoleRuleArrayOutputWithContext(ctx context.Context) AclRoleRuleArrayOutput {
+	return o
+}
+
+func (o AclRoleRuleArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]AclRoleRule] {
+	return pulumix.Output[[]AclRoleRule]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o AclRoleRuleArrayOutput) Index(i pulumi.IntInput) AclRoleRuleOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AclRoleRule {
+		return vs[0].([]AclRoleRule)[vs[1].(int)]
+	}).(AclRoleRuleOutput)
+}
+
+type AclRoleRuleDatabase struct {
+	// ID of the database to which the Rule should apply.
+	Database int `pulumi:"database"`
+	// For databases in Active/Active subscriptions only, the regions to which the Rule should apply.
+	Regions []string `pulumi:"regions"`
+	// ID of the subscription containing the database.
+	Subscription int `pulumi:"subscription"`
+}
+
+// AclRoleRuleDatabaseInput is an input type that accepts AclRoleRuleDatabaseArgs and AclRoleRuleDatabaseOutput values.
+// You can construct a concrete instance of `AclRoleRuleDatabaseInput` via:
+//
+//	AclRoleRuleDatabaseArgs{...}
+type AclRoleRuleDatabaseInput interface {
+	pulumi.Input
+
+	ToAclRoleRuleDatabaseOutput() AclRoleRuleDatabaseOutput
+	ToAclRoleRuleDatabaseOutputWithContext(context.Context) AclRoleRuleDatabaseOutput
+}
+
+type AclRoleRuleDatabaseArgs struct {
+	// ID of the database to which the Rule should apply.
+	Database pulumi.IntInput `pulumi:"database"`
+	// For databases in Active/Active subscriptions only, the regions to which the Rule should apply.
+	Regions pulumi.StringArrayInput `pulumi:"regions"`
+	// ID of the subscription containing the database.
+	Subscription pulumi.IntInput `pulumi:"subscription"`
+}
+
+func (AclRoleRuleDatabaseArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (i AclRoleRuleDatabaseArgs) ToAclRoleRuleDatabaseOutput() AclRoleRuleDatabaseOutput {
+	return i.ToAclRoleRuleDatabaseOutputWithContext(context.Background())
+}
+
+func (i AclRoleRuleDatabaseArgs) ToAclRoleRuleDatabaseOutputWithContext(ctx context.Context) AclRoleRuleDatabaseOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AclRoleRuleDatabaseOutput)
+}
+
+func (i AclRoleRuleDatabaseArgs) ToOutput(ctx context.Context) pulumix.Output[AclRoleRuleDatabase] {
+	return pulumix.Output[AclRoleRuleDatabase]{
+		OutputState: i.ToAclRoleRuleDatabaseOutputWithContext(ctx).OutputState,
+	}
+}
+
+// AclRoleRuleDatabaseArrayInput is an input type that accepts AclRoleRuleDatabaseArray and AclRoleRuleDatabaseArrayOutput values.
+// You can construct a concrete instance of `AclRoleRuleDatabaseArrayInput` via:
+//
+//	AclRoleRuleDatabaseArray{ AclRoleRuleDatabaseArgs{...} }
+type AclRoleRuleDatabaseArrayInput interface {
+	pulumi.Input
+
+	ToAclRoleRuleDatabaseArrayOutput() AclRoleRuleDatabaseArrayOutput
+	ToAclRoleRuleDatabaseArrayOutputWithContext(context.Context) AclRoleRuleDatabaseArrayOutput
+}
+
+type AclRoleRuleDatabaseArray []AclRoleRuleDatabaseInput
+
+func (AclRoleRuleDatabaseArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (i AclRoleRuleDatabaseArray) ToAclRoleRuleDatabaseArrayOutput() AclRoleRuleDatabaseArrayOutput {
+	return i.ToAclRoleRuleDatabaseArrayOutputWithContext(context.Background())
+}
+
+func (i AclRoleRuleDatabaseArray) ToAclRoleRuleDatabaseArrayOutputWithContext(ctx context.Context) AclRoleRuleDatabaseArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AclRoleRuleDatabaseArrayOutput)
+}
+
+func (i AclRoleRuleDatabaseArray) ToOutput(ctx context.Context) pulumix.Output[[]AclRoleRuleDatabase] {
+	return pulumix.Output[[]AclRoleRuleDatabase]{
+		OutputState: i.ToAclRoleRuleDatabaseArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
+type AclRoleRuleDatabaseOutput struct{ *pulumi.OutputState }
+
+func (AclRoleRuleDatabaseOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (o AclRoleRuleDatabaseOutput) ToAclRoleRuleDatabaseOutput() AclRoleRuleDatabaseOutput {
+	return o
+}
+
+func (o AclRoleRuleDatabaseOutput) ToAclRoleRuleDatabaseOutputWithContext(ctx context.Context) AclRoleRuleDatabaseOutput {
+	return o
+}
+
+func (o AclRoleRuleDatabaseOutput) ToOutput(ctx context.Context) pulumix.Output[AclRoleRuleDatabase] {
+	return pulumix.Output[AclRoleRuleDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
+// ID of the database to which the Rule should apply.
+func (o AclRoleRuleDatabaseOutput) Database() pulumi.IntOutput {
+	return o.ApplyT(func(v AclRoleRuleDatabase) int { return v.Database }).(pulumi.IntOutput)
+}
+
+// For databases in Active/Active subscriptions only, the regions to which the Rule should apply.
+func (o AclRoleRuleDatabaseOutput) Regions() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v AclRoleRuleDatabase) []string { return v.Regions }).(pulumi.StringArrayOutput)
+}
+
+// ID of the subscription containing the database.
+func (o AclRoleRuleDatabaseOutput) Subscription() pulumi.IntOutput {
+	return o.ApplyT(func(v AclRoleRuleDatabase) int { return v.Subscription }).(pulumi.IntOutput)
+}
+
+type AclRoleRuleDatabaseArrayOutput struct{ *pulumi.OutputState }
+
+func (AclRoleRuleDatabaseArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (o AclRoleRuleDatabaseArrayOutput) ToAclRoleRuleDatabaseArrayOutput() AclRoleRuleDatabaseArrayOutput {
+	return o
+}
+
+func (o AclRoleRuleDatabaseArrayOutput) ToAclRoleRuleDatabaseArrayOutputWithContext(ctx context.Context) AclRoleRuleDatabaseArrayOutput {
+	return o
+}
+
+func (o AclRoleRuleDatabaseArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]AclRoleRuleDatabase] {
+	return pulumix.Output[[]AclRoleRuleDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o AclRoleRuleDatabaseArrayOutput) Index(i pulumi.IntInput) AclRoleRuleDatabaseOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AclRoleRuleDatabase {
+		return vs[0].([]AclRoleRuleDatabase)[vs[1].(int)]
+	}).(AclRoleRuleDatabaseOutput)
+}
 
 type ActiveActiveSubscriptionCreationPlan struct {
 	// Maximum memory usage that will be used for your largest planned database, including replication and other overhead
@@ -47,6 +320,12 @@ func (i ActiveActiveSubscriptionCreationPlanArgs) ToActiveActiveSubscriptionCrea
 
 func (i ActiveActiveSubscriptionCreationPlanArgs) ToActiveActiveSubscriptionCreationPlanOutputWithContext(ctx context.Context) ActiveActiveSubscriptionCreationPlanOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionCreationPlanOutput)
+}
+
+func (i ActiveActiveSubscriptionCreationPlanArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionCreationPlan] {
+	return pulumix.Output[ActiveActiveSubscriptionCreationPlan]{
+		OutputState: i.ToActiveActiveSubscriptionCreationPlanOutputWithContext(ctx).OutputState,
+	}
 }
 
 func (i ActiveActiveSubscriptionCreationPlanArgs) ToActiveActiveSubscriptionCreationPlanPtrOutput() ActiveActiveSubscriptionCreationPlanPtrOutput {
@@ -90,6 +369,12 @@ func (i *activeActiveSubscriptionCreationPlanPtrType) ToActiveActiveSubscription
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionCreationPlanPtrOutput)
 }
 
+func (i *activeActiveSubscriptionCreationPlanPtrType) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionCreationPlan] {
+	return pulumix.Output[*ActiveActiveSubscriptionCreationPlan]{
+		OutputState: i.ToActiveActiveSubscriptionCreationPlanPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionCreationPlanOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionCreationPlanOutput) ElementType() reflect.Type {
@@ -112,6 +397,12 @@ func (o ActiveActiveSubscriptionCreationPlanOutput) ToActiveActiveSubscriptionCr
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v ActiveActiveSubscriptionCreationPlan) *ActiveActiveSubscriptionCreationPlan {
 		return &v
 	}).(ActiveActiveSubscriptionCreationPlanPtrOutput)
+}
+
+func (o ActiveActiveSubscriptionCreationPlanOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionCreationPlan] {
+	return pulumix.Output[ActiveActiveSubscriptionCreationPlan]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Maximum memory usage that will be used for your largest planned database, including replication and other overhead
@@ -142,6 +433,12 @@ func (o ActiveActiveSubscriptionCreationPlanPtrOutput) ToActiveActiveSubscriptio
 
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) ToActiveActiveSubscriptionCreationPlanPtrOutputWithContext(ctx context.Context) ActiveActiveSubscriptionCreationPlanPtrOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionCreationPlanPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionCreationPlan] {
+	return pulumix.Output[*ActiveActiveSubscriptionCreationPlan]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionCreationPlanPtrOutput) Elem() ActiveActiveSubscriptionCreationPlanOutput {
@@ -187,6 +484,8 @@ type ActiveActiveSubscriptionCreationPlanRegion struct {
 	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
 	// Throughput measurement for an active-active subscription
+	//
+	// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 	ReadOperationsPerSecond int `pulumi:"readOperationsPerSecond"`
 	// Deployment region as defined by cloud provider
 	Region string `pulumi:"region"`
@@ -209,6 +508,8 @@ type ActiveActiveSubscriptionCreationPlanRegionArgs struct {
 	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
 	// Throughput measurement for an active-active subscription
+	//
+	// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 	ReadOperationsPerSecond pulumi.IntInput `pulumi:"readOperationsPerSecond"`
 	// Deployment region as defined by cloud provider
 	Region pulumi.StringInput `pulumi:"region"`
@@ -226,6 +527,12 @@ func (i ActiveActiveSubscriptionCreationPlanRegionArgs) ToActiveActiveSubscripti
 
 func (i ActiveActiveSubscriptionCreationPlanRegionArgs) ToActiveActiveSubscriptionCreationPlanRegionOutputWithContext(ctx context.Context) ActiveActiveSubscriptionCreationPlanRegionOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionCreationPlanRegionOutput)
+}
+
+func (i ActiveActiveSubscriptionCreationPlanRegionArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionCreationPlanRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionCreationPlanRegion]{
+		OutputState: i.ToActiveActiveSubscriptionCreationPlanRegionOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionCreationPlanRegionArrayInput is an input type that accepts ActiveActiveSubscriptionCreationPlanRegionArray and ActiveActiveSubscriptionCreationPlanRegionArrayOutput values.
@@ -253,6 +560,12 @@ func (i ActiveActiveSubscriptionCreationPlanRegionArray) ToActiveActiveSubscript
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionCreationPlanRegionArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionCreationPlanRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionCreationPlanRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionCreationPlanRegion]{
+		OutputState: i.ToActiveActiveSubscriptionCreationPlanRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionCreationPlanRegionOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionCreationPlanRegionOutput) ElementType() reflect.Type {
@@ -267,12 +580,20 @@ func (o ActiveActiveSubscriptionCreationPlanRegionOutput) ToActiveActiveSubscrip
 	return o
 }
 
+func (o ActiveActiveSubscriptionCreationPlanRegionOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionCreationPlanRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionCreationPlanRegion]{
+		OutputState: o.OutputState,
+	}
+}
+
 // Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
 // Throughput measurement for an active-active subscription
+//
+// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 func (o ActiveActiveSubscriptionCreationPlanRegionOutput) ReadOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionCreationPlanRegion) int { return v.ReadOperationsPerSecond }).(pulumi.IntOutput)
 }
@@ -301,6 +622,12 @@ func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) ToActiveActiveSub
 	return o
 }
 
+func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionCreationPlanRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionCreationPlanRegion]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionCreationPlanRegionOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ActiveActiveSubscriptionCreationPlanRegion {
 		return vs[0].([]ActiveActiveSubscriptionCreationPlanRegion)[vs[1].(int)]
@@ -308,7 +635,7 @@ func (o ActiveActiveSubscriptionCreationPlanRegionArrayOutput) Index(i pulumi.In
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlert struct {
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name string `pulumi:"name"`
 	// Alert value
 	Value int `pulumi:"value"`
@@ -326,7 +653,7 @@ type ActiveActiveSubscriptionDatabaseGlobalAlertInput interface {
 }
 
 type ActiveActiveSubscriptionDatabaseGlobalAlertArgs struct {
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name pulumi.StringInput `pulumi:"name"`
 	// Alert value
 	Value pulumi.IntInput `pulumi:"value"`
@@ -342,6 +669,12 @@ func (i ActiveActiveSubscriptionDatabaseGlobalAlertArgs) ToActiveActiveSubscript
 
 func (i ActiveActiveSubscriptionDatabaseGlobalAlertArgs) ToActiveActiveSubscriptionDatabaseGlobalAlertOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseGlobalAlertOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseGlobalAlertOutput)
+}
+
+func (i ActiveActiveSubscriptionDatabaseGlobalAlertArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseGlobalAlert] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseGlobalAlert]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseGlobalAlertOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionDatabaseGlobalAlertArrayInput is an input type that accepts ActiveActiveSubscriptionDatabaseGlobalAlertArray and ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput values.
@@ -369,6 +702,12 @@ func (i ActiveActiveSubscriptionDatabaseGlobalAlertArray) ToActiveActiveSubscrip
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionDatabaseGlobalAlertArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseGlobalAlert] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseGlobalAlert]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseGlobalAlertArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionDatabaseGlobalAlertOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionDatabaseGlobalAlertOutput) ElementType() reflect.Type {
@@ -383,7 +722,13 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) ToActiveActiveSubscri
 	return o
 }
 
-// A meaningful name to identify the database
+func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseGlobalAlert] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseGlobalAlert]{
+		OutputState: o.OutputState,
+	}
+}
+
+// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionDatabaseGlobalAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseGlobalAlert) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -407,6 +752,12 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) ToActiveActiveSu
 	return o
 }
 
+func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseGlobalAlert] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseGlobalAlert]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionDatabaseGlobalAlertOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ActiveActiveSubscriptionDatabaseGlobalAlert {
 		return vs[0].([]ActiveActiveSubscriptionDatabaseGlobalAlert)[vs[1].(int)]
@@ -424,6 +775,8 @@ type ActiveActiveSubscriptionDatabaseOverrideRegion struct {
 	OverrideGlobalPassword *string `pulumi:"overrideGlobalPassword"`
 	// List of regional instance of an Active-Active database source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'] )
 	OverrideGlobalSourceIps []string `pulumi:"overrideGlobalSourceIps"`
+	// Specifies the backup options for the database in this region, documented below
+	RemoteBackup *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup `pulumi:"remoteBackup"`
 }
 
 // ActiveActiveSubscriptionDatabaseOverrideRegionInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionArgs and ActiveActiveSubscriptionDatabaseOverrideRegionOutput values.
@@ -448,6 +801,8 @@ type ActiveActiveSubscriptionDatabaseOverrideRegionArgs struct {
 	OverrideGlobalPassword pulumi.StringPtrInput `pulumi:"overrideGlobalPassword"`
 	// List of regional instance of an Active-Active database source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'] )
 	OverrideGlobalSourceIps pulumi.StringArrayInput `pulumi:"overrideGlobalSourceIps"`
+	// Specifies the backup options for the database in this region, documented below
+	RemoteBackup ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput `pulumi:"remoteBackup"`
 }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionArgs) ElementType() reflect.Type {
@@ -460,6 +815,12 @@ func (i ActiveActiveSubscriptionDatabaseOverrideRegionArgs) ToActiveActiveSubscr
 
 func (i ActiveActiveSubscriptionDatabaseOverrideRegionArgs) ToActiveActiveSubscriptionDatabaseOverrideRegionOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionOutput)
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegion]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionArray and ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput values.
@@ -487,6 +848,12 @@ func (i ActiveActiveSubscriptionDatabaseOverrideRegionArray) ToActiveActiveSubsc
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegion]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionDatabaseOverrideRegionOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ElementType() reflect.Type {
@@ -499,6 +866,12 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToActiveActiveSubs
 
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Region name.
@@ -528,6 +901,13 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) OverrideGlobalSour
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) []string { return v.OverrideGlobalSourceIps }).(pulumi.StringArrayOutput)
 }
 
+// Specifies the backup options for the database in this region, documented below
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) RemoteBackup() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup {
+		return v.RemoteBackup
+	}).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput)
+}
+
 type ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) ElementType() reflect.Type {
@@ -540,6 +920,12 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) ToActiveActiv
 
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionDatabaseOverrideRegionOutput {
@@ -585,6 +971,12 @@ func (i ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs) T
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput)
 }
 
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray and ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput` via:
 //
@@ -610,6 +1002,12 @@ func (i ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray) 
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput) ElementType() reflect.Type {
@@ -622,6 +1020,12 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput)
 
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Alert name
@@ -648,10 +1052,234 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOu
 	return o
 }
 
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert] {
+	return pulumix.Output[[]ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert {
 		return vs[0].([]ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlert)[vs[1].(int)]
 	}).(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput)
+}
+
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup struct {
+	// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+	Interval string `pulumi:"interval"`
+	// Defines a URI representing the backup storage location
+	StoragePath string `pulumi:"storagePath"`
+	// Defines the provider of the storage location
+	StorageType string `pulumi:"storageType"`
+	// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+	TimeUtc *string `pulumi:"timeUtc"`
+}
+
+// ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs and ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput values.
+// You can construct a concrete instance of `ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupInput` via:
+//
+//	ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs{...}
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupInput interface {
+	pulumi.Input
+
+	ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput
+	ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutputWithContext(context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput
+}
+
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs struct {
+	// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+	Interval pulumi.StringInput `pulumi:"interval"`
+	// Defines a URI representing the backup storage location
+	StoragePath pulumi.StringInput `pulumi:"storagePath"`
+	// Defines the provider of the storage location
+	StorageType pulumi.StringInput `pulumi:"storageType"`
+	// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+	TimeUtc pulumi.StringPtrInput `pulumi:"timeUtc"`
+}
+
+func (ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup)(nil)).Elem()
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput {
+	return i.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutputWithContext(context.Background())
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput)
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutputWithContext(ctx).OutputState,
+	}
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return i.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (i ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput).ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx)
+}
+
+// ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput is an input type that accepts ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs, ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtr and ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput values.
+// You can construct a concrete instance of `ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput` via:
+//
+//	        ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs{...}
+//
+//	or:
+//
+//	        nil
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput interface {
+	pulumi.Input
+
+	ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput
+	ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput
+}
+
+type activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs
+
+func ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtr(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput {
+	return (*activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType)(v)
+}
+
+func (*activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup)(nil)).Elem()
+}
+
+func (i *activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return i.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (i *activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput)
+}
+
+func (i *activeActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrType) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup] {
+	return pulumix.Output[*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput struct{ *pulumi.OutputState }
+
+func (ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup)(nil)).Elem()
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput {
+	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput {
+	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return o.ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup {
+		return &v
+	}).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput)
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup] {
+	return pulumix.Output[ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) Interval() pulumi.StringOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) string { return v.Interval }).(pulumi.StringOutput)
+}
+
+// Defines a URI representing the backup storage location
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) StoragePath() pulumi.StringOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) string { return v.StoragePath }).(pulumi.StringOutput)
+}
+
+// Defines the provider of the storage location
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) StorageType() pulumi.StringOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) string { return v.StorageType }).(pulumi.StringOutput)
+}
+
+// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput) TimeUtc() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *string { return v.TimeUtc }).(pulumi.StringPtrOutput)
+}
+
+type ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput struct{ *pulumi.OutputState }
+
+func (ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup)(nil)).Elem()
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) ToActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput {
+	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup] {
+	return pulumix.Output[*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) Elem() ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup {
+		if v != nil {
+			return *v
+		}
+		var ret ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup
+		return ret
+	}).(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput)
+}
+
+// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) Interval() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.Interval
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines a URI representing the backup storage location
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) StoragePath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.StoragePath
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines the provider of the storage location
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) StorageType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.StorageType
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput) TimeUtc() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return v.TimeUtc
+	}).(pulumi.StringPtrOutput)
 }
 
 type ActiveActiveSubscriptionRegionsRegion struct {
@@ -707,6 +1335,12 @@ func (i ActiveActiveSubscriptionRegionsRegionArgs) ToActiveActiveSubscriptionReg
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsRegionOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsRegionArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionRegionsRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionRegionsRegion]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsRegionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionRegionsRegionArrayInput is an input type that accepts ActiveActiveSubscriptionRegionsRegionArray and ActiveActiveSubscriptionRegionsRegionArrayOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionRegionsRegionArrayInput` via:
 //
@@ -732,6 +1366,12 @@ func (i ActiveActiveSubscriptionRegionsRegionArray) ToActiveActiveSubscriptionRe
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsRegionArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionRegionsRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionRegionsRegion]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionRegionsRegionOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionRegionsRegionOutput) ElementType() reflect.Type {
@@ -744,6 +1384,12 @@ func (o ActiveActiveSubscriptionRegionsRegionOutput) ToActiveActiveSubscriptionR
 
 func (o ActiveActiveSubscriptionRegionsRegionOutput) ToActiveActiveSubscriptionRegionsRegionOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsRegionOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionRegionsRegionOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionRegionsRegion] {
+	return pulumix.Output[ActiveActiveSubscriptionRegionsRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A block defining the write and read operations in the region, per database, documented below
@@ -790,6 +1436,12 @@ func (o ActiveActiveSubscriptionRegionsRegionArrayOutput) ToActiveActiveSubscrip
 
 func (o ActiveActiveSubscriptionRegionsRegionArrayOutput) ToActiveActiveSubscriptionRegionsRegionArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsRegionArrayOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionRegionsRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionRegionsRegion] {
+	return pulumix.Output[[]ActiveActiveSubscriptionRegionsRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionRegionsRegionArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionRegionsRegionOutput {
@@ -843,6 +1495,12 @@ func (i ActiveActiveSubscriptionRegionsRegionDatabaseArgs) ToActiveActiveSubscri
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsRegionDatabaseOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsRegionDatabaseArgs) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionRegionsRegionDatabase] {
+	return pulumix.Output[ActiveActiveSubscriptionRegionsRegionDatabase]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsRegionDatabaseOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionRegionsRegionDatabaseArrayInput is an input type that accepts ActiveActiveSubscriptionRegionsRegionDatabaseArray and ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionRegionsRegionDatabaseArrayInput` via:
 //
@@ -868,6 +1526,12 @@ func (i ActiveActiveSubscriptionRegionsRegionDatabaseArray) ToActiveActiveSubscr
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsRegionDatabaseArray) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionRegionsRegionDatabase] {
+	return pulumix.Output[[]ActiveActiveSubscriptionRegionsRegionDatabase]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsRegionDatabaseArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionRegionsRegionDatabaseOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionRegionsRegionDatabaseOutput) ElementType() reflect.Type {
@@ -880,6 +1544,12 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) ToActiveActiveSubsc
 
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) ToActiveActiveSubscriptionRegionsRegionDatabaseOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsRegionDatabaseOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) ToOutput(ctx context.Context) pulumix.Output[ActiveActiveSubscriptionRegionsRegionDatabase] {
+	return pulumix.Output[ActiveActiveSubscriptionRegionsRegionDatabase]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Database ID belonging to the subscription
@@ -916,6 +1586,12 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) ToActiveActive
 	return o
 }
 
+func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]ActiveActiveSubscriptionRegionsRegionDatabase] {
+	return pulumix.Output[[]ActiveActiveSubscriptionRegionsRegionDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionRegionsRegionDatabaseOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ActiveActiveSubscriptionRegionsRegionDatabase {
 		return vs[0].([]ActiveActiveSubscriptionRegionsRegionDatabase)[vs[1].(int)]
@@ -924,6 +1600,8 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) Index(i pulumi
 
 type SubscriptionAllowlist struct {
 	// Set of CIDR ranges that are allowed to access the databases associated with this subscription
+	//
+	// > **Note:** `allowlist` is only available when you run on your own cloud account, and not one that Redis provided (i.e `cloudAccountId` != 1)
 	Cidrs []string `pulumi:"cidrs"`
 	// Set of security groups that are allowed to access the databases associated with this subscription
 	SecurityGroupIds []string `pulumi:"securityGroupIds"`
@@ -942,6 +1620,8 @@ type SubscriptionAllowlistInput interface {
 
 type SubscriptionAllowlistArgs struct {
 	// Set of CIDR ranges that are allowed to access the databases associated with this subscription
+	//
+	// > **Note:** `allowlist` is only available when you run on your own cloud account, and not one that Redis provided (i.e `cloudAccountId` != 1)
 	Cidrs pulumi.StringArrayInput `pulumi:"cidrs"`
 	// Set of security groups that are allowed to access the databases associated with this subscription
 	SecurityGroupIds pulumi.StringArrayInput `pulumi:"securityGroupIds"`
@@ -957,6 +1637,12 @@ func (i SubscriptionAllowlistArgs) ToSubscriptionAllowlistOutput() SubscriptionA
 
 func (i SubscriptionAllowlistArgs) ToSubscriptionAllowlistOutputWithContext(ctx context.Context) SubscriptionAllowlistOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionAllowlistOutput)
+}
+
+func (i SubscriptionAllowlistArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionAllowlist] {
+	return pulumix.Output[SubscriptionAllowlist]{
+		OutputState: i.ToSubscriptionAllowlistOutputWithContext(ctx).OutputState,
+	}
 }
 
 func (i SubscriptionAllowlistArgs) ToSubscriptionAllowlistPtrOutput() SubscriptionAllowlistPtrOutput {
@@ -1000,6 +1686,12 @@ func (i *subscriptionAllowlistPtrType) ToSubscriptionAllowlistPtrOutputWithConte
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionAllowlistPtrOutput)
 }
 
+func (i *subscriptionAllowlistPtrType) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionAllowlist] {
+	return pulumix.Output[*SubscriptionAllowlist]{
+		OutputState: i.ToSubscriptionAllowlistPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionAllowlistOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionAllowlistOutput) ElementType() reflect.Type {
@@ -1024,7 +1716,15 @@ func (o SubscriptionAllowlistOutput) ToSubscriptionAllowlistPtrOutputWithContext
 	}).(SubscriptionAllowlistPtrOutput)
 }
 
+func (o SubscriptionAllowlistOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionAllowlist] {
+	return pulumix.Output[SubscriptionAllowlist]{
+		OutputState: o.OutputState,
+	}
+}
+
 // Set of CIDR ranges that are allowed to access the databases associated with this subscription
+//
+// > **Note:** `allowlist` is only available when you run on your own cloud account, and not one that Redis provided (i.e `cloudAccountId` != 1)
 func (o SubscriptionAllowlistOutput) Cidrs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionAllowlist) []string { return v.Cidrs }).(pulumi.StringArrayOutput)
 }
@@ -1048,6 +1748,12 @@ func (o SubscriptionAllowlistPtrOutput) ToSubscriptionAllowlistPtrOutputWithCont
 	return o
 }
 
+func (o SubscriptionAllowlistPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionAllowlist] {
+	return pulumix.Output[*SubscriptionAllowlist]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionAllowlistPtrOutput) Elem() SubscriptionAllowlistOutput {
 	return o.ApplyT(func(v *SubscriptionAllowlist) SubscriptionAllowlist {
 		if v != nil {
@@ -1059,6 +1765,8 @@ func (o SubscriptionAllowlistPtrOutput) Elem() SubscriptionAllowlistOutput {
 }
 
 // Set of CIDR ranges that are allowed to access the databases associated with this subscription
+//
+// > **Note:** `allowlist` is only available when you run on your own cloud account, and not one that Redis provided (i.e `cloudAccountId` != 1)
 func (o SubscriptionAllowlistPtrOutput) Cidrs() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionAllowlist) []string {
 		if v == nil {
@@ -1079,13 +1787,13 @@ func (o SubscriptionAllowlistPtrOutput) SecurityGroupIds() pulumi.StringArrayOut
 }
 
 type SubscriptionCloudProvider struct {
-	// Cloud account identifier. Default: Redis Labs internal cloud account
+	// Cloud account identifier. Default: Redis Labs internal cloud account. **Modifying this attribute will force creation of a new resource.**
 	// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
 	// only with Redis Labs internal cloud account
 	CloudAccountId *string `pulumi:"cloudAccountId"`
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	Provider *string `pulumi:"provider"`
-	// A region object, documented below
+	// A region object, documented below. **Modifying this attribute will force creation of a new resource.**
 	Regions []SubscriptionCloudProviderRegion `pulumi:"regions"`
 }
 
@@ -1101,13 +1809,13 @@ type SubscriptionCloudProviderInput interface {
 }
 
 type SubscriptionCloudProviderArgs struct {
-	// Cloud account identifier. Default: Redis Labs internal cloud account
+	// Cloud account identifier. Default: Redis Labs internal cloud account. **Modifying this attribute will force creation of a new resource.**
 	// (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
 	// only with Redis Labs internal cloud account
 	CloudAccountId pulumi.StringPtrInput `pulumi:"cloudAccountId"`
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	Provider pulumi.StringPtrInput `pulumi:"provider"`
-	// A region object, documented below
+	// A region object, documented below. **Modifying this attribute will force creation of a new resource.**
 	Regions SubscriptionCloudProviderRegionArrayInput `pulumi:"regions"`
 }
 
@@ -1121,6 +1829,12 @@ func (i SubscriptionCloudProviderArgs) ToSubscriptionCloudProviderOutput() Subsc
 
 func (i SubscriptionCloudProviderArgs) ToSubscriptionCloudProviderOutputWithContext(ctx context.Context) SubscriptionCloudProviderOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderOutput)
+}
+
+func (i SubscriptionCloudProviderArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProvider] {
+	return pulumix.Output[SubscriptionCloudProvider]{
+		OutputState: i.ToSubscriptionCloudProviderOutputWithContext(ctx).OutputState,
+	}
 }
 
 func (i SubscriptionCloudProviderArgs) ToSubscriptionCloudProviderPtrOutput() SubscriptionCloudProviderPtrOutput {
@@ -1164,6 +1878,12 @@ func (i *subscriptionCloudProviderPtrType) ToSubscriptionCloudProviderPtrOutputW
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderPtrOutput)
 }
 
+func (i *subscriptionCloudProviderPtrType) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionCloudProvider] {
+	return pulumix.Output[*SubscriptionCloudProvider]{
+		OutputState: i.ToSubscriptionCloudProviderPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionCloudProviderOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionCloudProviderOutput) ElementType() reflect.Type {
@@ -1188,19 +1908,25 @@ func (o SubscriptionCloudProviderOutput) ToSubscriptionCloudProviderPtrOutputWit
 	}).(SubscriptionCloudProviderPtrOutput)
 }
 
-// Cloud account identifier. Default: Redis Labs internal cloud account
+func (o SubscriptionCloudProviderOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProvider] {
+	return pulumix.Output[SubscriptionCloudProvider]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Cloud account identifier. Default: Redis Labs internal cloud account. **Modifying this attribute will force creation of a new resource.**
 // (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
 // only with Redis Labs internal cloud account
 func (o SubscriptionCloudProviderOutput) CloudAccountId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) *string { return v.CloudAccountId }).(pulumi.StringPtrOutput)
 }
 
-// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderOutput) Provider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) *string { return v.Provider }).(pulumi.StringPtrOutput)
 }
 
-// A region object, documented below
+// A region object, documented below. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProvider) []SubscriptionCloudProviderRegion { return v.Regions }).(SubscriptionCloudProviderRegionArrayOutput)
 }
@@ -1219,6 +1945,12 @@ func (o SubscriptionCloudProviderPtrOutput) ToSubscriptionCloudProviderPtrOutput
 	return o
 }
 
+func (o SubscriptionCloudProviderPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionCloudProvider] {
+	return pulumix.Output[*SubscriptionCloudProvider]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionCloudProviderPtrOutput) Elem() SubscriptionCloudProviderOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) SubscriptionCloudProvider {
 		if v != nil {
@@ -1229,7 +1961,7 @@ func (o SubscriptionCloudProviderPtrOutput) Elem() SubscriptionCloudProviderOutp
 	}).(SubscriptionCloudProviderOutput)
 }
 
-// Cloud account identifier. Default: Redis Labs internal cloud account
+// Cloud account identifier. Default: Redis Labs internal cloud account. **Modifying this attribute will force creation of a new resource.**
 // (using Cloud Account ID = 1 implies using Redis Labs internal cloud account). Note that a GCP subscription can be created
 // only with Redis Labs internal cloud account
 func (o SubscriptionCloudProviderPtrOutput) CloudAccountId() pulumi.StringPtrOutput {
@@ -1241,7 +1973,7 @@ func (o SubscriptionCloudProviderPtrOutput) CloudAccountId() pulumi.StringPtrOut
 	}).(pulumi.StringPtrOutput)
 }
 
-// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderPtrOutput) Provider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) *string {
 		if v == nil {
@@ -1251,7 +1983,7 @@ func (o SubscriptionCloudProviderPtrOutput) Provider() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// A region object, documented below
+// A region object, documented below. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderPtrOutput) Regions() SubscriptionCloudProviderRegionArrayOutput {
 	return o.ApplyT(func(v *SubscriptionCloudProvider) []SubscriptionCloudProviderRegion {
 		if v == nil {
@@ -1262,19 +1994,18 @@ func (o SubscriptionCloudProviderPtrOutput) Regions() SubscriptionCloudProviderR
 }
 
 type SubscriptionCloudProviderRegion struct {
-	// Support deployment on multiple availability zones within the selected region. Default: ‘false’
+	// Support deployment on multiple availability zones within the selected region. Default: ‘false’. **Modifying this attribute will force creation of a new resource.**
 	MultipleAvailabilityZones *bool `pulumi:"multipleAvailabilityZones"`
-	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 	NetworkingDeploymentCidr string `pulumi:"networkingDeploymentCidr"`
 	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
 	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-	// within the hosting account.
+	// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 	NetworkingVpcId *string `pulumi:"networkingVpcId"`
 	// List of generated network configuration
-	Networks []SubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
-	// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
-	PreferredAvailabilityZones []string `pulumi:"preferredAvailabilityZones"`
-	// Deployment region as defined by cloud provider
+	Networks                   []SubscriptionCloudProviderRegionNetwork `pulumi:"networks"`
+	PreferredAvailabilityZones []string                                 `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider. **Modifying this attribute will force creation of a new resource.**
 	Region string `pulumi:"region"`
 }
 
@@ -1290,19 +2021,18 @@ type SubscriptionCloudProviderRegionInput interface {
 }
 
 type SubscriptionCloudProviderRegionArgs struct {
-	// Support deployment on multiple availability zones within the selected region. Default: ‘false’
+	// Support deployment on multiple availability zones within the selected region. Default: ‘false’. **Modifying this attribute will force creation of a new resource.**
 	MultipleAvailabilityZones pulumi.BoolPtrInput `pulumi:"multipleAvailabilityZones"`
-	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 	NetworkingDeploymentCidr pulumi.StringInput `pulumi:"networkingDeploymentCidr"`
 	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
 	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-	// within the hosting account.
+	// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 	NetworkingVpcId pulumi.StringPtrInput `pulumi:"networkingVpcId"`
 	// List of generated network configuration
-	Networks SubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
-	// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
-	PreferredAvailabilityZones pulumi.StringArrayInput `pulumi:"preferredAvailabilityZones"`
-	// Deployment region as defined by cloud provider
+	Networks                   SubscriptionCloudProviderRegionNetworkArrayInput `pulumi:"networks"`
+	PreferredAvailabilityZones pulumi.StringArrayInput                          `pulumi:"preferredAvailabilityZones"`
+	// Deployment region as defined by cloud provider. **Modifying this attribute will force creation of a new resource.**
 	Region pulumi.StringInput `pulumi:"region"`
 }
 
@@ -1316,6 +2046,12 @@ func (i SubscriptionCloudProviderRegionArgs) ToSubscriptionCloudProviderRegionOu
 
 func (i SubscriptionCloudProviderRegionArgs) ToSubscriptionCloudProviderRegionOutputWithContext(ctx context.Context) SubscriptionCloudProviderRegionOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderRegionOutput)
+}
+
+func (i SubscriptionCloudProviderRegionArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProviderRegion] {
+	return pulumix.Output[SubscriptionCloudProviderRegion]{
+		OutputState: i.ToSubscriptionCloudProviderRegionOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionCloudProviderRegionArrayInput is an input type that accepts SubscriptionCloudProviderRegionArray and SubscriptionCloudProviderRegionArrayOutput values.
@@ -1343,6 +2079,12 @@ func (i SubscriptionCloudProviderRegionArray) ToSubscriptionCloudProviderRegionA
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderRegionArrayOutput)
 }
 
+func (i SubscriptionCloudProviderRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionCloudProviderRegion] {
+	return pulumix.Output[[]SubscriptionCloudProviderRegion]{
+		OutputState: i.ToSubscriptionCloudProviderRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionCloudProviderRegionOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionCloudProviderRegionOutput) ElementType() reflect.Type {
@@ -1357,19 +2099,25 @@ func (o SubscriptionCloudProviderRegionOutput) ToSubscriptionCloudProviderRegion
 	return o
 }
 
-// Support deployment on multiple availability zones within the selected region. Default: ‘false’
+func (o SubscriptionCloudProviderRegionOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProviderRegion] {
+	return pulumix.Output[SubscriptionCloudProviderRegion]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Support deployment on multiple availability zones within the selected region. Default: ‘false’. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionOutput) MultipleAvailabilityZones() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) *bool { return v.MultipleAvailabilityZones }).(pulumi.BoolPtrOutput)
 }
 
-// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionOutput) NetworkingDeploymentCidr() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) string { return v.NetworkingDeploymentCidr }).(pulumi.StringOutput)
 }
 
 // Either an existing VPC Id (already exists in the specific region) or create a new VPC
 // (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-// within the hosting account.
+// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionOutput) NetworkingVpcId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) *string { return v.NetworkingVpcId }).(pulumi.StringPtrOutput)
 }
@@ -1379,12 +2127,11 @@ func (o SubscriptionCloudProviderRegionOutput) Networks() SubscriptionCloudProvi
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) []SubscriptionCloudProviderRegionNetwork { return v.Networks }).(SubscriptionCloudProviderRegionNetworkArrayOutput)
 }
 
-// Availability zones deployment preferences (for the selected provider & region). If multipleAvailabilityZones is set to 'true', select three availability zones from the list. If you don't want to specify preferred avaialbility zones, set this attribute to an empty list ('[]').
 func (o SubscriptionCloudProviderRegionOutput) PreferredAvailabilityZones() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) []string { return v.PreferredAvailabilityZones }).(pulumi.StringArrayOutput)
 }
 
-// Deployment region as defined by cloud provider
+// Deployment region as defined by cloud provider. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionOutput) Region() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegion) string { return v.Region }).(pulumi.StringOutput)
 }
@@ -1403,6 +2150,12 @@ func (o SubscriptionCloudProviderRegionArrayOutput) ToSubscriptionCloudProviderR
 	return o
 }
 
+func (o SubscriptionCloudProviderRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionCloudProviderRegion] {
+	return pulumix.Output[[]SubscriptionCloudProviderRegion]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionCloudProviderRegionArrayOutput) Index(i pulumi.IntInput) SubscriptionCloudProviderRegionOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) SubscriptionCloudProviderRegion {
 		return vs[0].([]SubscriptionCloudProviderRegion)[vs[1].(int)]
@@ -1410,13 +2163,13 @@ func (o SubscriptionCloudProviderRegionArrayOutput) Index(i pulumi.IntInput) Sub
 }
 
 type SubscriptionCloudProviderRegionNetwork struct {
-	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 	NetworkingDeploymentCidr *string `pulumi:"networkingDeploymentCidr"`
 	// The subnet that the subscription deploys into
 	NetworkingSubnetId *string `pulumi:"networkingSubnetId"`
 	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
 	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-	// within the hosting account.
+	// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 	NetworkingVpcId *string `pulumi:"networkingVpcId"`
 }
 
@@ -1432,13 +2185,13 @@ type SubscriptionCloudProviderRegionNetworkInput interface {
 }
 
 type SubscriptionCloudProviderRegionNetworkArgs struct {
-	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+	// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 	NetworkingDeploymentCidr pulumi.StringPtrInput `pulumi:"networkingDeploymentCidr"`
 	// The subnet that the subscription deploys into
 	NetworkingSubnetId pulumi.StringPtrInput `pulumi:"networkingSubnetId"`
 	// Either an existing VPC Id (already exists in the specific region) or create a new VPC
 	// (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-	// within the hosting account.
+	// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 	NetworkingVpcId pulumi.StringPtrInput `pulumi:"networkingVpcId"`
 }
 
@@ -1452,6 +2205,12 @@ func (i SubscriptionCloudProviderRegionNetworkArgs) ToSubscriptionCloudProviderR
 
 func (i SubscriptionCloudProviderRegionNetworkArgs) ToSubscriptionCloudProviderRegionNetworkOutputWithContext(ctx context.Context) SubscriptionCloudProviderRegionNetworkOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderRegionNetworkOutput)
+}
+
+func (i SubscriptionCloudProviderRegionNetworkArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[SubscriptionCloudProviderRegionNetwork]{
+		OutputState: i.ToSubscriptionCloudProviderRegionNetworkOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionCloudProviderRegionNetworkArrayInput is an input type that accepts SubscriptionCloudProviderRegionNetworkArray and SubscriptionCloudProviderRegionNetworkArrayOutput values.
@@ -1479,6 +2238,12 @@ func (i SubscriptionCloudProviderRegionNetworkArray) ToSubscriptionCloudProvider
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCloudProviderRegionNetworkArrayOutput)
 }
 
+func (i SubscriptionCloudProviderRegionNetworkArray) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[[]SubscriptionCloudProviderRegionNetwork]{
+		OutputState: i.ToSubscriptionCloudProviderRegionNetworkArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionCloudProviderRegionNetworkOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionCloudProviderRegionNetworkOutput) ElementType() reflect.Type {
@@ -1493,7 +2258,13 @@ func (o SubscriptionCloudProviderRegionNetworkOutput) ToSubscriptionCloudProvide
 	return o
 }
 
-// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24)
+func (o SubscriptionCloudProviderRegionNetworkOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[SubscriptionCloudProviderRegionNetwork]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Deployment CIDR mask. The total number of bits must be 24 (x.x.x.x/24). **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingDeploymentCidr() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegionNetwork) *string { return v.NetworkingDeploymentCidr }).(pulumi.StringPtrOutput)
 }
@@ -1505,7 +2276,7 @@ func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingSubnetId() pulum
 
 // Either an existing VPC Id (already exists in the specific region) or create a new VPC
 // (if no VPC is specified). VPC Identifier must be in a valid format (for example: ‘vpc-0125be68a4986384ad’) and existing
-// within the hosting account.
+// within the hosting account. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionCloudProviderRegionNetworkOutput) NetworkingVpcId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v SubscriptionCloudProviderRegionNetwork) *string { return v.NetworkingVpcId }).(pulumi.StringPtrOutput)
 }
@@ -1524,6 +2295,12 @@ func (o SubscriptionCloudProviderRegionNetworkArrayOutput) ToSubscriptionCloudPr
 	return o
 }
 
+func (o SubscriptionCloudProviderRegionNetworkArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[[]SubscriptionCloudProviderRegionNetwork]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionCloudProviderRegionNetworkArrayOutput) Index(i pulumi.IntInput) SubscriptionCloudProviderRegionNetworkOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) SubscriptionCloudProviderRegionNetwork {
 		return vs[0].([]SubscriptionCloudProviderRegionNetwork)[vs[1].(int)]
@@ -1534,6 +2311,10 @@ type SubscriptionCreationPlan struct {
 	// Relevant only to ram-and-flash clusters
 	// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
 	// be the maximum average item size defined in one of your databases.  Default: 1000
+	//
+	// ~>**Note:** If the number of modules exceeds the `quantity` then additional creation-plan databases will be created with the modules defined in the `modules` block.
+	//
+	// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `memoryStorage`, `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 	AverageItemSizeInBytes *int `pulumi:"averageItemSizeInBytes"`
 	// Maximum memory usage that will be used for your largest planned database.
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
@@ -1542,7 +2323,7 @@ type SubscriptionCreationPlan struct {
 	Modules []string `pulumi:"modules"`
 	// The planned number of databases in the subscription
 	Quantity int `pulumi:"quantity"`
-	// Databases replication. Set to `true` if any of your databases will use replication
+	// Databases replication. Default: ‘true’
 	Replication bool `pulumi:"replication"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -1567,6 +2348,10 @@ type SubscriptionCreationPlanArgs struct {
 	// Relevant only to ram-and-flash clusters
 	// Estimated average size (measured in bytes) of the items stored in the database. The value needs to
 	// be the maximum average item size defined in one of your databases.  Default: 1000
+	//
+	// ~>**Note:** If the number of modules exceeds the `quantity` then additional creation-plan databases will be created with the modules defined in the `modules` block.
+	//
+	// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `memoryStorage`, `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 	AverageItemSizeInBytes pulumi.IntPtrInput `pulumi:"averageItemSizeInBytes"`
 	// Maximum memory usage that will be used for your largest planned database.
 	MemoryLimitInGb pulumi.Float64Input `pulumi:"memoryLimitInGb"`
@@ -1575,7 +2360,7 @@ type SubscriptionCreationPlanArgs struct {
 	Modules pulumi.StringArrayInput `pulumi:"modules"`
 	// The planned number of databases in the subscription
 	Quantity pulumi.IntInput `pulumi:"quantity"`
-	// Databases replication. Set to `true` if any of your databases will use replication
+	// Databases replication. Default: ‘true’
 	Replication pulumi.BoolInput `pulumi:"replication"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput `pulumi:"supportOssClusterApi"`
@@ -1595,6 +2380,12 @@ func (i SubscriptionCreationPlanArgs) ToSubscriptionCreationPlanOutput() Subscri
 
 func (i SubscriptionCreationPlanArgs) ToSubscriptionCreationPlanOutputWithContext(ctx context.Context) SubscriptionCreationPlanOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCreationPlanOutput)
+}
+
+func (i SubscriptionCreationPlanArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCreationPlan] {
+	return pulumix.Output[SubscriptionCreationPlan]{
+		OutputState: i.ToSubscriptionCreationPlanOutputWithContext(ctx).OutputState,
+	}
 }
 
 func (i SubscriptionCreationPlanArgs) ToSubscriptionCreationPlanPtrOutput() SubscriptionCreationPlanPtrOutput {
@@ -1638,6 +2429,12 @@ func (i *subscriptionCreationPlanPtrType) ToSubscriptionCreationPlanPtrOutputWit
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionCreationPlanPtrOutput)
 }
 
+func (i *subscriptionCreationPlanPtrType) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionCreationPlan] {
+	return pulumix.Output[*SubscriptionCreationPlan]{
+		OutputState: i.ToSubscriptionCreationPlanPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionCreationPlanOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionCreationPlanOutput) ElementType() reflect.Type {
@@ -1662,9 +2459,19 @@ func (o SubscriptionCreationPlanOutput) ToSubscriptionCreationPlanPtrOutputWithC
 	}).(SubscriptionCreationPlanPtrOutput)
 }
 
+func (o SubscriptionCreationPlanOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionCreationPlan] {
+	return pulumix.Output[SubscriptionCreationPlan]{
+		OutputState: o.OutputState,
+	}
+}
+
 // Relevant only to ram-and-flash clusters
 // Estimated average size (measured in bytes) of the items stored in the database. The value needs to
 // be the maximum average item size defined in one of your databases.  Default: 1000
+//
+// ~>**Note:** If the number of modules exceeds the `quantity` then additional creation-plan databases will be created with the modules defined in the `modules` block.
+//
+// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `memoryStorage`, `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 func (o SubscriptionCreationPlanOutput) AverageItemSizeInBytes() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) *int { return v.AverageItemSizeInBytes }).(pulumi.IntPtrOutput)
 }
@@ -1685,7 +2492,7 @@ func (o SubscriptionCreationPlanOutput) Quantity() pulumi.IntOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) int { return v.Quantity }).(pulumi.IntOutput)
 }
 
-// Databases replication. Set to `true` if any of your databases will use replication
+// Databases replication. Default: ‘true’
 func (o SubscriptionCreationPlanOutput) Replication() pulumi.BoolOutput {
 	return o.ApplyT(func(v SubscriptionCreationPlan) bool { return v.Replication }).(pulumi.BoolOutput)
 }
@@ -1719,6 +2526,12 @@ func (o SubscriptionCreationPlanPtrOutput) ToSubscriptionCreationPlanPtrOutputWi
 	return o
 }
 
+func (o SubscriptionCreationPlanPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionCreationPlan] {
+	return pulumix.Output[*SubscriptionCreationPlan]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionCreationPlanPtrOutput) Elem() SubscriptionCreationPlanOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) SubscriptionCreationPlan {
 		if v != nil {
@@ -1732,6 +2545,10 @@ func (o SubscriptionCreationPlanPtrOutput) Elem() SubscriptionCreationPlanOutput
 // Relevant only to ram-and-flash clusters
 // Estimated average size (measured in bytes) of the items stored in the database. The value needs to
 // be the maximum average item size defined in one of your databases.  Default: 1000
+//
+// ~>**Note:** If the number of modules exceeds the `quantity` then additional creation-plan databases will be created with the modules defined in the `modules` block.
+//
+// > **Note:** If changes are made to attributes in the subscription which require the subscription to be recreated (such as `memoryStorage`, `cloudProvider` or `paymentMethod`), the creationPlan will need to be defined in order to change these attributes. This is because the creationPlan is always required when a subscription is created.
 func (o SubscriptionCreationPlanPtrOutput) AverageItemSizeInBytes() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *int {
 		if v == nil {
@@ -1772,7 +2589,7 @@ func (o SubscriptionCreationPlanPtrOutput) Quantity() pulumi.IntPtrOutput {
 	}).(pulumi.IntPtrOutput)
 }
 
-// Databases replication. Set to `true` if any of your databases will use replication
+// Databases replication. Default: ‘true’
 func (o SubscriptionCreationPlanPtrOutput) Replication() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *SubscriptionCreationPlan) *bool {
 		if v == nil {
@@ -1813,7 +2630,7 @@ func (o SubscriptionCreationPlanPtrOutput) ThroughputMeasurementValue() pulumi.I
 }
 
 type SubscriptionDatabaseAlert struct {
-	// Alert name
+	// Alert name. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	Name string `pulumi:"name"`
 	// Alert value
 	Value int `pulumi:"value"`
@@ -1831,7 +2648,7 @@ type SubscriptionDatabaseAlertInput interface {
 }
 
 type SubscriptionDatabaseAlertArgs struct {
-	// Alert name
+	// Alert name. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	Name pulumi.StringInput `pulumi:"name"`
 	// Alert value
 	Value pulumi.IntInput `pulumi:"value"`
@@ -1847,6 +2664,12 @@ func (i SubscriptionDatabaseAlertArgs) ToSubscriptionDatabaseAlertOutput() Subsc
 
 func (i SubscriptionDatabaseAlertArgs) ToSubscriptionDatabaseAlertOutputWithContext(ctx context.Context) SubscriptionDatabaseAlertOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseAlertOutput)
+}
+
+func (i SubscriptionDatabaseAlertArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseAlert] {
+	return pulumix.Output[SubscriptionDatabaseAlert]{
+		OutputState: i.ToSubscriptionDatabaseAlertOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionDatabaseAlertArrayInput is an input type that accepts SubscriptionDatabaseAlertArray and SubscriptionDatabaseAlertArrayOutput values.
@@ -1874,6 +2697,12 @@ func (i SubscriptionDatabaseAlertArray) ToSubscriptionDatabaseAlertArrayOutputWi
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseAlertArrayOutput)
 }
 
+func (i SubscriptionDatabaseAlertArray) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionDatabaseAlert] {
+	return pulumix.Output[[]SubscriptionDatabaseAlert]{
+		OutputState: i.ToSubscriptionDatabaseAlertArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionDatabaseAlertOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionDatabaseAlertOutput) ElementType() reflect.Type {
@@ -1888,7 +2717,13 @@ func (o SubscriptionDatabaseAlertOutput) ToSubscriptionDatabaseAlertOutputWithCo
 	return o
 }
 
-// Alert name
+func (o SubscriptionDatabaseAlertOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseAlert] {
+	return pulumix.Output[SubscriptionDatabaseAlert]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Alert name. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 func (o SubscriptionDatabaseAlertOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseAlert) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -1912,6 +2747,12 @@ func (o SubscriptionDatabaseAlertArrayOutput) ToSubscriptionDatabaseAlertArrayOu
 	return o
 }
 
+func (o SubscriptionDatabaseAlertArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionDatabaseAlert] {
+	return pulumix.Output[[]SubscriptionDatabaseAlert]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionDatabaseAlertArrayOutput) Index(i pulumi.IntInput) SubscriptionDatabaseAlertOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) SubscriptionDatabaseAlert {
 		return vs[0].([]SubscriptionDatabaseAlert)[vs[1].(int)]
@@ -1919,7 +2760,31 @@ func (o SubscriptionDatabaseAlertArrayOutput) Index(i pulumi.IntInput) Subscript
 }
 
 type SubscriptionDatabaseModule struct {
-	// Name of the Redis database module to enable
+	// Name of the Redis database module to enable. **Modifying this attribute will force creation of a new resource.**
+	//
+	// Example:
+	//
+	// ```go
+	// package main
+	//
+	// import (
+	// 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	// )
+	//
+	// func main() {
+	// 	pulumi.Run(func(ctx *pulumi.Context) error {
+	// 		_ := []map[string]interface{}{
+	// 			map[string]interface{}{
+	// 				"name": "RedisJSON",
+	// 			},
+	// 			map[string]interface{}{
+	// 				"name": "RedisBloom",
+	// 			},
+	// 		}
+	// 		return nil
+	// 	})
+	// }
+	// ```
 	Name string `pulumi:"name"`
 }
 
@@ -1935,7 +2800,31 @@ type SubscriptionDatabaseModuleInput interface {
 }
 
 type SubscriptionDatabaseModuleArgs struct {
-	// Name of the Redis database module to enable
+	// Name of the Redis database module to enable. **Modifying this attribute will force creation of a new resource.**
+	//
+	// Example:
+	//
+	// ```go
+	// package main
+	//
+	// import (
+	// 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	// )
+	//
+	// func main() {
+	// 	pulumi.Run(func(ctx *pulumi.Context) error {
+	// 		_ := []map[string]interface{}{
+	// 			map[string]interface{}{
+	// 				"name": "RedisJSON",
+	// 			},
+	// 			map[string]interface{}{
+	// 				"name": "RedisBloom",
+	// 			},
+	// 		}
+	// 		return nil
+	// 	})
+	// }
+	// ```
 	Name pulumi.StringInput `pulumi:"name"`
 }
 
@@ -1949,6 +2838,12 @@ func (i SubscriptionDatabaseModuleArgs) ToSubscriptionDatabaseModuleOutput() Sub
 
 func (i SubscriptionDatabaseModuleArgs) ToSubscriptionDatabaseModuleOutputWithContext(ctx context.Context) SubscriptionDatabaseModuleOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseModuleOutput)
+}
+
+func (i SubscriptionDatabaseModuleArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseModule] {
+	return pulumix.Output[SubscriptionDatabaseModule]{
+		OutputState: i.ToSubscriptionDatabaseModuleOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionDatabaseModuleArrayInput is an input type that accepts SubscriptionDatabaseModuleArray and SubscriptionDatabaseModuleArrayOutput values.
@@ -1976,6 +2871,12 @@ func (i SubscriptionDatabaseModuleArray) ToSubscriptionDatabaseModuleArrayOutput
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseModuleArrayOutput)
 }
 
+func (i SubscriptionDatabaseModuleArray) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionDatabaseModule] {
+	return pulumix.Output[[]SubscriptionDatabaseModule]{
+		OutputState: i.ToSubscriptionDatabaseModuleArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionDatabaseModuleOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionDatabaseModuleOutput) ElementType() reflect.Type {
@@ -1990,7 +2891,40 @@ func (o SubscriptionDatabaseModuleOutput) ToSubscriptionDatabaseModuleOutputWith
 	return o
 }
 
-// Name of the Redis database module to enable
+func (o SubscriptionDatabaseModuleOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseModule] {
+	return pulumix.Output[SubscriptionDatabaseModule]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Name of the Redis database module to enable. **Modifying this attribute will force creation of a new resource.**
+//
+// Example:
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			_ := []map[string]interface{}{
+//				map[string]interface{}{
+//					"name": "RedisJSON",
+//				},
+//				map[string]interface{}{
+//					"name": "RedisBloom",
+//				},
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 func (o SubscriptionDatabaseModuleOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v SubscriptionDatabaseModule) string { return v.Name }).(pulumi.StringOutput)
 }
@@ -2009,10 +2943,503 @@ func (o SubscriptionDatabaseModuleArrayOutput) ToSubscriptionDatabaseModuleArray
 	return o
 }
 
+func (o SubscriptionDatabaseModuleArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]SubscriptionDatabaseModule] {
+	return pulumix.Output[[]SubscriptionDatabaseModule]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionDatabaseModuleArrayOutput) Index(i pulumi.IntInput) SubscriptionDatabaseModuleOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) SubscriptionDatabaseModule {
 		return vs[0].([]SubscriptionDatabaseModule)[vs[1].(int)]
 	}).(SubscriptionDatabaseModuleOutput)
+}
+
+type SubscriptionDatabaseRemoteBackup struct {
+	// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+	Interval string `pulumi:"interval"`
+	// Defines a URI representing the backup storage location
+	StoragePath string `pulumi:"storagePath"`
+	// Defines the provider of the storage location
+	StorageType string `pulumi:"storageType"`
+	// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+	TimeUtc *string `pulumi:"timeUtc"`
+}
+
+// SubscriptionDatabaseRemoteBackupInput is an input type that accepts SubscriptionDatabaseRemoteBackupArgs and SubscriptionDatabaseRemoteBackupOutput values.
+// You can construct a concrete instance of `SubscriptionDatabaseRemoteBackupInput` via:
+//
+//	SubscriptionDatabaseRemoteBackupArgs{...}
+type SubscriptionDatabaseRemoteBackupInput interface {
+	pulumi.Input
+
+	ToSubscriptionDatabaseRemoteBackupOutput() SubscriptionDatabaseRemoteBackupOutput
+	ToSubscriptionDatabaseRemoteBackupOutputWithContext(context.Context) SubscriptionDatabaseRemoteBackupOutput
+}
+
+type SubscriptionDatabaseRemoteBackupArgs struct {
+	// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+	Interval pulumi.StringInput `pulumi:"interval"`
+	// Defines a URI representing the backup storage location
+	StoragePath pulumi.StringInput `pulumi:"storagePath"`
+	// Defines the provider of the storage location
+	StorageType pulumi.StringInput `pulumi:"storageType"`
+	// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+	TimeUtc pulumi.StringPtrInput `pulumi:"timeUtc"`
+}
+
+func (SubscriptionDatabaseRemoteBackupArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*SubscriptionDatabaseRemoteBackup)(nil)).Elem()
+}
+
+func (i SubscriptionDatabaseRemoteBackupArgs) ToSubscriptionDatabaseRemoteBackupOutput() SubscriptionDatabaseRemoteBackupOutput {
+	return i.ToSubscriptionDatabaseRemoteBackupOutputWithContext(context.Background())
+}
+
+func (i SubscriptionDatabaseRemoteBackupArgs) ToSubscriptionDatabaseRemoteBackupOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseRemoteBackupOutput)
+}
+
+func (i SubscriptionDatabaseRemoteBackupArgs) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseRemoteBackup] {
+	return pulumix.Output[SubscriptionDatabaseRemoteBackup]{
+		OutputState: i.ToSubscriptionDatabaseRemoteBackupOutputWithContext(ctx).OutputState,
+	}
+}
+
+func (i SubscriptionDatabaseRemoteBackupArgs) ToSubscriptionDatabaseRemoteBackupPtrOutput() SubscriptionDatabaseRemoteBackupPtrOutput {
+	return i.ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (i SubscriptionDatabaseRemoteBackupArgs) ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseRemoteBackupOutput).ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx)
+}
+
+// SubscriptionDatabaseRemoteBackupPtrInput is an input type that accepts SubscriptionDatabaseRemoteBackupArgs, SubscriptionDatabaseRemoteBackupPtr and SubscriptionDatabaseRemoteBackupPtrOutput values.
+// You can construct a concrete instance of `SubscriptionDatabaseRemoteBackupPtrInput` via:
+//
+//	        SubscriptionDatabaseRemoteBackupArgs{...}
+//
+//	or:
+//
+//	        nil
+type SubscriptionDatabaseRemoteBackupPtrInput interface {
+	pulumi.Input
+
+	ToSubscriptionDatabaseRemoteBackupPtrOutput() SubscriptionDatabaseRemoteBackupPtrOutput
+	ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(context.Context) SubscriptionDatabaseRemoteBackupPtrOutput
+}
+
+type subscriptionDatabaseRemoteBackupPtrType SubscriptionDatabaseRemoteBackupArgs
+
+func SubscriptionDatabaseRemoteBackupPtr(v *SubscriptionDatabaseRemoteBackupArgs) SubscriptionDatabaseRemoteBackupPtrInput {
+	return (*subscriptionDatabaseRemoteBackupPtrType)(v)
+}
+
+func (*subscriptionDatabaseRemoteBackupPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**SubscriptionDatabaseRemoteBackup)(nil)).Elem()
+}
+
+func (i *subscriptionDatabaseRemoteBackupPtrType) ToSubscriptionDatabaseRemoteBackupPtrOutput() SubscriptionDatabaseRemoteBackupPtrOutput {
+	return i.ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (i *subscriptionDatabaseRemoteBackupPtrType) ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseRemoteBackupPtrOutput)
+}
+
+func (i *subscriptionDatabaseRemoteBackupPtrType) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionDatabaseRemoteBackup] {
+	return pulumix.Output[*SubscriptionDatabaseRemoteBackup]{
+		OutputState: i.ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
+type SubscriptionDatabaseRemoteBackupOutput struct{ *pulumi.OutputState }
+
+func (SubscriptionDatabaseRemoteBackupOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*SubscriptionDatabaseRemoteBackup)(nil)).Elem()
+}
+
+func (o SubscriptionDatabaseRemoteBackupOutput) ToSubscriptionDatabaseRemoteBackupOutput() SubscriptionDatabaseRemoteBackupOutput {
+	return o
+}
+
+func (o SubscriptionDatabaseRemoteBackupOutput) ToSubscriptionDatabaseRemoteBackupOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupOutput {
+	return o
+}
+
+func (o SubscriptionDatabaseRemoteBackupOutput) ToSubscriptionDatabaseRemoteBackupPtrOutput() SubscriptionDatabaseRemoteBackupPtrOutput {
+	return o.ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(context.Background())
+}
+
+func (o SubscriptionDatabaseRemoteBackupOutput) ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v SubscriptionDatabaseRemoteBackup) *SubscriptionDatabaseRemoteBackup {
+		return &v
+	}).(SubscriptionDatabaseRemoteBackupPtrOutput)
+}
+
+func (o SubscriptionDatabaseRemoteBackupOutput) ToOutput(ctx context.Context) pulumix.Output[SubscriptionDatabaseRemoteBackup] {
+	return pulumix.Output[SubscriptionDatabaseRemoteBackup]{
+		OutputState: o.OutputState,
+	}
+}
+
+// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+func (o SubscriptionDatabaseRemoteBackupOutput) Interval() pulumi.StringOutput {
+	return o.ApplyT(func(v SubscriptionDatabaseRemoteBackup) string { return v.Interval }).(pulumi.StringOutput)
+}
+
+// Defines a URI representing the backup storage location
+func (o SubscriptionDatabaseRemoteBackupOutput) StoragePath() pulumi.StringOutput {
+	return o.ApplyT(func(v SubscriptionDatabaseRemoteBackup) string { return v.StoragePath }).(pulumi.StringOutput)
+}
+
+// Defines the provider of the storage location
+func (o SubscriptionDatabaseRemoteBackupOutput) StorageType() pulumi.StringOutput {
+	return o.ApplyT(func(v SubscriptionDatabaseRemoteBackup) string { return v.StorageType }).(pulumi.StringOutput)
+}
+
+// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+func (o SubscriptionDatabaseRemoteBackupOutput) TimeUtc() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v SubscriptionDatabaseRemoteBackup) *string { return v.TimeUtc }).(pulumi.StringPtrOutput)
+}
+
+type SubscriptionDatabaseRemoteBackupPtrOutput struct{ *pulumi.OutputState }
+
+func (SubscriptionDatabaseRemoteBackupPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**SubscriptionDatabaseRemoteBackup)(nil)).Elem()
+}
+
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) ToSubscriptionDatabaseRemoteBackupPtrOutput() SubscriptionDatabaseRemoteBackupPtrOutput {
+	return o
+}
+
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) ToSubscriptionDatabaseRemoteBackupPtrOutputWithContext(ctx context.Context) SubscriptionDatabaseRemoteBackupPtrOutput {
+	return o
+}
+
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionDatabaseRemoteBackup] {
+	return pulumix.Output[*SubscriptionDatabaseRemoteBackup]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) Elem() SubscriptionDatabaseRemoteBackupOutput {
+	return o.ApplyT(func(v *SubscriptionDatabaseRemoteBackup) SubscriptionDatabaseRemoteBackup {
+		if v != nil {
+			return *v
+		}
+		var ret SubscriptionDatabaseRemoteBackup
+		return ret
+	}).(SubscriptionDatabaseRemoteBackupOutput)
+}
+
+// Defines the interval between backups. Should be in the following format 'every-x-hours'. x is one of [24,12,6,4,2,1]. For example: 'every-4-hours'
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) Interval() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabaseRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.Interval
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines a URI representing the backup storage location
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) StoragePath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabaseRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.StoragePath
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines the provider of the storage location
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) StorageType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabaseRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.StorageType
+	}).(pulumi.StringPtrOutput)
+}
+
+// Defines the hour automatic backups are made - only applicable when the interval is `every-12-hours` or `every-24-hours`. For example: '14:00'
+func (o SubscriptionDatabaseRemoteBackupPtrOutput) TimeUtc() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabaseRemoteBackup) *string {
+		if v == nil {
+			return nil
+		}
+		return v.TimeUtc
+	}).(pulumi.StringPtrOutput)
+}
+
+type GetAclRoleRule struct {
+	// ID of the database to which the Rule should apply.
+	Databases []GetAclRoleRuleDatabase `pulumi:"databases"`
+	// The name of the Role to filter returned subscriptions
+	Name string `pulumi:"name"`
+}
+
+// GetAclRoleRuleInput is an input type that accepts GetAclRoleRuleArgs and GetAclRoleRuleOutput values.
+// You can construct a concrete instance of `GetAclRoleRuleInput` via:
+//
+//	GetAclRoleRuleArgs{...}
+type GetAclRoleRuleInput interface {
+	pulumi.Input
+
+	ToGetAclRoleRuleOutput() GetAclRoleRuleOutput
+	ToGetAclRoleRuleOutputWithContext(context.Context) GetAclRoleRuleOutput
+}
+
+type GetAclRoleRuleArgs struct {
+	// ID of the database to which the Rule should apply.
+	Databases GetAclRoleRuleDatabaseArrayInput `pulumi:"databases"`
+	// The name of the Role to filter returned subscriptions
+	Name pulumi.StringInput `pulumi:"name"`
+}
+
+func (GetAclRoleRuleArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*GetAclRoleRule)(nil)).Elem()
+}
+
+func (i GetAclRoleRuleArgs) ToGetAclRoleRuleOutput() GetAclRoleRuleOutput {
+	return i.ToGetAclRoleRuleOutputWithContext(context.Background())
+}
+
+func (i GetAclRoleRuleArgs) ToGetAclRoleRuleOutputWithContext(ctx context.Context) GetAclRoleRuleOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GetAclRoleRuleOutput)
+}
+
+func (i GetAclRoleRuleArgs) ToOutput(ctx context.Context) pulumix.Output[GetAclRoleRule] {
+	return pulumix.Output[GetAclRoleRule]{
+		OutputState: i.ToGetAclRoleRuleOutputWithContext(ctx).OutputState,
+	}
+}
+
+// GetAclRoleRuleArrayInput is an input type that accepts GetAclRoleRuleArray and GetAclRoleRuleArrayOutput values.
+// You can construct a concrete instance of `GetAclRoleRuleArrayInput` via:
+//
+//	GetAclRoleRuleArray{ GetAclRoleRuleArgs{...} }
+type GetAclRoleRuleArrayInput interface {
+	pulumi.Input
+
+	ToGetAclRoleRuleArrayOutput() GetAclRoleRuleArrayOutput
+	ToGetAclRoleRuleArrayOutputWithContext(context.Context) GetAclRoleRuleArrayOutput
+}
+
+type GetAclRoleRuleArray []GetAclRoleRuleInput
+
+func (GetAclRoleRuleArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]GetAclRoleRule)(nil)).Elem()
+}
+
+func (i GetAclRoleRuleArray) ToGetAclRoleRuleArrayOutput() GetAclRoleRuleArrayOutput {
+	return i.ToGetAclRoleRuleArrayOutputWithContext(context.Background())
+}
+
+func (i GetAclRoleRuleArray) ToGetAclRoleRuleArrayOutputWithContext(ctx context.Context) GetAclRoleRuleArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GetAclRoleRuleArrayOutput)
+}
+
+func (i GetAclRoleRuleArray) ToOutput(ctx context.Context) pulumix.Output[[]GetAclRoleRule] {
+	return pulumix.Output[[]GetAclRoleRule]{
+		OutputState: i.ToGetAclRoleRuleArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
+type GetAclRoleRuleOutput struct{ *pulumi.OutputState }
+
+func (GetAclRoleRuleOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*GetAclRoleRule)(nil)).Elem()
+}
+
+func (o GetAclRoleRuleOutput) ToGetAclRoleRuleOutput() GetAclRoleRuleOutput {
+	return o
+}
+
+func (o GetAclRoleRuleOutput) ToGetAclRoleRuleOutputWithContext(ctx context.Context) GetAclRoleRuleOutput {
+	return o
+}
+
+func (o GetAclRoleRuleOutput) ToOutput(ctx context.Context) pulumix.Output[GetAclRoleRule] {
+	return pulumix.Output[GetAclRoleRule]{
+		OutputState: o.OutputState,
+	}
+}
+
+// ID of the database to which the Rule should apply.
+func (o GetAclRoleRuleOutput) Databases() GetAclRoleRuleDatabaseArrayOutput {
+	return o.ApplyT(func(v GetAclRoleRule) []GetAclRoleRuleDatabase { return v.Databases }).(GetAclRoleRuleDatabaseArrayOutput)
+}
+
+// The name of the Role to filter returned subscriptions
+func (o GetAclRoleRuleOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v GetAclRoleRule) string { return v.Name }).(pulumi.StringOutput)
+}
+
+type GetAclRoleRuleArrayOutput struct{ *pulumi.OutputState }
+
+func (GetAclRoleRuleArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]GetAclRoleRule)(nil)).Elem()
+}
+
+func (o GetAclRoleRuleArrayOutput) ToGetAclRoleRuleArrayOutput() GetAclRoleRuleArrayOutput {
+	return o
+}
+
+func (o GetAclRoleRuleArrayOutput) ToGetAclRoleRuleArrayOutputWithContext(ctx context.Context) GetAclRoleRuleArrayOutput {
+	return o
+}
+
+func (o GetAclRoleRuleArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetAclRoleRule] {
+	return pulumix.Output[[]GetAclRoleRule]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o GetAclRoleRuleArrayOutput) Index(i pulumi.IntInput) GetAclRoleRuleOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) GetAclRoleRule {
+		return vs[0].([]GetAclRoleRule)[vs[1].(int)]
+	}).(GetAclRoleRuleOutput)
+}
+
+type GetAclRoleRuleDatabase struct {
+	// ID of the database to which the Rule should apply.
+	Database int `pulumi:"database"`
+	// The regions to which the Rule should apply, if appropriate to the database.
+	Regions []string `pulumi:"regions"`
+	// ID of the subscription containing the database.
+	Subscription int `pulumi:"subscription"`
+}
+
+// GetAclRoleRuleDatabaseInput is an input type that accepts GetAclRoleRuleDatabaseArgs and GetAclRoleRuleDatabaseOutput values.
+// You can construct a concrete instance of `GetAclRoleRuleDatabaseInput` via:
+//
+//	GetAclRoleRuleDatabaseArgs{...}
+type GetAclRoleRuleDatabaseInput interface {
+	pulumi.Input
+
+	ToGetAclRoleRuleDatabaseOutput() GetAclRoleRuleDatabaseOutput
+	ToGetAclRoleRuleDatabaseOutputWithContext(context.Context) GetAclRoleRuleDatabaseOutput
+}
+
+type GetAclRoleRuleDatabaseArgs struct {
+	// ID of the database to which the Rule should apply.
+	Database pulumi.IntInput `pulumi:"database"`
+	// The regions to which the Rule should apply, if appropriate to the database.
+	Regions pulumi.StringArrayInput `pulumi:"regions"`
+	// ID of the subscription containing the database.
+	Subscription pulumi.IntInput `pulumi:"subscription"`
+}
+
+func (GetAclRoleRuleDatabaseArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*GetAclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (i GetAclRoleRuleDatabaseArgs) ToGetAclRoleRuleDatabaseOutput() GetAclRoleRuleDatabaseOutput {
+	return i.ToGetAclRoleRuleDatabaseOutputWithContext(context.Background())
+}
+
+func (i GetAclRoleRuleDatabaseArgs) ToGetAclRoleRuleDatabaseOutputWithContext(ctx context.Context) GetAclRoleRuleDatabaseOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GetAclRoleRuleDatabaseOutput)
+}
+
+func (i GetAclRoleRuleDatabaseArgs) ToOutput(ctx context.Context) pulumix.Output[GetAclRoleRuleDatabase] {
+	return pulumix.Output[GetAclRoleRuleDatabase]{
+		OutputState: i.ToGetAclRoleRuleDatabaseOutputWithContext(ctx).OutputState,
+	}
+}
+
+// GetAclRoleRuleDatabaseArrayInput is an input type that accepts GetAclRoleRuleDatabaseArray and GetAclRoleRuleDatabaseArrayOutput values.
+// You can construct a concrete instance of `GetAclRoleRuleDatabaseArrayInput` via:
+//
+//	GetAclRoleRuleDatabaseArray{ GetAclRoleRuleDatabaseArgs{...} }
+type GetAclRoleRuleDatabaseArrayInput interface {
+	pulumi.Input
+
+	ToGetAclRoleRuleDatabaseArrayOutput() GetAclRoleRuleDatabaseArrayOutput
+	ToGetAclRoleRuleDatabaseArrayOutputWithContext(context.Context) GetAclRoleRuleDatabaseArrayOutput
+}
+
+type GetAclRoleRuleDatabaseArray []GetAclRoleRuleDatabaseInput
+
+func (GetAclRoleRuleDatabaseArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]GetAclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (i GetAclRoleRuleDatabaseArray) ToGetAclRoleRuleDatabaseArrayOutput() GetAclRoleRuleDatabaseArrayOutput {
+	return i.ToGetAclRoleRuleDatabaseArrayOutputWithContext(context.Background())
+}
+
+func (i GetAclRoleRuleDatabaseArray) ToGetAclRoleRuleDatabaseArrayOutputWithContext(ctx context.Context) GetAclRoleRuleDatabaseArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GetAclRoleRuleDatabaseArrayOutput)
+}
+
+func (i GetAclRoleRuleDatabaseArray) ToOutput(ctx context.Context) pulumix.Output[[]GetAclRoleRuleDatabase] {
+	return pulumix.Output[[]GetAclRoleRuleDatabase]{
+		OutputState: i.ToGetAclRoleRuleDatabaseArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
+type GetAclRoleRuleDatabaseOutput struct{ *pulumi.OutputState }
+
+func (GetAclRoleRuleDatabaseOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*GetAclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (o GetAclRoleRuleDatabaseOutput) ToGetAclRoleRuleDatabaseOutput() GetAclRoleRuleDatabaseOutput {
+	return o
+}
+
+func (o GetAclRoleRuleDatabaseOutput) ToGetAclRoleRuleDatabaseOutputWithContext(ctx context.Context) GetAclRoleRuleDatabaseOutput {
+	return o
+}
+
+func (o GetAclRoleRuleDatabaseOutput) ToOutput(ctx context.Context) pulumix.Output[GetAclRoleRuleDatabase] {
+	return pulumix.Output[GetAclRoleRuleDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
+// ID of the database to which the Rule should apply.
+func (o GetAclRoleRuleDatabaseOutput) Database() pulumi.IntOutput {
+	return o.ApplyT(func(v GetAclRoleRuleDatabase) int { return v.Database }).(pulumi.IntOutput)
+}
+
+// The regions to which the Rule should apply, if appropriate to the database.
+func (o GetAclRoleRuleDatabaseOutput) Regions() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v GetAclRoleRuleDatabase) []string { return v.Regions }).(pulumi.StringArrayOutput)
+}
+
+// ID of the subscription containing the database.
+func (o GetAclRoleRuleDatabaseOutput) Subscription() pulumi.IntOutput {
+	return o.ApplyT(func(v GetAclRoleRuleDatabase) int { return v.Subscription }).(pulumi.IntOutput)
+}
+
+type GetAclRoleRuleDatabaseArrayOutput struct{ *pulumi.OutputState }
+
+func (GetAclRoleRuleDatabaseArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]GetAclRoleRuleDatabase)(nil)).Elem()
+}
+
+func (o GetAclRoleRuleDatabaseArrayOutput) ToGetAclRoleRuleDatabaseArrayOutput() GetAclRoleRuleDatabaseArrayOutput {
+	return o
+}
+
+func (o GetAclRoleRuleDatabaseArrayOutput) ToGetAclRoleRuleDatabaseArrayOutputWithContext(ctx context.Context) GetAclRoleRuleDatabaseArrayOutput {
+	return o
+}
+
+func (o GetAclRoleRuleDatabaseArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetAclRoleRuleDatabase] {
+	return pulumix.Output[[]GetAclRoleRuleDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
+func (o GetAclRoleRuleDatabaseArrayOutput) Index(i pulumi.IntInput) GetAclRoleRuleDatabaseOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) GetAclRoleRuleDatabase {
+		return vs[0].([]GetAclRoleRuleDatabase)[vs[1].(int)]
+	}).(GetAclRoleRuleDatabaseOutput)
 }
 
 type GetDataPersistenceDataPersistence struct {
@@ -2052,6 +3479,12 @@ func (i GetDataPersistenceDataPersistenceArgs) ToGetDataPersistenceDataPersisten
 	return pulumi.ToOutputWithContext(ctx, i).(GetDataPersistenceDataPersistenceOutput)
 }
 
+func (i GetDataPersistenceDataPersistenceArgs) ToOutput(ctx context.Context) pulumix.Output[GetDataPersistenceDataPersistence] {
+	return pulumix.Output[GetDataPersistenceDataPersistence]{
+		OutputState: i.ToGetDataPersistenceDataPersistenceOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetDataPersistenceDataPersistenceArrayInput is an input type that accepts GetDataPersistenceDataPersistenceArray and GetDataPersistenceDataPersistenceArrayOutput values.
 // You can construct a concrete instance of `GetDataPersistenceDataPersistenceArrayInput` via:
 //
@@ -2077,6 +3510,12 @@ func (i GetDataPersistenceDataPersistenceArray) ToGetDataPersistenceDataPersiste
 	return pulumi.ToOutputWithContext(ctx, i).(GetDataPersistenceDataPersistenceArrayOutput)
 }
 
+func (i GetDataPersistenceDataPersistenceArray) ToOutput(ctx context.Context) pulumix.Output[[]GetDataPersistenceDataPersistence] {
+	return pulumix.Output[[]GetDataPersistenceDataPersistence]{
+		OutputState: i.ToGetDataPersistenceDataPersistenceArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetDataPersistenceDataPersistenceOutput struct{ *pulumi.OutputState }
 
 func (GetDataPersistenceDataPersistenceOutput) ElementType() reflect.Type {
@@ -2089,6 +3528,12 @@ func (o GetDataPersistenceDataPersistenceOutput) ToGetDataPersistenceDataPersist
 
 func (o GetDataPersistenceDataPersistenceOutput) ToGetDataPersistenceDataPersistenceOutputWithContext(ctx context.Context) GetDataPersistenceDataPersistenceOutput {
 	return o
+}
+
+func (o GetDataPersistenceDataPersistenceOutput) ToOutput(ctx context.Context) pulumix.Output[GetDataPersistenceDataPersistence] {
+	return pulumix.Output[GetDataPersistenceDataPersistence]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A meaningful description of the data persistence option.
@@ -2113,6 +3558,12 @@ func (o GetDataPersistenceDataPersistenceArrayOutput) ToGetDataPersistenceDataPe
 
 func (o GetDataPersistenceDataPersistenceArrayOutput) ToGetDataPersistenceDataPersistenceArrayOutputWithContext(ctx context.Context) GetDataPersistenceDataPersistenceArrayOutput {
 	return o
+}
+
+func (o GetDataPersistenceDataPersistenceArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetDataPersistenceDataPersistence] {
+	return pulumix.Output[[]GetDataPersistenceDataPersistence]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetDataPersistenceDataPersistenceArrayOutput) Index(i pulumi.IntInput) GetDataPersistenceDataPersistenceOutput {
@@ -2158,6 +3609,12 @@ func (i GetDatabaseAlertArgs) ToGetDatabaseAlertOutputWithContext(ctx context.Co
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseAlertOutput)
 }
 
+func (i GetDatabaseAlertArgs) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseAlert] {
+	return pulumix.Output[GetDatabaseAlert]{
+		OutputState: i.ToGetDatabaseAlertOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetDatabaseAlertArrayInput is an input type that accepts GetDatabaseAlertArray and GetDatabaseAlertArrayOutput values.
 // You can construct a concrete instance of `GetDatabaseAlertArrayInput` via:
 //
@@ -2183,6 +3640,12 @@ func (i GetDatabaseAlertArray) ToGetDatabaseAlertArrayOutputWithContext(ctx cont
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseAlertArrayOutput)
 }
 
+func (i GetDatabaseAlertArray) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseAlert] {
+	return pulumix.Output[[]GetDatabaseAlert]{
+		OutputState: i.ToGetDatabaseAlertArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetDatabaseAlertOutput struct{ *pulumi.OutputState }
 
 func (GetDatabaseAlertOutput) ElementType() reflect.Type {
@@ -2195,6 +3658,12 @@ func (o GetDatabaseAlertOutput) ToGetDatabaseAlertOutput() GetDatabaseAlertOutpu
 
 func (o GetDatabaseAlertOutput) ToGetDatabaseAlertOutputWithContext(ctx context.Context) GetDatabaseAlertOutput {
 	return o
+}
+
+func (o GetDatabaseAlertOutput) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseAlert] {
+	return pulumix.Output[GetDatabaseAlert]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The name of the database to filter returned databases
@@ -2219,6 +3688,12 @@ func (o GetDatabaseAlertArrayOutput) ToGetDatabaseAlertArrayOutput() GetDatabase
 
 func (o GetDatabaseAlertArrayOutput) ToGetDatabaseAlertArrayOutputWithContext(ctx context.Context) GetDatabaseAlertArrayOutput {
 	return o
+}
+
+func (o GetDatabaseAlertArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseAlert] {
+	return pulumix.Output[[]GetDatabaseAlert]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetDatabaseAlertArrayOutput) Index(i pulumi.IntInput) GetDatabaseAlertOutput {
@@ -2260,6 +3735,12 @@ func (i GetDatabaseModuleArgs) ToGetDatabaseModuleOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseModuleOutput)
 }
 
+func (i GetDatabaseModuleArgs) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseModule] {
+	return pulumix.Output[GetDatabaseModule]{
+		OutputState: i.ToGetDatabaseModuleOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetDatabaseModuleArrayInput is an input type that accepts GetDatabaseModuleArray and GetDatabaseModuleArrayOutput values.
 // You can construct a concrete instance of `GetDatabaseModuleArrayInput` via:
 //
@@ -2285,6 +3766,12 @@ func (i GetDatabaseModuleArray) ToGetDatabaseModuleArrayOutputWithContext(ctx co
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseModuleArrayOutput)
 }
 
+func (i GetDatabaseModuleArray) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseModule] {
+	return pulumix.Output[[]GetDatabaseModule]{
+		OutputState: i.ToGetDatabaseModuleArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetDatabaseModuleOutput struct{ *pulumi.OutputState }
 
 func (GetDatabaseModuleOutput) ElementType() reflect.Type {
@@ -2297,6 +3784,12 @@ func (o GetDatabaseModuleOutput) ToGetDatabaseModuleOutput() GetDatabaseModuleOu
 
 func (o GetDatabaseModuleOutput) ToGetDatabaseModuleOutputWithContext(ctx context.Context) GetDatabaseModuleOutput {
 	return o
+}
+
+func (o GetDatabaseModuleOutput) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseModule] {
+	return pulumix.Output[GetDatabaseModule]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The name of the database to filter returned databases
@@ -2316,6 +3809,12 @@ func (o GetDatabaseModuleArrayOutput) ToGetDatabaseModuleArrayOutput() GetDataba
 
 func (o GetDatabaseModuleArrayOutput) ToGetDatabaseModuleArrayOutputWithContext(ctx context.Context) GetDatabaseModuleArrayOutput {
 	return o
+}
+
+func (o GetDatabaseModuleArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseModule] {
+	return pulumix.Output[[]GetDatabaseModule]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetDatabaseModuleArrayOutput) Index(i pulumi.IntInput) GetDatabaseModuleOutput {
@@ -2361,6 +3860,12 @@ func (i GetDatabaseModulesModuleArgs) ToGetDatabaseModulesModuleOutputWithContex
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseModulesModuleOutput)
 }
 
+func (i GetDatabaseModulesModuleArgs) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseModulesModule] {
+	return pulumix.Output[GetDatabaseModulesModule]{
+		OutputState: i.ToGetDatabaseModulesModuleOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetDatabaseModulesModuleArrayInput is an input type that accepts GetDatabaseModulesModuleArray and GetDatabaseModulesModuleArrayOutput values.
 // You can construct a concrete instance of `GetDatabaseModulesModuleArrayInput` via:
 //
@@ -2386,6 +3891,12 @@ func (i GetDatabaseModulesModuleArray) ToGetDatabaseModulesModuleArrayOutputWith
 	return pulumi.ToOutputWithContext(ctx, i).(GetDatabaseModulesModuleArrayOutput)
 }
 
+func (i GetDatabaseModulesModuleArray) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseModulesModule] {
+	return pulumix.Output[[]GetDatabaseModulesModule]{
+		OutputState: i.ToGetDatabaseModulesModuleArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetDatabaseModulesModuleOutput struct{ *pulumi.OutputState }
 
 func (GetDatabaseModulesModuleOutput) ElementType() reflect.Type {
@@ -2398,6 +3909,12 @@ func (o GetDatabaseModulesModuleOutput) ToGetDatabaseModulesModuleOutput() GetDa
 
 func (o GetDatabaseModulesModuleOutput) ToGetDatabaseModulesModuleOutputWithContext(ctx context.Context) GetDatabaseModulesModuleOutput {
 	return o
+}
+
+func (o GetDatabaseModulesModuleOutput) ToOutput(ctx context.Context) pulumix.Output[GetDatabaseModulesModule] {
+	return pulumix.Output[GetDatabaseModulesModule]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A meaningful description of the database module
@@ -2422,6 +3939,12 @@ func (o GetDatabaseModulesModuleArrayOutput) ToGetDatabaseModulesModuleArrayOutp
 
 func (o GetDatabaseModulesModuleArrayOutput) ToGetDatabaseModulesModuleArrayOutputWithContext(ctx context.Context) GetDatabaseModulesModuleArrayOutput {
 	return o
+}
+
+func (o GetDatabaseModulesModuleArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetDatabaseModulesModule] {
+	return pulumix.Output[[]GetDatabaseModulesModule]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetDatabaseModulesModuleArrayOutput) Index(i pulumi.IntInput) GetDatabaseModulesModuleOutput {
@@ -2467,6 +3990,12 @@ func (i GetRegionsRegionArgs) ToGetRegionsRegionOutputWithContext(ctx context.Co
 	return pulumi.ToOutputWithContext(ctx, i).(GetRegionsRegionOutput)
 }
 
+func (i GetRegionsRegionArgs) ToOutput(ctx context.Context) pulumix.Output[GetRegionsRegion] {
+	return pulumix.Output[GetRegionsRegion]{
+		OutputState: i.ToGetRegionsRegionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetRegionsRegionArrayInput is an input type that accepts GetRegionsRegionArray and GetRegionsRegionArrayOutput values.
 // You can construct a concrete instance of `GetRegionsRegionArrayInput` via:
 //
@@ -2492,6 +4021,12 @@ func (i GetRegionsRegionArray) ToGetRegionsRegionArrayOutputWithContext(ctx cont
 	return pulumi.ToOutputWithContext(ctx, i).(GetRegionsRegionArrayOutput)
 }
 
+func (i GetRegionsRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]GetRegionsRegion] {
+	return pulumix.Output[[]GetRegionsRegion]{
+		OutputState: i.ToGetRegionsRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetRegionsRegionOutput struct{ *pulumi.OutputState }
 
 func (GetRegionsRegionOutput) ElementType() reflect.Type {
@@ -2504,6 +4039,12 @@ func (o GetRegionsRegionOutput) ToGetRegionsRegionOutput() GetRegionsRegionOutpu
 
 func (o GetRegionsRegionOutput) ToGetRegionsRegionOutputWithContext(ctx context.Context) GetRegionsRegionOutput {
 	return o
+}
+
+func (o GetRegionsRegionOutput) ToOutput(ctx context.Context) pulumix.Output[GetRegionsRegion] {
+	return pulumix.Output[GetRegionsRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The identifier assigned by the cloud provider, (for example `eu-west-1` for `AWS`)
@@ -2528,6 +4069,12 @@ func (o GetRegionsRegionArrayOutput) ToGetRegionsRegionArrayOutput() GetRegionsR
 
 func (o GetRegionsRegionArrayOutput) ToGetRegionsRegionArrayOutputWithContext(ctx context.Context) GetRegionsRegionArrayOutput {
 	return o
+}
+
+func (o GetRegionsRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetRegionsRegion] {
+	return pulumix.Output[[]GetRegionsRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetRegionsRegionArrayOutput) Index(i pulumi.IntInput) GetRegionsRegionOutput {
@@ -2577,6 +4124,12 @@ func (i GetSubscriptionCloudProviderArgs) ToGetSubscriptionCloudProviderOutputWi
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderOutput)
 }
 
+func (i GetSubscriptionCloudProviderArgs) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProvider] {
+	return pulumix.Output[GetSubscriptionCloudProvider]{
+		OutputState: i.ToGetSubscriptionCloudProviderOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetSubscriptionCloudProviderArrayInput is an input type that accepts GetSubscriptionCloudProviderArray and GetSubscriptionCloudProviderArrayOutput values.
 // You can construct a concrete instance of `GetSubscriptionCloudProviderArrayInput` via:
 //
@@ -2602,6 +4155,12 @@ func (i GetSubscriptionCloudProviderArray) ToGetSubscriptionCloudProviderArrayOu
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderArrayOutput)
 }
 
+func (i GetSubscriptionCloudProviderArray) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProvider] {
+	return pulumix.Output[[]GetSubscriptionCloudProvider]{
+		OutputState: i.ToGetSubscriptionCloudProviderArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetSubscriptionCloudProviderOutput struct{ *pulumi.OutputState }
 
 func (GetSubscriptionCloudProviderOutput) ElementType() reflect.Type {
@@ -2614,6 +4173,12 @@ func (o GetSubscriptionCloudProviderOutput) ToGetSubscriptionCloudProviderOutput
 
 func (o GetSubscriptionCloudProviderOutput) ToGetSubscriptionCloudProviderOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderOutput) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProvider] {
+	return pulumix.Output[GetSubscriptionCloudProvider]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Cloud account identifier, (A Cloud Account Id = 1 implies using Redis Labs internal cloud account)
@@ -2643,6 +4208,12 @@ func (o GetSubscriptionCloudProviderArrayOutput) ToGetSubscriptionCloudProviderA
 
 func (o GetSubscriptionCloudProviderArrayOutput) ToGetSubscriptionCloudProviderArrayOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderArrayOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProvider] {
+	return pulumix.Output[[]GetSubscriptionCloudProvider]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetSubscriptionCloudProviderArrayOutput) Index(i pulumi.IntInput) GetSubscriptionCloudProviderOutput {
@@ -2700,6 +4271,12 @@ func (i GetSubscriptionCloudProviderRegionArgs) ToGetSubscriptionCloudProviderRe
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderRegionOutput)
 }
 
+func (i GetSubscriptionCloudProviderRegionArgs) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProviderRegion] {
+	return pulumix.Output[GetSubscriptionCloudProviderRegion]{
+		OutputState: i.ToGetSubscriptionCloudProviderRegionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetSubscriptionCloudProviderRegionArrayInput is an input type that accepts GetSubscriptionCloudProviderRegionArray and GetSubscriptionCloudProviderRegionArrayOutput values.
 // You can construct a concrete instance of `GetSubscriptionCloudProviderRegionArrayInput` via:
 //
@@ -2725,6 +4302,12 @@ func (i GetSubscriptionCloudProviderRegionArray) ToGetSubscriptionCloudProviderR
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderRegionArrayOutput)
 }
 
+func (i GetSubscriptionCloudProviderRegionArray) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProviderRegion] {
+	return pulumix.Output[[]GetSubscriptionCloudProviderRegion]{
+		OutputState: i.ToGetSubscriptionCloudProviderRegionArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetSubscriptionCloudProviderRegionOutput struct{ *pulumi.OutputState }
 
 func (GetSubscriptionCloudProviderRegionOutput) ElementType() reflect.Type {
@@ -2737,6 +4320,12 @@ func (o GetSubscriptionCloudProviderRegionOutput) ToGetSubscriptionCloudProvider
 
 func (o GetSubscriptionCloudProviderRegionOutput) ToGetSubscriptionCloudProviderRegionOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderRegionOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderRegionOutput) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProviderRegion] {
+	return pulumix.Output[GetSubscriptionCloudProviderRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Support deployment on multiple availability zones within the selected region
@@ -2778,6 +4367,12 @@ func (o GetSubscriptionCloudProviderRegionArrayOutput) ToGetSubscriptionCloudPro
 
 func (o GetSubscriptionCloudProviderRegionArrayOutput) ToGetSubscriptionCloudProviderRegionArrayOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderRegionArrayOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderRegionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProviderRegion] {
+	return pulumix.Output[[]GetSubscriptionCloudProviderRegion]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetSubscriptionCloudProviderRegionArrayOutput) Index(i pulumi.IntInput) GetSubscriptionCloudProviderRegionOutput {
@@ -2827,6 +4422,12 @@ func (i GetSubscriptionCloudProviderRegionNetworkArgs) ToGetSubscriptionCloudPro
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderRegionNetworkOutput)
 }
 
+func (i GetSubscriptionCloudProviderRegionNetworkArgs) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[GetSubscriptionCloudProviderRegionNetwork]{
+		OutputState: i.ToGetSubscriptionCloudProviderRegionNetworkOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetSubscriptionCloudProviderRegionNetworkArrayInput is an input type that accepts GetSubscriptionCloudProviderRegionNetworkArray and GetSubscriptionCloudProviderRegionNetworkArrayOutput values.
 // You can construct a concrete instance of `GetSubscriptionCloudProviderRegionNetworkArrayInput` via:
 //
@@ -2852,6 +4453,12 @@ func (i GetSubscriptionCloudProviderRegionNetworkArray) ToGetSubscriptionCloudPr
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionCloudProviderRegionNetworkArrayOutput)
 }
 
+func (i GetSubscriptionCloudProviderRegionNetworkArray) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[[]GetSubscriptionCloudProviderRegionNetwork]{
+		OutputState: i.ToGetSubscriptionCloudProviderRegionNetworkArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetSubscriptionCloudProviderRegionNetworkOutput struct{ *pulumi.OutputState }
 
 func (GetSubscriptionCloudProviderRegionNetworkOutput) ElementType() reflect.Type {
@@ -2864,6 +4471,12 @@ func (o GetSubscriptionCloudProviderRegionNetworkOutput) ToGetSubscriptionCloudP
 
 func (o GetSubscriptionCloudProviderRegionNetworkOutput) ToGetSubscriptionCloudProviderRegionNetworkOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderRegionNetworkOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderRegionNetworkOutput) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[GetSubscriptionCloudProviderRegionNetwork]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Deployment CIDR mask for the generated
@@ -2893,6 +4506,12 @@ func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) ToGetSubscriptionC
 
 func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) ToGetSubscriptionCloudProviderRegionNetworkArrayOutputWithContext(ctx context.Context) GetSubscriptionCloudProviderRegionNetworkArrayOutput {
 	return o
+}
+
+func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionCloudProviderRegionNetwork] {
+	return pulumix.Output[[]GetSubscriptionCloudProviderRegionNetwork]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetSubscriptionCloudProviderRegionNetworkArrayOutput) Index(i pulumi.IntInput) GetSubscriptionCloudProviderRegionNetworkOutput {
@@ -2982,6 +4601,12 @@ func (i GetSubscriptionPeeringsPeeringArgs) ToGetSubscriptionPeeringsPeeringOutp
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionPeeringsPeeringOutput)
 }
 
+func (i GetSubscriptionPeeringsPeeringArgs) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionPeeringsPeering] {
+	return pulumix.Output[GetSubscriptionPeeringsPeering]{
+		OutputState: i.ToGetSubscriptionPeeringsPeeringOutputWithContext(ctx).OutputState,
+	}
+}
+
 // GetSubscriptionPeeringsPeeringArrayInput is an input type that accepts GetSubscriptionPeeringsPeeringArray and GetSubscriptionPeeringsPeeringArrayOutput values.
 // You can construct a concrete instance of `GetSubscriptionPeeringsPeeringArrayInput` via:
 //
@@ -3007,6 +4632,12 @@ func (i GetSubscriptionPeeringsPeeringArray) ToGetSubscriptionPeeringsPeeringArr
 	return pulumi.ToOutputWithContext(ctx, i).(GetSubscriptionPeeringsPeeringArrayOutput)
 }
 
+func (i GetSubscriptionPeeringsPeeringArray) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionPeeringsPeering] {
+	return pulumix.Output[[]GetSubscriptionPeeringsPeering]{
+		OutputState: i.ToGetSubscriptionPeeringsPeeringArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 type GetSubscriptionPeeringsPeeringOutput struct{ *pulumi.OutputState }
 
 func (GetSubscriptionPeeringsPeeringOutput) ElementType() reflect.Type {
@@ -3019,6 +4650,12 @@ func (o GetSubscriptionPeeringsPeeringOutput) ToGetSubscriptionPeeringsPeeringOu
 
 func (o GetSubscriptionPeeringsPeeringOutput) ToGetSubscriptionPeeringsPeeringOutputWithContext(ctx context.Context) GetSubscriptionPeeringsPeeringOutput {
 	return o
+}
+
+func (o GetSubscriptionPeeringsPeeringOutput) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionPeeringsPeering] {
+	return pulumix.Output[GetSubscriptionPeeringsPeering]{
+		OutputState: o.OutputState,
+	}
 }
 
 // AWS account id that the VPC to be peered lives in
@@ -3100,6 +4737,12 @@ func (o GetSubscriptionPeeringsPeeringArrayOutput) ToGetSubscriptionPeeringsPeer
 	return o
 }
 
+func (o GetSubscriptionPeeringsPeeringArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]GetSubscriptionPeeringsPeering] {
+	return pulumix.Output[[]GetSubscriptionPeeringsPeering]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o GetSubscriptionPeeringsPeeringArrayOutput) Index(i pulumi.IntInput) GetSubscriptionPeeringsPeeringOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) GetSubscriptionPeeringsPeering {
 		return vs[0].([]GetSubscriptionPeeringsPeering)[vs[1].(int)]
@@ -3107,6 +4750,10 @@ func (o GetSubscriptionPeeringsPeeringArrayOutput) Index(i pulumi.IntInput) GetS
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*AclRoleRuleInput)(nil)).Elem(), AclRoleRuleArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AclRoleRuleArrayInput)(nil)).Elem(), AclRoleRuleArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AclRoleRuleDatabaseInput)(nil)).Elem(), AclRoleRuleDatabaseArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AclRoleRuleDatabaseArrayInput)(nil)).Elem(), AclRoleRuleDatabaseArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionCreationPlanInput)(nil)).Elem(), ActiveActiveSubscriptionCreationPlanArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionCreationPlanPtrInput)(nil)).Elem(), ActiveActiveSubscriptionCreationPlanArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionCreationPlanRegionInput)(nil)).Elem(), ActiveActiveSubscriptionCreationPlanRegionArgs{})
@@ -3117,6 +4764,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput)(nil)).Elem(), ActiveActiveSubscriptionDatabaseOverrideRegionArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertInput)(nil)).Elem(), ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayInput)(nil)).Elem(), ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupInput)(nil)).Elem(), ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrInput)(nil)).Elem(), ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionArrayInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionDatabaseInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionDatabaseArgs{})
@@ -3135,6 +4784,12 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*SubscriptionDatabaseAlertArrayInput)(nil)).Elem(), SubscriptionDatabaseAlertArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*SubscriptionDatabaseModuleInput)(nil)).Elem(), SubscriptionDatabaseModuleArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*SubscriptionDatabaseModuleArrayInput)(nil)).Elem(), SubscriptionDatabaseModuleArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*SubscriptionDatabaseRemoteBackupInput)(nil)).Elem(), SubscriptionDatabaseRemoteBackupArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*SubscriptionDatabaseRemoteBackupPtrInput)(nil)).Elem(), SubscriptionDatabaseRemoteBackupArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GetAclRoleRuleInput)(nil)).Elem(), GetAclRoleRuleArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GetAclRoleRuleArrayInput)(nil)).Elem(), GetAclRoleRuleArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GetAclRoleRuleDatabaseInput)(nil)).Elem(), GetAclRoleRuleDatabaseArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GetAclRoleRuleDatabaseArrayInput)(nil)).Elem(), GetAclRoleRuleDatabaseArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GetDataPersistenceDataPersistenceInput)(nil)).Elem(), GetDataPersistenceDataPersistenceArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GetDataPersistenceDataPersistenceArrayInput)(nil)).Elem(), GetDataPersistenceDataPersistenceArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GetDatabaseAlertInput)(nil)).Elem(), GetDatabaseAlertArgs{})
@@ -3153,6 +4808,10 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*GetSubscriptionCloudProviderRegionNetworkArrayInput)(nil)).Elem(), GetSubscriptionCloudProviderRegionNetworkArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GetSubscriptionPeeringsPeeringInput)(nil)).Elem(), GetSubscriptionPeeringsPeeringArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GetSubscriptionPeeringsPeeringArrayInput)(nil)).Elem(), GetSubscriptionPeeringsPeeringArray{})
+	pulumi.RegisterOutputType(AclRoleRuleOutput{})
+	pulumi.RegisterOutputType(AclRoleRuleArrayOutput{})
+	pulumi.RegisterOutputType(AclRoleRuleDatabaseOutput{})
+	pulumi.RegisterOutputType(AclRoleRuleDatabaseArrayOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionCreationPlanOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionCreationPlanPtrOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionCreationPlanRegionOutput{})
@@ -3163,6 +4822,8 @@ func init() {
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArrayOutput{})
+	pulumi.RegisterOutputType(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupOutput{})
+	pulumi.RegisterOutputType(ActiveActiveSubscriptionDatabaseOverrideRegionRemoteBackupPtrOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionArrayOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionDatabaseOutput{})
@@ -3181,6 +4842,12 @@ func init() {
 	pulumi.RegisterOutputType(SubscriptionDatabaseAlertArrayOutput{})
 	pulumi.RegisterOutputType(SubscriptionDatabaseModuleOutput{})
 	pulumi.RegisterOutputType(SubscriptionDatabaseModuleArrayOutput{})
+	pulumi.RegisterOutputType(SubscriptionDatabaseRemoteBackupOutput{})
+	pulumi.RegisterOutputType(SubscriptionDatabaseRemoteBackupPtrOutput{})
+	pulumi.RegisterOutputType(GetAclRoleRuleOutput{})
+	pulumi.RegisterOutputType(GetAclRoleRuleArrayOutput{})
+	pulumi.RegisterOutputType(GetAclRoleRuleDatabaseOutput{})
+	pulumi.RegisterOutputType(GetAclRoleRuleDatabaseArrayOutput{})
 	pulumi.RegisterOutputType(GetDataPersistenceDataPersistenceOutput{})
 	pulumi.RegisterOutputType(GetDataPersistenceDataPersistenceArrayOutput{})
 	pulumi.RegisterOutputType(GetDatabaseAlertOutput{})

@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Manages regions within your Redis Enterprise Cloud Active-Active subscription.
@@ -84,7 +86,7 @@ type ActiveActiveSubscriptionRegions struct {
 	DeleteRegions pulumi.BoolPtrOutput `pulumi:"deleteRegions"`
 	// Cloud networking details, per region, documented below
 	Regions ActiveActiveSubscriptionRegionsRegionArrayOutput `pulumi:"regions"`
-	// ID of the subscription that the regions belong to
+	// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 }
 
@@ -101,7 +103,7 @@ func NewActiveActiveSubscriptionRegions(ctx *pulumi.Context,
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionRegions
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions", name, args, &resource, opts...)
 	if err != nil {
@@ -128,7 +130,7 @@ type activeActiveSubscriptionRegionsState struct {
 	DeleteRegions *bool `pulumi:"deleteRegions"`
 	// Cloud networking details, per region, documented below
 	Regions []ActiveActiveSubscriptionRegionsRegion `pulumi:"regions"`
-	// ID of the subscription that the regions belong to
+	// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId *string `pulumi:"subscriptionId"`
 }
 
@@ -137,7 +139,7 @@ type ActiveActiveSubscriptionRegionsState struct {
 	DeleteRegions pulumi.BoolPtrInput
 	// Cloud networking details, per region, documented below
 	Regions ActiveActiveSubscriptionRegionsRegionArrayInput
-	// ID of the subscription that the regions belong to
+	// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringPtrInput
 }
 
@@ -150,7 +152,7 @@ type activeActiveSubscriptionRegionsArgs struct {
 	DeleteRegions *bool `pulumi:"deleteRegions"`
 	// Cloud networking details, per region, documented below
 	Regions []ActiveActiveSubscriptionRegionsRegion `pulumi:"regions"`
-	// ID of the subscription that the regions belong to
+	// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId string `pulumi:"subscriptionId"`
 }
 
@@ -160,7 +162,7 @@ type ActiveActiveSubscriptionRegionsArgs struct {
 	DeleteRegions pulumi.BoolPtrInput
 	// Cloud networking details, per region, documented below
 	Regions ActiveActiveSubscriptionRegionsRegionArrayInput
-	// ID of the subscription that the regions belong to
+	// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringInput
 }
 
@@ -185,6 +187,12 @@ func (i *ActiveActiveSubscriptionRegions) ToActiveActiveSubscriptionRegionsOutpu
 
 func (i *ActiveActiveSubscriptionRegions) ToActiveActiveSubscriptionRegionsOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsOutput)
+}
+
+func (i *ActiveActiveSubscriptionRegions) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[*ActiveActiveSubscriptionRegions]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionRegionsArrayInput is an input type that accepts ActiveActiveSubscriptionRegionsArray and ActiveActiveSubscriptionRegionsArrayOutput values.
@@ -212,6 +220,12 @@ func (i ActiveActiveSubscriptionRegionsArray) ToActiveActiveSubscriptionRegionsA
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsArrayOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsArray) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionRegions]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionRegionsMapInput is an input type that accepts ActiveActiveSubscriptionRegionsMap and ActiveActiveSubscriptionRegionsMapOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionRegionsMapInput` via:
 //
@@ -237,6 +251,12 @@ func (i ActiveActiveSubscriptionRegionsMap) ToActiveActiveSubscriptionRegionsMap
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionRegionsMapOutput)
 }
 
+func (i ActiveActiveSubscriptionRegionsMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionRegions]{
+		OutputState: i.ToActiveActiveSubscriptionRegionsMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionRegionsOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionRegionsOutput) ElementType() reflect.Type {
@@ -251,6 +271,12 @@ func (o ActiveActiveSubscriptionRegionsOutput) ToActiveActiveSubscriptionRegions
 	return o
 }
 
+func (o ActiveActiveSubscriptionRegionsOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[*ActiveActiveSubscriptionRegions]{
+		OutputState: o.OutputState,
+	}
+}
+
 // Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 func (o ActiveActiveSubscriptionRegionsOutput) DeleteRegions() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionRegions) pulumi.BoolPtrOutput { return v.DeleteRegions }).(pulumi.BoolPtrOutput)
@@ -263,7 +289,7 @@ func (o ActiveActiveSubscriptionRegionsOutput) Regions() ActiveActiveSubscriptio
 	}).(ActiveActiveSubscriptionRegionsRegionArrayOutput)
 }
 
-// ID of the subscription that the regions belong to
+// ID of the subscription that the regions belong to. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionRegionsOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionRegions) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
@@ -280,6 +306,12 @@ func (o ActiveActiveSubscriptionRegionsArrayOutput) ToActiveActiveSubscriptionRe
 
 func (o ActiveActiveSubscriptionRegionsArrayOutput) ToActiveActiveSubscriptionRegionsArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsArrayOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionRegionsArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionRegions]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionRegionsArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionRegionsOutput {
@@ -300,6 +332,12 @@ func (o ActiveActiveSubscriptionRegionsMapOutput) ToActiveActiveSubscriptionRegi
 
 func (o ActiveActiveSubscriptionRegionsMapOutput) ToActiveActiveSubscriptionRegionsMapOutputWithContext(ctx context.Context) ActiveActiveSubscriptionRegionsMapOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionRegionsMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionRegions] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionRegions]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionRegionsMapOutput) MapIndex(k pulumi.StringInput) ActiveActiveSubscriptionRegionsOutput {

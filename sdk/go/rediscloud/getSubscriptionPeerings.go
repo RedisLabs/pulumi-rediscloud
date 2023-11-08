@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Subscription Peerings data source allows access to a list of VPC peerings for a particular subscription.
@@ -41,7 +43,7 @@ import (
 //
 // ```
 func GetSubscriptionPeerings(ctx *pulumi.Context, args *GetSubscriptionPeeringsArgs, opts ...pulumi.InvokeOption) (*GetSubscriptionPeeringsResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv GetSubscriptionPeeringsResult
 	err := ctx.Invoke("rediscloud:index/getSubscriptionPeerings:getSubscriptionPeerings", args, &rv, opts...)
 	if err != nil {
@@ -107,6 +109,12 @@ func (o GetSubscriptionPeeringsResultOutput) ToGetSubscriptionPeeringsResultOutp
 
 func (o GetSubscriptionPeeringsResultOutput) ToGetSubscriptionPeeringsResultOutputWithContext(ctx context.Context) GetSubscriptionPeeringsResultOutput {
 	return o
+}
+
+func (o GetSubscriptionPeeringsResultOutput) ToOutput(ctx context.Context) pulumix.Output[GetSubscriptionPeeringsResult] {
+	return pulumix.Output[GetSubscriptionPeeringsResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The provider-assigned unique ID for this managed resource.

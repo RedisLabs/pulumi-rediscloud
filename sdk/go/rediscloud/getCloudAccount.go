@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Cloud Account data source allows access to the ID of a Cloud Account configuration.  This ID can be
@@ -74,7 +76,7 @@ import (
 //
 // ```
 func LookupCloudAccount(ctx *pulumi.Context, args *LookupCloudAccountArgs, opts ...pulumi.InvokeOption) (*LookupCloudAccountResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv LookupCloudAccountResult
 	err := ctx.Invoke("rediscloud:index/getCloudAccount:getCloudAccount", args, &rv, opts...)
 	if err != nil {
@@ -144,6 +146,12 @@ func (o LookupCloudAccountResultOutput) ToLookupCloudAccountResultOutput() Looku
 
 func (o LookupCloudAccountResultOutput) ToLookupCloudAccountResultOutputWithContext(ctx context.Context) LookupCloudAccountResultOutput {
 	return o
+}
+
+func (o LookupCloudAccountResultOutput) ToOutput(ctx context.Context) pulumix.Output[LookupCloudAccountResult] {
+	return pulumix.Output[LookupCloudAccountResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The access key ID associated with the cloud account

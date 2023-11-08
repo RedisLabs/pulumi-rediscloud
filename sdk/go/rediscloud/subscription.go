@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // ## Example Usage
@@ -49,15 +51,13 @@ import (
 //					},
 //				},
 //				CreationPlan: &rediscloud.SubscriptionCreationPlanArgs{
-//					MemoryLimitInGb:            pulumi.Float64(2),
+//					MemoryLimitInGb:            pulumi.Float64(15),
 //					Quantity:                   pulumi.Int(1),
-//					Replication:                pulumi.Bool(false),
-//					SupportOssClusterApi:       pulumi.Bool(false),
+//					Replication:                pulumi.Bool(true),
 //					ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
-//					ThroughputMeasurementValue: pulumi.Int(10000),
+//					ThroughputMeasurementValue: pulumi.Int(20000),
 //					Modules: pulumi.StringArray{
-//						pulumi.String("RediSearch"),
-//						pulumi.String("RedisBloom"),
+//						pulumi.String("RedisJSON"),
 //					},
 //				},
 //			})
@@ -79,20 +79,22 @@ import (
 //	$ pulumi import rediscloud:index/subscription:Subscription subscription-resource 12345678
 //
 // ```
+//
+//	~> __Note:__ the creation_plan block will be ignored during imports.
 type Subscription struct {
 	pulumi.CustomResourceState
 
 	// An allowlist object, documented below
 	Allowlist SubscriptionAllowlistPtrOutput `pulumi:"allowlist"`
-	// A cloud provider object, documented below
+	// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider SubscriptionCloudProviderOutput `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan SubscriptionCreationPlanPtrOutput `pulumi:"creationPlan"`
-	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 	MemoryStorage pulumi.StringPtrOutput `pulumi:"memoryStorage"`
 	// A meaningful name to identify the subscription
 	Name pulumi.StringOutput `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrOutput `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringOutput `pulumi:"paymentMethodId"`
@@ -108,7 +110,7 @@ func NewSubscription(ctx *pulumi.Context,
 	if args.CloudProvider == nil {
 		return nil, errors.New("invalid value for required argument 'CloudProvider'")
 	}
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource Subscription
 	err := ctx.RegisterResource("rediscloud:index/subscription:Subscription", name, args, &resource, opts...)
 	if err != nil {
@@ -133,15 +135,15 @@ func GetSubscription(ctx *pulumi.Context,
 type subscriptionState struct {
 	// An allowlist object, documented below
 	Allowlist *SubscriptionAllowlist `pulumi:"allowlist"`
-	// A cloud provider object, documented below
+	// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider *SubscriptionCloudProvider `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan *SubscriptionCreationPlan `pulumi:"creationPlan"`
-	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 	MemoryStorage *string `pulumi:"memoryStorage"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod *string `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
@@ -150,15 +152,15 @@ type subscriptionState struct {
 type SubscriptionState struct {
 	// An allowlist object, documented below
 	Allowlist SubscriptionAllowlistPtrInput
-	// A cloud provider object, documented below
+	// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider SubscriptionCloudProviderPtrInput
 	// A creation plan object, documented below
 	CreationPlan SubscriptionCreationPlanPtrInput
-	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 	MemoryStorage pulumi.StringPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrInput
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
@@ -171,15 +173,15 @@ func (SubscriptionState) ElementType() reflect.Type {
 type subscriptionArgs struct {
 	// An allowlist object, documented below
 	Allowlist *SubscriptionAllowlist `pulumi:"allowlist"`
-	// A cloud provider object, documented below
+	// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider SubscriptionCloudProvider `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan *SubscriptionCreationPlan `pulumi:"creationPlan"`
-	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 	MemoryStorage *string `pulumi:"memoryStorage"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod *string `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
@@ -189,15 +191,15 @@ type subscriptionArgs struct {
 type SubscriptionArgs struct {
 	// An allowlist object, documented below
 	Allowlist SubscriptionAllowlistPtrInput
-	// A cloud provider object, documented below
+	// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider SubscriptionCloudProviderInput
 	// A creation plan object, documented below
 	CreationPlan SubscriptionCreationPlanPtrInput
-	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+	// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 	MemoryStorage pulumi.StringPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrInput
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
@@ -226,6 +228,12 @@ func (i *Subscription) ToSubscriptionOutputWithContext(ctx context.Context) Subs
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionOutput)
 }
 
+func (i *Subscription) ToOutput(ctx context.Context) pulumix.Output[*Subscription] {
+	return pulumix.Output[*Subscription]{
+		OutputState: i.ToSubscriptionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // SubscriptionArrayInput is an input type that accepts SubscriptionArray and SubscriptionArrayOutput values.
 // You can construct a concrete instance of `SubscriptionArrayInput` via:
 //
@@ -249,6 +257,12 @@ func (i SubscriptionArray) ToSubscriptionArrayOutput() SubscriptionArrayOutput {
 
 func (i SubscriptionArray) ToSubscriptionArrayOutputWithContext(ctx context.Context) SubscriptionArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionArrayOutput)
+}
+
+func (i SubscriptionArray) ToOutput(ctx context.Context) pulumix.Output[[]*Subscription] {
+	return pulumix.Output[[]*Subscription]{
+		OutputState: i.ToSubscriptionArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionMapInput is an input type that accepts SubscriptionMap and SubscriptionMapOutput values.
@@ -276,6 +290,12 @@ func (i SubscriptionMap) ToSubscriptionMapOutputWithContext(ctx context.Context)
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionMapOutput)
 }
 
+func (i SubscriptionMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*Subscription] {
+	return pulumix.Output[map[string]*Subscription]{
+		OutputState: i.ToSubscriptionMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionOutput) ElementType() reflect.Type {
@@ -290,12 +310,18 @@ func (o SubscriptionOutput) ToSubscriptionOutputWithContext(ctx context.Context)
 	return o
 }
 
+func (o SubscriptionOutput) ToOutput(ctx context.Context) pulumix.Output[*Subscription] {
+	return pulumix.Output[*Subscription]{
+		OutputState: o.OutputState,
+	}
+}
+
 // An allowlist object, documented below
 func (o SubscriptionOutput) Allowlist() SubscriptionAllowlistPtrOutput {
 	return o.ApplyT(func(v *Subscription) SubscriptionAllowlistPtrOutput { return v.Allowlist }).(SubscriptionAllowlistPtrOutput)
 }
 
-// A cloud provider object, documented below
+// A cloud provider object, documented below. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionOutput) CloudProvider() SubscriptionCloudProviderOutput {
 	return o.ApplyT(func(v *Subscription) SubscriptionCloudProviderOutput { return v.CloudProvider }).(SubscriptionCloudProviderOutput)
 }
@@ -305,7 +331,7 @@ func (o SubscriptionOutput) CreationPlan() SubscriptionCreationPlanPtrOutput {
 	return o.ApplyT(func(v *Subscription) SubscriptionCreationPlanPtrOutput { return v.CreationPlan }).(SubscriptionCreationPlanPtrOutput)
 }
 
-// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’
+// Memory storage preference: either ‘ram’ or a combination of ‘ram-and-flash’. Default: ‘ram’. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionOutput) MemoryStorage() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Subscription) pulumi.StringPtrOutput { return v.MemoryStorage }).(pulumi.StringPtrOutput)
 }
@@ -315,7 +341,7 @@ func (o SubscriptionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *Subscription) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionOutput) PaymentMethod() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Subscription) pulumi.StringPtrOutput { return v.PaymentMethod }).(pulumi.StringPtrOutput)
 }
@@ -339,6 +365,12 @@ func (o SubscriptionArrayOutput) ToSubscriptionArrayOutputWithContext(ctx contex
 	return o
 }
 
+func (o SubscriptionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*Subscription] {
+	return pulumix.Output[[]*Subscription]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionArrayOutput) Index(i pulumi.IntInput) SubscriptionOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *Subscription {
 		return vs[0].([]*Subscription)[vs[1].(int)]
@@ -357,6 +389,12 @@ func (o SubscriptionMapOutput) ToSubscriptionMapOutput() SubscriptionMapOutput {
 
 func (o SubscriptionMapOutput) ToSubscriptionMapOutputWithContext(ctx context.Context) SubscriptionMapOutput {
 	return o
+}
+
+func (o SubscriptionMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*Subscription] {
+	return pulumix.Output[map[string]*Subscription]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o SubscriptionMapOutput) MapIndex(k pulumi.StringInput) SubscriptionOutput {

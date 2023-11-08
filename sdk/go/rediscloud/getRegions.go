@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Regions data source allows access to a list of supported cloud provider regions. These regions can be used with the subscription resource.
@@ -71,7 +73,7 @@ import (
 //
 // ```
 func GetRegions(ctx *pulumi.Context, args *GetRegionsArgs, opts ...pulumi.InvokeOption) (*GetRegionsResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv GetRegionsResult
 	err := ctx.Invoke("rediscloud:index/getRegions:getRegions", args, &rv, opts...)
 	if err != nil {
@@ -132,6 +134,12 @@ func (o GetRegionsResultOutput) ToGetRegionsResultOutput() GetRegionsResultOutpu
 
 func (o GetRegionsResultOutput) ToGetRegionsResultOutputWithContext(ctx context.Context) GetRegionsResultOutput {
 	return o
+}
+
+func (o GetRegionsResultOutput) ToOutput(ctx context.Context) pulumix.Output[GetRegionsResult] {
+	return pulumix.Output[GetRegionsResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The provider-assigned unique ID for this managed resource.

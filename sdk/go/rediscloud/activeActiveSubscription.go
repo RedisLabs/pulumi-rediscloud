@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // ## Example Usage
@@ -70,16 +72,18 @@ import (
 //	$ pulumi import rediscloud:index/activeActiveSubscription:ActiveActiveSubscription subscription-resource 12345678
 //
 // ```
+//
+//	~> __Note:__ the creation_plan block will be ignored during imports.
 type ActiveActiveSubscription struct {
 	pulumi.CustomResourceState
 
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider pulumi.StringPtrOutput `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrOutput `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name pulumi.StringOutput `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrOutput `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringOutput `pulumi:"paymentMethodId"`
@@ -92,7 +96,7 @@ func NewActiveActiveSubscription(ctx *pulumi.Context,
 		args = &ActiveActiveSubscriptionArgs{}
 	}
 
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscription
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscription:ActiveActiveSubscription", name, args, &resource, opts...)
 	if err != nil {
@@ -115,26 +119,26 @@ func GetActiveActiveSubscription(ctx *pulumi.Context,
 
 // Input properties used for looking up and filtering ActiveActiveSubscription resources.
 type activeActiveSubscriptionState struct {
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider *string `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan *ActiveActiveSubscriptionCreationPlan `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod *string `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
 }
 
 type ActiveActiveSubscriptionState struct {
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider pulumi.StringPtrInput
 	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrInput
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
@@ -145,13 +149,13 @@ func (ActiveActiveSubscriptionState) ElementType() reflect.Type {
 }
 
 type activeActiveSubscriptionArgs struct {
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider *string `pulumi:"cloudProvider"`
 	// A creation plan object, documented below
 	CreationPlan *ActiveActiveSubscriptionCreationPlan `pulumi:"creationPlan"`
 	// A meaningful name to identify the subscription
 	Name *string `pulumi:"name"`
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod *string `pulumi:"paymentMethod"`
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId *string `pulumi:"paymentMethodId"`
@@ -159,13 +163,13 @@ type activeActiveSubscriptionArgs struct {
 
 // The set of arguments for constructing a ActiveActiveSubscription resource.
 type ActiveActiveSubscriptionArgs struct {
-	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider pulumi.StringPtrInput
 	// A creation plan object, documented below
 	CreationPlan ActiveActiveSubscriptionCreationPlanPtrInput
 	// A meaningful name to identify the subscription
 	Name pulumi.StringPtrInput
-	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+	// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 	PaymentMethod pulumi.StringPtrInput
 	// A valid payment method pre-defined in the current account. This value is __Optional__ for AWS/GCP Marketplace accounts, but __Required__ for all other account types
 	PaymentMethodId pulumi.StringPtrInput
@@ -194,6 +198,12 @@ func (i *ActiveActiveSubscription) ToActiveActiveSubscriptionOutputWithContext(c
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionOutput)
 }
 
+func (i *ActiveActiveSubscription) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscription] {
+	return pulumix.Output[*ActiveActiveSubscription]{
+		OutputState: i.ToActiveActiveSubscriptionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionArrayInput is an input type that accepts ActiveActiveSubscriptionArray and ActiveActiveSubscriptionArrayOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionArrayInput` via:
 //
@@ -217,6 +227,12 @@ func (i ActiveActiveSubscriptionArray) ToActiveActiveSubscriptionArrayOutput() A
 
 func (i ActiveActiveSubscriptionArray) ToActiveActiveSubscriptionArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionArrayOutput)
+}
+
+func (i ActiveActiveSubscriptionArray) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscription] {
+	return pulumix.Output[[]*ActiveActiveSubscription]{
+		OutputState: i.ToActiveActiveSubscriptionArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionMapInput is an input type that accepts ActiveActiveSubscriptionMap and ActiveActiveSubscriptionMapOutput values.
@@ -244,6 +260,12 @@ func (i ActiveActiveSubscriptionMap) ToActiveActiveSubscriptionMapOutputWithCont
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionMapOutput)
 }
 
+func (i ActiveActiveSubscriptionMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscription] {
+	return pulumix.Output[map[string]*ActiveActiveSubscription]{
+		OutputState: i.ToActiveActiveSubscriptionMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionOutput) ElementType() reflect.Type {
@@ -258,7 +280,13 @@ func (o ActiveActiveSubscriptionOutput) ToActiveActiveSubscriptionOutputWithCont
 	return o
 }
 
-// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’
+func (o ActiveActiveSubscriptionOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscription] {
+	return pulumix.Output[*ActiveActiveSubscription]{
+		OutputState: o.OutputState,
+	}
+}
+
+// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionOutput) CloudProvider() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringPtrOutput { return v.CloudProvider }).(pulumi.StringPtrOutput)
 }
@@ -273,7 +301,7 @@ func (o ActiveActiveSubscriptionOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
-// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'
+// The payment method for the requested subscription, (either `credit-card` or `marketplace`). If `credit-card` is specified, `paymentMethodId` must be defined. Default: 'credit-card'. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionOutput) PaymentMethod() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscription) pulumi.StringPtrOutput { return v.PaymentMethod }).(pulumi.StringPtrOutput)
 }
@@ -297,6 +325,12 @@ func (o ActiveActiveSubscriptionArrayOutput) ToActiveActiveSubscriptionArrayOutp
 	return o
 }
 
+func (o ActiveActiveSubscriptionArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscription] {
+	return pulumix.Output[[]*ActiveActiveSubscription]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ActiveActiveSubscription {
 		return vs[0].([]*ActiveActiveSubscription)[vs[1].(int)]
@@ -315,6 +349,12 @@ func (o ActiveActiveSubscriptionMapOutput) ToActiveActiveSubscriptionMapOutput()
 
 func (o ActiveActiveSubscriptionMapOutput) ToActiveActiveSubscriptionMapOutputWithContext(ctx context.Context) ActiveActiveSubscriptionMapOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscription] {
+	return pulumix.Output[map[string]*ActiveActiveSubscription]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionMapOutput) MapIndex(k pulumi.StringInput) ActiveActiveSubscriptionOutput {

@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Creates a Database within a specified Active-Active Subscription in your Redis Enterprise Cloud Account.
@@ -117,7 +119,7 @@ import (
 //
 // ```
 //
-//	NoteDue to constraints in the Redis Cloud API, the import process will not import global attributes or override region attributes. If you wish to use these attributes in your Terraform configuraton, you will need to manually add them to your Terraform configuration and run `terraform apply` to update the database.
+//	NoteDue to constraints in the Redis Cloud API, the import process will not import global attributes or override region attributes. If you wish to use these attributes in your Terraform configuration, you will need to manually add them to your Terraform configuration and run `pulumi up` to update the database.
 type ActiveActiveSubscriptionDatabase struct {
 	pulumi.CustomResourceState
 
@@ -132,25 +134,27 @@ type ActiveActiveSubscriptionDatabase struct {
 	// Should use the external endpoint for open-source (OSS) Cluster API.
 	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrOutput `pulumi:"externalEndpointForOssClusterApi"`
-	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+	// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput `pulumi:"globalAlerts"`
 	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrOutput `pulumi:"globalDataPersistence"`
-	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+	// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringOutput `pulumi:"globalPassword"`
-	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+	// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayOutput `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name pulumi.StringOutput `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput `pulumi:"overrideRegions"`
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrOutput `pulumi:"port"`
 	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint pulumi.StringMapOutput `pulumi:"privateEndpoint"`
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapOutput `pulumi:"publicEndpoint"`
-	// The ID of the Active-Active subscription to create the database in
+	// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
@@ -176,7 +180,7 @@ func NewActiveActiveSubscriptionDatabase(ctx *pulumi.Context,
 		"globalPassword",
 	})
 	opts = append(opts, secrets)
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource ActiveActiveSubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase", name, args, &resource, opts...)
 	if err != nil {
@@ -210,25 +214,27 @@ type activeActiveSubscriptionDatabaseState struct {
 	// Should use the external endpoint for open-source (OSS) Cluster API.
 	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+	// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	GlobalAlerts []ActiveActiveSubscriptionDatabaseGlobalAlert `pulumi:"globalAlerts"`
 	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence *string `pulumi:"globalDataPersistence"`
-	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+	// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 	GlobalPassword *string `pulumi:"globalPassword"`
-	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+	// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name *string `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port *int `pulumi:"port"`
 	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint map[string]string `pulumi:"privateEndpoint"`
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint map[string]string `pulumi:"publicEndpoint"`
-	// The ID of the Active-Active subscription to create the database in
+	// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId *string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -246,25 +252,27 @@ type ActiveActiveSubscriptionDatabaseState struct {
 	// Should use the external endpoint for open-source (OSS) Cluster API.
 	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+	// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayInput
 	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrInput
-	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+	// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringPtrInput
-	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+	// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayInput
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64PtrInput
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name pulumi.StringPtrInput
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrInput
 	// A map of which private endpoints can to access the database per region, uses region name as key.
 	PrivateEndpoint pulumi.StringMapInput
 	// A map of which public endpoints can to access the database per region, uses region name as key.
 	PublicEndpoint pulumi.StringMapInput
-	// The ID of the Active-Active subscription to create the database in
+	// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringPtrInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -284,21 +292,23 @@ type activeActiveSubscriptionDatabaseArgs struct {
 	// Should use the external endpoint for open-source (OSS) Cluster API.
 	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi *bool `pulumi:"externalEndpointForOssClusterApi"`
-	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+	// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	GlobalAlerts []ActiveActiveSubscriptionDatabaseGlobalAlert `pulumi:"globalAlerts"`
 	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence *string `pulumi:"globalDataPersistence"`
-	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+	// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 	GlobalPassword *string `pulumi:"globalPassword"`
-	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+	// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps []string `pulumi:"globalSourceIps"`
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name *string `pulumi:"name"`
 	// Override region specific configuration, documented below
 	OverrideRegions []ActiveActiveSubscriptionDatabaseOverrideRegion `pulumi:"overrideRegions"`
-	// The ID of the Active-Active subscription to create the database in
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port *int `pulumi:"port"`
+	// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -315,21 +325,23 @@ type ActiveActiveSubscriptionDatabaseArgs struct {
 	// Should use the external endpoint for open-source (OSS) Cluster API.
 	// Can only be enabled if OSS Cluster API support is enabled. Default: 'false'
 	ExternalEndpointForOssClusterApi pulumi.BoolPtrInput
-	// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+	// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 	GlobalAlerts ActiveActiveSubscriptionDatabaseGlobalAlertArrayInput
 	// Global rate of database data persistence (in persistent storage) of regions that dont override global settings. Default: 'none'
 	GlobalDataPersistence pulumi.StringPtrInput
-	// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+	// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 	GlobalPassword pulumi.StringPtrInput
-	// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+	// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 	GlobalSourceIps pulumi.StringArrayInput
 	// Maximum memory usage for this specific database, including replication and other overhead
 	MemoryLimitInGb pulumi.Float64Input
-	// A meaningful name to identify the database
+	// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 	Name pulumi.StringPtrInput
 	// Override region specific configuration, documented below
 	OverrideRegions ActiveActiveSubscriptionDatabaseOverrideRegionArrayInput
-	// The ID of the Active-Active subscription to create the database in
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrInput
+	// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -358,6 +370,12 @@ func (i *ActiveActiveSubscriptionDatabase) ToActiveActiveSubscriptionDatabaseOut
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseOutput)
 }
 
+func (i *ActiveActiveSubscriptionDatabase) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[*ActiveActiveSubscriptionDatabase]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ActiveActiveSubscriptionDatabaseArrayInput is an input type that accepts ActiveActiveSubscriptionDatabaseArray and ActiveActiveSubscriptionDatabaseArrayOutput values.
 // You can construct a concrete instance of `ActiveActiveSubscriptionDatabaseArrayInput` via:
 //
@@ -381,6 +399,12 @@ func (i ActiveActiveSubscriptionDatabaseArray) ToActiveActiveSubscriptionDatabas
 
 func (i ActiveActiveSubscriptionDatabaseArray) ToActiveActiveSubscriptionDatabaseArrayOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseArrayOutput)
+}
+
+func (i ActiveActiveSubscriptionDatabaseArray) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionDatabase]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ActiveActiveSubscriptionDatabaseMapInput is an input type that accepts ActiveActiveSubscriptionDatabaseMap and ActiveActiveSubscriptionDatabaseMapOutput values.
@@ -408,6 +432,12 @@ func (i ActiveActiveSubscriptionDatabaseMap) ToActiveActiveSubscriptionDatabaseM
 	return pulumi.ToOutputWithContext(ctx, i).(ActiveActiveSubscriptionDatabaseMapOutput)
 }
 
+func (i ActiveActiveSubscriptionDatabaseMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionDatabase]{
+		OutputState: i.ToActiveActiveSubscriptionDatabaseMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ActiveActiveSubscriptionDatabaseOutput struct{ *pulumi.OutputState }
 
 func (ActiveActiveSubscriptionDatabaseOutput) ElementType() reflect.Type {
@@ -420,6 +450,12 @@ func (o ActiveActiveSubscriptionDatabaseOutput) ToActiveActiveSubscriptionDataba
 
 func (o ActiveActiveSubscriptionDatabaseOutput) ToActiveActiveSubscriptionDatabaseOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseOutput) ToOutput(ctx context.Context) pulumix.Output[*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[*ActiveActiveSubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
 }
 
 // SSL certificate to authenticate user connections.
@@ -450,7 +486,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) ExternalEndpointForOssClusterApi
 	}).(pulumi.BoolPtrOutput)
 }
 
-// A block defining Redis database alert of regions that dont override global settings, documented below, can be specified multiple times
+// A block defining Redis database alert of regions that don't override global settings, documented below, can be specified multiple times. (either: 'dataset-size', 'datasets-size', 'throughput-higher-than', 'throughput-lower-than', 'latency', 'syncsource-error', 'syncsource-lag' or 'connections-limit')
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalAlerts() ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput {
 		return v.GlobalAlerts
@@ -462,12 +498,12 @@ func (o ActiveActiveSubscriptionDatabaseOutput) GlobalDataPersistence() pulumi.S
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringPtrOutput { return v.GlobalDataPersistence }).(pulumi.StringPtrOutput)
 }
 
-// Password to access the database of regions that dont override global settings. If left empty, the password will be generated automatically
+// Password to access the database of regions that don't override global settings. If left empty, the password will be generated automatically
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalPassword() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.GlobalPassword }).(pulumi.StringOutput)
 }
 
-// List of source IP addresses or subnet masks of regions that dont override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
+// List of source IP addresses or subnet masks of regions that don't override global settings. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: ['192.168.10.0/32', '192.168.12.0/24'])
 func (o ActiveActiveSubscriptionDatabaseOutput) GlobalSourceIps() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringArrayOutput { return v.GlobalSourceIps }).(pulumi.StringArrayOutput)
 }
@@ -477,7 +513,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) MemoryLimitInGb() pulumi.Float64
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.Float64Output { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
-// A meaningful name to identify the database
+// A meaningful name to identify the database. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionDatabaseOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
@@ -487,6 +523,11 @@ func (o ActiveActiveSubscriptionDatabaseOutput) OverrideRegions() ActiveActiveSu
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput {
 		return v.OverrideRegions
 	}).(ActiveActiveSubscriptionDatabaseOverrideRegionArrayOutput)
+}
+
+// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+func (o ActiveActiveSubscriptionDatabaseOutput) Port() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.IntPtrOutput { return v.Port }).(pulumi.IntPtrOutput)
 }
 
 // A map of which private endpoints can to access the database per region, uses region name as key.
@@ -499,7 +540,7 @@ func (o ActiveActiveSubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringMa
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringMapOutput { return v.PublicEndpoint }).(pulumi.StringMapOutput)
 }
 
-// The ID of the Active-Active subscription to create the database in
+// The ID of the Active-Active subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 func (o ActiveActiveSubscriptionDatabaseOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v *ActiveActiveSubscriptionDatabase) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
@@ -523,6 +564,12 @@ func (o ActiveActiveSubscriptionDatabaseArrayOutput) ToActiveActiveSubscriptionD
 	return o
 }
 
+func (o ActiveActiveSubscriptionDatabaseArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[[]*ActiveActiveSubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ActiveActiveSubscriptionDatabaseArrayOutput) Index(i pulumi.IntInput) ActiveActiveSubscriptionDatabaseOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ActiveActiveSubscriptionDatabase {
 		return vs[0].([]*ActiveActiveSubscriptionDatabase)[vs[1].(int)]
@@ -541,6 +588,12 @@ func (o ActiveActiveSubscriptionDatabaseMapOutput) ToActiveActiveSubscriptionDat
 
 func (o ActiveActiveSubscriptionDatabaseMapOutput) ToActiveActiveSubscriptionDatabaseMapOutputWithContext(ctx context.Context) ActiveActiveSubscriptionDatabaseMapOutput {
 	return o
+}
+
+func (o ActiveActiveSubscriptionDatabaseMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ActiveActiveSubscriptionDatabase] {
+	return pulumix.Output[map[string]*ActiveActiveSubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ActiveActiveSubscriptionDatabaseMapOutput) MapIndex(k pulumi.StringInput) ActiveActiveSubscriptionDatabaseOutput {

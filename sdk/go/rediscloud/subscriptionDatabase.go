@@ -8,10 +8,93 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Creates a Database within a specified Subscription in your Redis Enterprise Cloud Account.
+//
+// ## Example Usage
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
+//				CardType: pulumi.StringRef("Visa"),
+//			}, nil)
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewSubscription(ctx, "subscription-resource", &rediscloud.SubscriptionArgs{
+//				PaymentMethod:   pulumi.String("credit-card"),
+//				PaymentMethodId: *pulumi.String(card.Id),
+//				MemoryStorage:   pulumi.String("ram"),
+//				CloudProvider: &rediscloud.SubscriptionCloudProviderArgs{
+//					Provider: pulumi.Any(data.Rediscloud_cloud_account.Account.Provider_type),
+//					Regions: rediscloud.SubscriptionCloudProviderRegionArray{
+//						&rediscloud.SubscriptionCloudProviderRegionArgs{
+//							Region:                    pulumi.String("eu-west-1"),
+//							MultipleAvailabilityZones: pulumi.Bool(true),
+//							NetworkingDeploymentCidr:  pulumi.String("10.0.0.0/24"),
+//							PreferredAvailabilityZones: pulumi.StringArray{
+//								pulumi.String("euw1-az1, euw1-az2, euw1-az3"),
+//							},
+//						},
+//					},
+//				},
+//				CreationPlan: &rediscloud.SubscriptionCreationPlanArgs{
+//					MemoryLimitInGb:            pulumi.Float64(15),
+//					Quantity:                   pulumi.Int(1),
+//					Replication:                pulumi.Bool(true),
+//					ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
+//					ThroughputMeasurementValue: pulumi.Int(20000),
+//					Modules: pulumi.StringArray{
+//						pulumi.String("RedisJSON"),
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewSubscriptionDatabase(ctx, "database-resource", &rediscloud.SubscriptionDatabaseArgs{
+//				SubscriptionId:             subscription_resource.ID(),
+//				MemoryLimitInGb:            pulumi.Float64(15),
+//				DataPersistence:            pulumi.String("aof-every-write"),
+//				ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
+//				ThroughputMeasurementValue: pulumi.Int(20000),
+//				Replication:                pulumi.Bool(true),
+//				Modules: rediscloud.SubscriptionDatabaseModuleArray{
+//					&rediscloud.SubscriptionDatabaseModuleArgs{
+//						Name: pulumi.String("RedisJSON"),
+//					},
+//				},
+//				Alerts: rediscloud.SubscriptionDatabaseAlertArray{
+//					&rediscloud.SubscriptionDatabaseAlertArgs{
+//						Name:  pulumi.String("dataset-size"),
+//						Value: pulumi.Int(40),
+//					},
+//				},
+//			}, pulumi.DependsOn([]pulumi.Resource{
+//				subscription_resource,
+//			}))
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 //
 // ## Import
 //
@@ -34,7 +117,7 @@ type SubscriptionDatabase struct {
 	ClientSslCertificate pulumi.StringPtrOutput `pulumi:"clientSslCertificate"`
 	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrOutput `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage). Default: ‘none’
+	// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 	DataPersistence pulumi.StringPtrOutput `pulumi:"dataPersistence"`
 	// Identifier of the database created
 	DbId pulumi.IntOutput `pulumi:"dbId"`
@@ -49,20 +132,26 @@ type SubscriptionDatabase struct {
 	HashingPolicies pulumi.StringArrayOutput `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64Output `pulumi:"memoryLimitInGb"`
-	// A list of modules objects, documented below
+	// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 	Modules SubscriptionDatabaseModuleArrayOutput `pulumi:"modules"`
 	// A meaningful name to identify the database
 	Name pulumi.StringOutput `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringOutput `pulumi:"password"`
-	// Path that will be used to store database backup files
+	// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+	//
+	// Deprecated: Use `remote_backup` block instead
 	PeriodicBackupPath pulumi.StringPtrOutput `pulumi:"periodicBackupPath"`
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrOutput `pulumi:"port"`
 	// Private endpoint to access the database
 	PrivateEndpoint pulumi.StringOutput `pulumi:"privateEndpoint"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
-	Protocol pulumi.StringOutput `pulumi:"protocol"`
+	// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
+	Protocol pulumi.StringPtrOutput `pulumi:"protocol"`
 	// Public endpoint to access the database
 	PublicEndpoint pulumi.StringOutput `pulumi:"publicEndpoint"`
+	// Specifies the backup options for the database, documented below
+	RemoteBackup SubscriptionDatabaseRemoteBackupPtrOutput `pulumi:"remoteBackup"`
 	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
 	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
 	// Cannot be enabled when `supportOssClusterApi` is enabled.
@@ -71,7 +160,7 @@ type SubscriptionDatabase struct {
 	Replication pulumi.BoolPtrOutput `pulumi:"replication"`
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayOutput `pulumi:"sourceIps"`
-	// The ID of the subscription to create the database in
+	// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringOutput `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrOutput `pulumi:"supportOssClusterApi"`
@@ -91,9 +180,6 @@ func NewSubscriptionDatabase(ctx *pulumi.Context,
 	if args.MemoryLimitInGb == nil {
 		return nil, errors.New("invalid value for required argument 'MemoryLimitInGb'")
 	}
-	if args.Protocol == nil {
-		return nil, errors.New("invalid value for required argument 'Protocol'")
-	}
 	if args.SubscriptionId == nil {
 		return nil, errors.New("invalid value for required argument 'SubscriptionId'")
 	}
@@ -110,7 +196,7 @@ func NewSubscriptionDatabase(ctx *pulumi.Context,
 		"password",
 	})
 	opts = append(opts, secrets)
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource SubscriptionDatabase
 	err := ctx.RegisterResource("rediscloud:index/subscriptionDatabase:SubscriptionDatabase", name, args, &resource, opts...)
 	if err != nil {
@@ -142,7 +228,7 @@ type subscriptionDatabaseState struct {
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
 	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction *string `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage). Default: ‘none’
+	// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 	DataPersistence *string `pulumi:"dataPersistence"`
 	// Identifier of the database created
 	DbId *int `pulumi:"dbId"`
@@ -157,20 +243,26 @@ type subscriptionDatabaseState struct {
 	HashingPolicies []string `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb *float64 `pulumi:"memoryLimitInGb"`
-	// A list of modules objects, documented below
+	// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
 	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
-	// Path that will be used to store database backup files
+	// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+	//
+	// Deprecated: Use `remote_backup` block instead
 	PeriodicBackupPath *string `pulumi:"periodicBackupPath"`
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port *int `pulumi:"port"`
 	// Private endpoint to access the database
 	PrivateEndpoint *string `pulumi:"privateEndpoint"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
+	// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
 	Protocol *string `pulumi:"protocol"`
 	// Public endpoint to access the database
 	PublicEndpoint *string `pulumi:"publicEndpoint"`
+	// Specifies the backup options for the database, documented below
+	RemoteBackup *SubscriptionDatabaseRemoteBackup `pulumi:"remoteBackup"`
 	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
 	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
 	// Cannot be enabled when `supportOssClusterApi` is enabled.
@@ -179,7 +271,7 @@ type subscriptionDatabaseState struct {
 	Replication *bool `pulumi:"replication"`
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
-	// The ID of the subscription to create the database in
+	// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId *string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -199,7 +291,7 @@ type SubscriptionDatabaseState struct {
 	ClientSslCertificate pulumi.StringPtrInput
 	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrInput
-	// Rate of database data persistence (in persistent storage). Default: ‘none’
+	// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 	DataPersistence pulumi.StringPtrInput
 	// Identifier of the database created
 	DbId pulumi.IntPtrInput
@@ -214,20 +306,26 @@ type SubscriptionDatabaseState struct {
 	HashingPolicies pulumi.StringArrayInput
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64PtrInput
-	// A list of modules objects, documented below
+	// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 	Modules SubscriptionDatabaseModuleArrayInput
 	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
-	// Path that will be used to store database backup files
+	// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+	//
+	// Deprecated: Use `remote_backup` block instead
 	PeriodicBackupPath pulumi.StringPtrInput
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrInput
 	// Private endpoint to access the database
 	PrivateEndpoint pulumi.StringPtrInput
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
+	// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
 	Protocol pulumi.StringPtrInput
 	// Public endpoint to access the database
 	PublicEndpoint pulumi.StringPtrInput
+	// Specifies the backup options for the database, documented below
+	RemoteBackup SubscriptionDatabaseRemoteBackupPtrInput
 	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
 	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
 	// Cannot be enabled when `supportOssClusterApi` is enabled.
@@ -236,7 +334,7 @@ type SubscriptionDatabaseState struct {
 	Replication pulumi.BoolPtrInput
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
-	// The ID of the subscription to create the database in
+	// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringPtrInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -260,7 +358,7 @@ type subscriptionDatabaseArgs struct {
 	ClientSslCertificate *string `pulumi:"clientSslCertificate"`
 	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction *string `pulumi:"dataEviction"`
-	// Rate of database data persistence (in persistent storage). Default: ‘none’
+	// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 	DataPersistence *string `pulumi:"dataPersistence"`
 	// Use TLS for authentication. Default: ‘false’
 	EnableTls *bool `pulumi:"enableTls"`
@@ -273,16 +371,22 @@ type subscriptionDatabaseArgs struct {
 	HashingPolicies []string `pulumi:"hashingPolicies"`
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb float64 `pulumi:"memoryLimitInGb"`
-	// A list of modules objects, documented below
+	// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 	Modules []SubscriptionDatabaseModule `pulumi:"modules"`
 	// A meaningful name to identify the database
 	Name *string `pulumi:"name"`
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password *string `pulumi:"password"`
-	// Path that will be used to store database backup files
+	// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+	//
+	// Deprecated: Use `remote_backup` block instead
 	PeriodicBackupPath *string `pulumi:"periodicBackupPath"`
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
-	Protocol string `pulumi:"protocol"`
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port *int `pulumi:"port"`
+	// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
+	Protocol *string `pulumi:"protocol"`
+	// Specifies the backup options for the database, documented below
+	RemoteBackup *SubscriptionDatabaseRemoteBackup `pulumi:"remoteBackup"`
 	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
 	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
 	// Cannot be enabled when `supportOssClusterApi` is enabled.
@@ -291,7 +395,7 @@ type subscriptionDatabaseArgs struct {
 	Replication *bool `pulumi:"replication"`
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps []string `pulumi:"sourceIps"`
-	// The ID of the subscription to create the database in
+	// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId string `pulumi:"subscriptionId"`
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi *bool `pulumi:"supportOssClusterApi"`
@@ -312,7 +416,7 @@ type SubscriptionDatabaseArgs struct {
 	ClientSslCertificate pulumi.StringPtrInput
 	// The data items eviction policy (either: 'allkeys-lru', 'allkeys-lfu', 'allkeys-random', 'volatile-lru', 'volatile-lfu', 'volatile-random', 'volatile-ttl' or 'noeviction'). Default: 'volatile-lru'
 	DataEviction pulumi.StringPtrInput
-	// Rate of database data persistence (in persistent storage). Default: ‘none’
+	// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 	DataPersistence pulumi.StringPtrInput
 	// Use TLS for authentication. Default: ‘false’
 	EnableTls pulumi.BoolPtrInput
@@ -325,16 +429,22 @@ type SubscriptionDatabaseArgs struct {
 	HashingPolicies pulumi.StringArrayInput
 	// Maximum memory usage for this specific database
 	MemoryLimitInGb pulumi.Float64Input
-	// A list of modules objects, documented below
+	// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 	Modules SubscriptionDatabaseModuleArrayInput
 	// A meaningful name to identify the database
 	Name pulumi.StringPtrInput
 	// Password to access the database. If omitted, a random 32 character long alphanumeric password will be automatically generated
 	Password pulumi.StringPtrInput
-	// Path that will be used to store database backup files
+	// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+	//
+	// Deprecated: Use `remote_backup` block instead
 	PeriodicBackupPath pulumi.StringPtrInput
-	// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
-	Protocol pulumi.StringInput
+	// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+	Port pulumi.IntPtrInput
+	// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
+	Protocol pulumi.StringPtrInput
+	// Specifies the backup options for the database, documented below
+	RemoteBackup SubscriptionDatabaseRemoteBackupPtrInput
 	// Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
 	// database will be a replica of. If the URI provided is Redis Labs Cloud instance, only host and port should be provided.
 	// Cannot be enabled when `supportOssClusterApi` is enabled.
@@ -343,7 +453,7 @@ type SubscriptionDatabaseArgs struct {
 	Replication pulumi.BoolPtrInput
 	// List of source IP addresses or subnet masks. If specified, Redis clients will be able to connect to this database only from within the specified source IP addresses ranges (example: [‘192.168.10.0/32’, ‘192.168.12.0/24’])
 	SourceIps pulumi.StringArrayInput
-	// The ID of the subscription to create the database in
+	// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId pulumi.StringInput
 	// Support Redis open-source (OSS) Cluster API. Default: ‘false’
 	SupportOssClusterApi pulumi.BoolPtrInput
@@ -376,6 +486,12 @@ func (i *SubscriptionDatabase) ToSubscriptionDatabaseOutputWithContext(ctx conte
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseOutput)
 }
 
+func (i *SubscriptionDatabase) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionDatabase] {
+	return pulumix.Output[*SubscriptionDatabase]{
+		OutputState: i.ToSubscriptionDatabaseOutputWithContext(ctx).OutputState,
+	}
+}
+
 // SubscriptionDatabaseArrayInput is an input type that accepts SubscriptionDatabaseArray and SubscriptionDatabaseArrayOutput values.
 // You can construct a concrete instance of `SubscriptionDatabaseArrayInput` via:
 //
@@ -399,6 +515,12 @@ func (i SubscriptionDatabaseArray) ToSubscriptionDatabaseArrayOutput() Subscript
 
 func (i SubscriptionDatabaseArray) ToSubscriptionDatabaseArrayOutputWithContext(ctx context.Context) SubscriptionDatabaseArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseArrayOutput)
+}
+
+func (i SubscriptionDatabaseArray) ToOutput(ctx context.Context) pulumix.Output[[]*SubscriptionDatabase] {
+	return pulumix.Output[[]*SubscriptionDatabase]{
+		OutputState: i.ToSubscriptionDatabaseArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // SubscriptionDatabaseMapInput is an input type that accepts SubscriptionDatabaseMap and SubscriptionDatabaseMapOutput values.
@@ -426,6 +548,12 @@ func (i SubscriptionDatabaseMap) ToSubscriptionDatabaseMapOutputWithContext(ctx 
 	return pulumi.ToOutputWithContext(ctx, i).(SubscriptionDatabaseMapOutput)
 }
 
+func (i SubscriptionDatabaseMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*SubscriptionDatabase] {
+	return pulumix.Output[map[string]*SubscriptionDatabase]{
+		OutputState: i.ToSubscriptionDatabaseMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type SubscriptionDatabaseOutput struct{ *pulumi.OutputState }
 
 func (SubscriptionDatabaseOutput) ElementType() reflect.Type {
@@ -438,6 +566,12 @@ func (o SubscriptionDatabaseOutput) ToSubscriptionDatabaseOutput() SubscriptionD
 
 func (o SubscriptionDatabaseOutput) ToSubscriptionDatabaseOutputWithContext(ctx context.Context) SubscriptionDatabaseOutput {
 	return o
+}
+
+func (o SubscriptionDatabaseOutput) ToOutput(ctx context.Context) pulumix.Output[*SubscriptionDatabase] {
+	return pulumix.Output[*SubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A block defining Redis database alert, documented below, can be specified multiple times
@@ -461,7 +595,7 @@ func (o SubscriptionDatabaseOutput) DataEviction() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.DataEviction }).(pulumi.StringPtrOutput)
 }
 
-// Rate of database data persistence (in persistent storage). Default: ‘none’
+// Rate of database's storage data persistence (either: 'none', 'aof-every-1-second', 'aof-every-write', 'snapshot-every-1-hour', 'snapshot-every-6-hours' or 'snapshot-every-12-hours'). Default: ‘none’
 func (o SubscriptionDatabaseOutput) DataPersistence() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.DataPersistence }).(pulumi.StringPtrOutput)
 }
@@ -494,7 +628,7 @@ func (o SubscriptionDatabaseOutput) MemoryLimitInGb() pulumi.Float64Output {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.Float64Output { return v.MemoryLimitInGb }).(pulumi.Float64Output)
 }
 
-// A list of modules objects, documented below
+// A list of modules objects, documented below. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionDatabaseOutput) Modules() SubscriptionDatabaseModuleArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) SubscriptionDatabaseModuleArrayOutput { return v.Modules }).(SubscriptionDatabaseModuleArrayOutput)
 }
@@ -509,9 +643,16 @@ func (o SubscriptionDatabaseOutput) Password() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Password }).(pulumi.StringOutput)
 }
 
-// Path that will be used to store database backup files
+// Path that will be used to store database backup files. **Deprecated: Use `remoteBackup` block instead**
+//
+// Deprecated: Use `remote_backup` block instead
 func (o SubscriptionDatabaseOutput) PeriodicBackupPath() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.PeriodicBackupPath }).(pulumi.StringPtrOutput)
+}
+
+// TCP port on which the database is available - must be between 10000 and 19999. **Modifying this attribute will force creation of a new resource.**
+func (o SubscriptionDatabaseOutput) Port() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.IntPtrOutput { return v.Port }).(pulumi.IntPtrOutput)
 }
 
 // Private endpoint to access the database
@@ -519,14 +660,19 @@ func (o SubscriptionDatabaseOutput) PrivateEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.PrivateEndpoint }).(pulumi.StringOutput)
 }
 
-// The protocol that will be used to access the database, (either ‘redis’ or 'memcached’) Default: ‘redis’
-func (o SubscriptionDatabaseOutput) Protocol() pulumi.StringOutput {
-	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.Protocol }).(pulumi.StringOutput)
+// The protocol that will be used to access the database, (either ‘redis’ or ‘memcached’) Default: ‘redis’. **Modifying this attribute will force creation of a new resource.**
+func (o SubscriptionDatabaseOutput) Protocol() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringPtrOutput { return v.Protocol }).(pulumi.StringPtrOutput)
 }
 
 // Public endpoint to access the database
 func (o SubscriptionDatabaseOutput) PublicEndpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.PublicEndpoint }).(pulumi.StringOutput)
+}
+
+// Specifies the backup options for the database, documented below
+func (o SubscriptionDatabaseOutput) RemoteBackup() SubscriptionDatabaseRemoteBackupPtrOutput {
+	return o.ApplyT(func(v *SubscriptionDatabase) SubscriptionDatabaseRemoteBackupPtrOutput { return v.RemoteBackup }).(SubscriptionDatabaseRemoteBackupPtrOutput)
 }
 
 // Set of Redis database URIs, in the format `redis://user:password@host:port`, that this
@@ -546,7 +692,7 @@ func (o SubscriptionDatabaseOutput) SourceIps() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringArrayOutput { return v.SourceIps }).(pulumi.StringArrayOutput)
 }
 
-// The ID of the subscription to create the database in
+// The ID of the subscription to create the database in. **Modifying this attribute will force creation of a new resource.**
 func (o SubscriptionDatabaseOutput) SubscriptionId() pulumi.StringOutput {
 	return o.ApplyT(func(v *SubscriptionDatabase) pulumi.StringOutput { return v.SubscriptionId }).(pulumi.StringOutput)
 }
@@ -580,6 +726,12 @@ func (o SubscriptionDatabaseArrayOutput) ToSubscriptionDatabaseArrayOutputWithCo
 	return o
 }
 
+func (o SubscriptionDatabaseArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*SubscriptionDatabase] {
+	return pulumix.Output[[]*SubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o SubscriptionDatabaseArrayOutput) Index(i pulumi.IntInput) SubscriptionDatabaseOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *SubscriptionDatabase {
 		return vs[0].([]*SubscriptionDatabase)[vs[1].(int)]
@@ -598,6 +750,12 @@ func (o SubscriptionDatabaseMapOutput) ToSubscriptionDatabaseMapOutput() Subscri
 
 func (o SubscriptionDatabaseMapOutput) ToSubscriptionDatabaseMapOutputWithContext(ctx context.Context) SubscriptionDatabaseMapOutput {
 	return o
+}
+
+func (o SubscriptionDatabaseMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*SubscriptionDatabase] {
+	return pulumix.Output[map[string]*SubscriptionDatabase]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o SubscriptionDatabaseMapOutput) MapIndex(k pulumi.StringInput) SubscriptionDatabaseOutput {

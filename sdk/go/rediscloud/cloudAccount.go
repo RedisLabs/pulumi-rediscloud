@@ -8,11 +8,57 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Creates a Cloud Account resource representing the access credentials to a cloud provider account, (`AWS`).
 // Redis Enterprise Cloud uses these credentials to provision databases within your infrastructure.
+//
+// ## Example Usage
+//
+// The following example defines a new AWS Cloud Account that is then used with a Subscription.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			exampleCloudAccount, err := rediscloud.NewCloudAccount(ctx, "exampleCloudAccount", &rediscloud.CloudAccountArgs{
+//				AccessKeyId:     pulumi.String("abcdefg"),
+//				AccessSecretKey: pulumi.String("9876543"),
+//				ConsoleUsername: pulumi.String("username"),
+//				ConsolePassword: pulumi.String("password"),
+//				ProviderType:    pulumi.String("AWS"),
+//				SignInLoginUrl:  pulumi.String("https://1234567890.signin.aws.amazon.com/console"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = rediscloud.NewSubscription(ctx, "exampleSubscription", &rediscloud.SubscriptionArgs{
+//				PaymentMethodId: pulumi.Any(data.Rediscloud_payment_method.Card.Id),
+//				MemoryStorage:   pulumi.String("ram"),
+//				CloudProvider: &rediscloud.SubscriptionCloudProviderArgs{
+//					Provider:       exampleCloudAccount.ProviderType,
+//					CloudAccountId: exampleCloudAccount.ID(),
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 //
 // ## Import
 //
@@ -40,7 +86,7 @@ type CloudAccount struct {
 	// Display name of the account.
 	Name pulumi.StringOutput `pulumi:"name"`
 	// Cloud provider type - either `AWS` or `GCP`.
-	// Note that drift cannot currently be detected for this.
+	// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 	ProviderType pulumi.StringOutput `pulumi:"providerType"`
 	// Cloud provider management console login URL.
 	// Note that drift cannot currently be detected for this.
@@ -85,7 +131,7 @@ func NewCloudAccount(ctx *pulumi.Context,
 		"consolePassword",
 	})
 	opts = append(opts, secrets)
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource CloudAccount
 	err := ctx.RegisterResource("rediscloud:index/cloudAccount:CloudAccount", name, args, &resource, opts...)
 	if err != nil {
@@ -122,7 +168,7 @@ type cloudAccountState struct {
 	// Display name of the account.
 	Name *string `pulumi:"name"`
 	// Cloud provider type - either `AWS` or `GCP`.
-	// Note that drift cannot currently be detected for this.
+	// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 	ProviderType *string `pulumi:"providerType"`
 	// Cloud provider management console login URL.
 	// Note that drift cannot currently be detected for this.
@@ -146,7 +192,7 @@ type CloudAccountState struct {
 	// Display name of the account.
 	Name pulumi.StringPtrInput
 	// Cloud provider type - either `AWS` or `GCP`.
-	// Note that drift cannot currently be detected for this.
+	// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 	ProviderType pulumi.StringPtrInput
 	// Cloud provider management console login URL.
 	// Note that drift cannot currently be detected for this.
@@ -174,7 +220,7 @@ type cloudAccountArgs struct {
 	// Display name of the account.
 	Name *string `pulumi:"name"`
 	// Cloud provider type - either `AWS` or `GCP`.
-	// Note that drift cannot currently be detected for this.
+	// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 	ProviderType string `pulumi:"providerType"`
 	// Cloud provider management console login URL.
 	// Note that drift cannot currently be detected for this.
@@ -197,7 +243,7 @@ type CloudAccountArgs struct {
 	// Display name of the account.
 	Name pulumi.StringPtrInput
 	// Cloud provider type - either `AWS` or `GCP`.
-	// Note that drift cannot currently be detected for this.
+	// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 	ProviderType pulumi.StringInput
 	// Cloud provider management console login URL.
 	// Note that drift cannot currently be detected for this.
@@ -227,6 +273,12 @@ func (i *CloudAccount) ToCloudAccountOutputWithContext(ctx context.Context) Clou
 	return pulumi.ToOutputWithContext(ctx, i).(CloudAccountOutput)
 }
 
+func (i *CloudAccount) ToOutput(ctx context.Context) pulumix.Output[*CloudAccount] {
+	return pulumix.Output[*CloudAccount]{
+		OutputState: i.ToCloudAccountOutputWithContext(ctx).OutputState,
+	}
+}
+
 // CloudAccountArrayInput is an input type that accepts CloudAccountArray and CloudAccountArrayOutput values.
 // You can construct a concrete instance of `CloudAccountArrayInput` via:
 //
@@ -250,6 +302,12 @@ func (i CloudAccountArray) ToCloudAccountArrayOutput() CloudAccountArrayOutput {
 
 func (i CloudAccountArray) ToCloudAccountArrayOutputWithContext(ctx context.Context) CloudAccountArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(CloudAccountArrayOutput)
+}
+
+func (i CloudAccountArray) ToOutput(ctx context.Context) pulumix.Output[[]*CloudAccount] {
+	return pulumix.Output[[]*CloudAccount]{
+		OutputState: i.ToCloudAccountArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // CloudAccountMapInput is an input type that accepts CloudAccountMap and CloudAccountMapOutput values.
@@ -277,6 +335,12 @@ func (i CloudAccountMap) ToCloudAccountMapOutputWithContext(ctx context.Context)
 	return pulumi.ToOutputWithContext(ctx, i).(CloudAccountMapOutput)
 }
 
+func (i CloudAccountMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*CloudAccount] {
+	return pulumix.Output[map[string]*CloudAccount]{
+		OutputState: i.ToCloudAccountMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type CloudAccountOutput struct{ *pulumi.OutputState }
 
 func (CloudAccountOutput) ElementType() reflect.Type {
@@ -289,6 +353,12 @@ func (o CloudAccountOutput) ToCloudAccountOutput() CloudAccountOutput {
 
 func (o CloudAccountOutput) ToCloudAccountOutputWithContext(ctx context.Context) CloudAccountOutput {
 	return o
+}
+
+func (o CloudAccountOutput) ToOutput(ctx context.Context) pulumix.Output[*CloudAccount] {
+	return pulumix.Output[*CloudAccount]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Cloud provider access key.
@@ -320,7 +390,7 @@ func (o CloudAccountOutput) Name() pulumi.StringOutput {
 }
 
 // Cloud provider type - either `AWS` or `GCP`.
-// Note that drift cannot currently be detected for this.
+// Note that drift cannot currently be detected for this. **Modifying this attribute will force creation of a new resource.**
 func (o CloudAccountOutput) ProviderType() pulumi.StringOutput {
 	return o.ApplyT(func(v *CloudAccount) pulumi.StringOutput { return v.ProviderType }).(pulumi.StringOutput)
 }
@@ -350,6 +420,12 @@ func (o CloudAccountArrayOutput) ToCloudAccountArrayOutputWithContext(ctx contex
 	return o
 }
 
+func (o CloudAccountArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*CloudAccount] {
+	return pulumix.Output[[]*CloudAccount]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o CloudAccountArrayOutput) Index(i pulumi.IntInput) CloudAccountOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *CloudAccount {
 		return vs[0].([]*CloudAccount)[vs[1].(int)]
@@ -368,6 +444,12 @@ func (o CloudAccountMapOutput) ToCloudAccountMapOutput() CloudAccountMapOutput {
 
 func (o CloudAccountMapOutput) ToCloudAccountMapOutputWithContext(ctx context.Context) CloudAccountMapOutput {
 	return o
+}
+
+func (o CloudAccountMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*CloudAccount] {
+	return pulumix.Output[map[string]*CloudAccount]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o CloudAccountMapOutput) MapIndex(k pulumi.StringInput) CloudAccountOutput {

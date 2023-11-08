@@ -6,6 +6,7 @@ package rediscloud
 import (
 	"fmt"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/blang/semver"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -20,6 +21,12 @@ func (m *module) Version() semver.Version {
 
 func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi.Resource, err error) {
 	switch typ {
+	case "rediscloud:index/aclRole:AclRole":
+		r = &AclRole{}
+	case "rediscloud:index/aclRule:AclRule":
+		r = &AclRule{}
+	case "rediscloud:index/aclUser:AclUser":
+		r = &AclUser{}
 	case "rediscloud:index/activeActiveSubscription:ActiveActiveSubscription":
 		r = &ActiveActiveSubscription{}
 	case "rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase":
@@ -63,7 +70,25 @@ func (p *pkg) ConstructProvider(ctx *pulumi.Context, name, typ, urn string) (pul
 }
 
 func init() {
-	version, _ := PkgVersion()
+	version, err := internal.PkgVersion()
+	if err != nil {
+		version = semver.Version{Major: 1}
+	}
+	pulumi.RegisterResourceModule(
+		"rediscloud",
+		"index/aclRole",
+		&module{version},
+	)
+	pulumi.RegisterResourceModule(
+		"rediscloud",
+		"index/aclRule",
+		&module{version},
+	)
+	pulumi.RegisterResourceModule(
+		"rediscloud",
+		"index/aclUser",
+		&module{version},
+	)
 	pulumi.RegisterResourceModule(
 		"rediscloud",
 		"index/activeActiveSubscription",

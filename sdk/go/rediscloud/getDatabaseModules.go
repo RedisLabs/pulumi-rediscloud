@@ -4,6 +4,7 @@
 package rediscloud
 
 import (
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -37,7 +38,7 @@ import (
 //
 // ```
 func GetDatabaseModules(ctx *pulumi.Context, opts ...pulumi.InvokeOption) (*GetDatabaseModulesResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv GetDatabaseModulesResult
 	err := ctx.Invoke("rediscloud:index/getDatabaseModules:getDatabaseModules", nil, &rv, opts...)
 	if err != nil {

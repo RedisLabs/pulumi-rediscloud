@@ -4,9 +4,12 @@
 package config
 
 import (
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
+
+var _ = internal.GetEnvOrDefault
 
 // This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment
 // variable.
@@ -15,7 +18,11 @@ func GetApiKey(ctx *pulumi.Context) string {
 	if err == nil {
 		return v
 	}
-	return getEnvOrDefault("", nil, "REDISCLOUD_API_KEY").(string)
+	var value string
+	if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_API_KEY"); d != nil {
+		value = d.(string)
+	}
+	return value
 }
 
 // This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY`
@@ -25,7 +32,11 @@ func GetSecretKey(ctx *pulumi.Context) string {
 	if err == nil {
 		return v
 	}
-	return getEnvOrDefault("", nil, "REDISCLOUD_SECRET_KEY").(string)
+	var value string
+	if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_SECRET_KEY"); d != nil {
+		value = d.(string)
+	}
+	return value
 }
 
 // This is the URL of Redis Cloud and will default to `https://api.redislabs.com/v1`. This can also be set by the

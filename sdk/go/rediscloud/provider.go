@@ -7,7 +7,9 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The provider type for the rediscloud package. By default, resources use package-wide configuration
@@ -36,10 +38,14 @@ func NewProvider(ctx *pulumi.Context,
 	}
 
 	if args.ApiKey == nil {
-		args.ApiKey = pulumi.StringPtr(getEnvOrDefault("", nil, "REDISCLOUD_API_KEY").(string))
+		if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_API_KEY"); d != nil {
+			args.ApiKey = pulumi.StringPtr(d.(string))
+		}
 	}
 	if args.SecretKey == nil {
-		args.SecretKey = pulumi.StringPtr(getEnvOrDefault("", nil, "REDISCLOUD_SECRET_KEY").(string))
+		if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_SECRET_KEY"); d != nil {
+			args.SecretKey = pulumi.StringPtr(d.(string))
+		}
 	}
 	if args.ApiKey != nil {
 		args.ApiKey = pulumi.ToSecret(args.ApiKey).(pulumi.StringPtrInput)
@@ -52,7 +58,7 @@ func NewProvider(ctx *pulumi.Context,
 		"secretKey",
 	})
 	opts = append(opts, secrets)
-	opts = pkgResourceDefaultOpts(opts)
+	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource Provider
 	err := ctx.RegisterResource("pulumi:providers:rediscloud", name, args, &resource, opts...)
 	if err != nil {
@@ -109,6 +115,12 @@ func (i *Provider) ToProviderOutputWithContext(ctx context.Context) ProviderOutp
 	return pulumi.ToOutputWithContext(ctx, i).(ProviderOutput)
 }
 
+func (i *Provider) ToOutput(ctx context.Context) pulumix.Output[*Provider] {
+	return pulumix.Output[*Provider]{
+		OutputState: i.ToProviderOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ProviderOutput struct{ *pulumi.OutputState }
 
 func (ProviderOutput) ElementType() reflect.Type {
@@ -121,6 +133,12 @@ func (o ProviderOutput) ToProviderOutput() ProviderOutput {
 
 func (o ProviderOutput) ToProviderOutputWithContext(ctx context.Context) ProviderOutput {
 	return o
+}
+
+func (o ProviderOutput) ToOutput(ctx context.Context) pulumix.Output[*Provider] {
+	return pulumix.Output[*Provider]{
+		OutputState: o.OutputState,
+	}
 }
 
 // This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment

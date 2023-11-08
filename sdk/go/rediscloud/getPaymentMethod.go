@@ -7,12 +7,14 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // The Payment Method data source allows access to the ID of a Payment Method configured against your Redis Enterprise Cloud account. This ID can be used when creating Subscription resources.
 func GetPaymentMethod(ctx *pulumi.Context, args *GetPaymentMethodArgs, opts ...pulumi.InvokeOption) (*GetPaymentMethodResult, error) {
-	opts = pkgInvokeDefaultOpts(opts)
+	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv GetPaymentMethodResult
 	err := ctx.Invoke("rediscloud:index/getPaymentMethod:getPaymentMethod", args, &rv, opts...)
 	if err != nil {
@@ -80,6 +82,12 @@ func (o GetPaymentMethodResultOutput) ToGetPaymentMethodResultOutput() GetPaymen
 
 func (o GetPaymentMethodResultOutput) ToGetPaymentMethodResultOutputWithContext(ctx context.Context) GetPaymentMethodResultOutput {
 	return o
+}
+
+func (o GetPaymentMethodResultOutput) ToOutput(ctx context.Context) pulumix.Output[GetPaymentMethodResult] {
+	return pulumix.Output[GetPaymentMethodResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o GetPaymentMethodResultOutput) CardType() pulumi.StringOutput {
