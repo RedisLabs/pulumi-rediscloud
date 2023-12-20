@@ -35,7 +35,6 @@ env:
 
   # Java SDK
   JAVAVERSION: "11"
-  JAVA_GEN_VERSION: v0.9.4
   JAVA_PUBLISH: "true"
   PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -193,10 +192,9 @@ jobs:
 
       - if: ${{ matrix.language == 'java' && env.JAVA_PUBLISH == 'true' }}
         name: Publish Java SDK
-        continue-on-error: true
         uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
         with:
-          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
+          arguments: --stacktrace --debug --scan publishToSonatype closeAndReleaseSonatypeStagingRepository
           build-root-directory: ./sdk/java
           gradle-version: 7.4.1
 
