@@ -1,8 +1,9 @@
 # ADR-0001: Stay on the published bridge and move to the mux entrypoints
 
-Status: Proposed.
+Status: Accepted.
 Date: 1 November 2026.
 Decision owner: Shay Berman.
+Acceptance basis: Shay Berman accepted this decision on 1 November 2026. Acceptance does not implement the refresh and does not publish a release.
 Index: [ADR-index.md](ADR-index.md).
 Design: [pulumi-provider-refresh.md](../design/pulumi-provider-refresh.md).
 Ticket: none.

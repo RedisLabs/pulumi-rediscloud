@@ -1,11 +1,11 @@
 # Refresh the Pulumi Redis Cloud provider
 
-Status: Ready. ADR-0001 stays Proposed until G0.
+Status: Accepted. G0 accepted by Shay Berman on 1 November 2026.
 Owner: Shay Berman.
 Date: 1 November 2026.
 Ticket: none.
 Design: this file.
-ADR: [ADR-0001](../adr/ADR-0001-published-bridge-mux.md) (Proposed).
+ADR: [ADR-0001](../adr/ADR-0001-published-bridge-mux.md) (Accepted).
 BDR: none. This is a technical refresh of an existing package. No pricing, entitlement, or ownership choice.
 Gap review: [pulumi-rediscloud-gap.md](../pulumi-rediscloud-gap.md).
 
@@ -169,15 +169,15 @@ flowchart TD
 Depends: nothing.
 Wave: 0. Human.
 
-The decision owner accepts ADR-0001 and this file. No repository change. T1 does not start before that.
+Accepted by Shay Berman on 1 November 2026. T1 may start. This acceptance does not publish a release.
 
 ### T1. Bridge, mux, and Terraform v2.19.3
 
 Depends: G0.
 Wave: 1. Nothing else runs in this wave.
-Edits: `provider/`, `sdk/go/`, `Makefile`, `go.mod` files, the alignment note in `analysis/pulumi-rediscloud-gap.md`, and the status lines in this design and ADR-0001. No other task edits the Makefile.
+Edits: `provider/`, `sdk/go/`, `Makefile`, `go.mod` files, and the alignment note in `analysis/pulumi-rediscloud-gap.md`. No other task edits the Makefile.
 
-One pull request. G0 is recorded here: ADR-0001 and this design move from Proposed and Ready to Accepted. Do not open the pull request while those lines still say Proposed.
+One pull request. G0 is already Accepted. This pull request does not change that decision.
 
 - Set `provider/go.mod` to Go 1.26.10, bridge v3.142.0, `github.com/pulumi/pulumi/pkg/v3` v3.273.0, and `terraform-provider-rediscloud` v2.19.3.
 - Delete the `replace` of `github.com/hashicorp/terraform-plugin-sdk/v2`.
@@ -358,6 +358,6 @@ Kept:
 Rejected:
 
 - An edge `T3 → T7 → T4`. T1's test discovery already runs a script test added later. The extra edge would stop T7 from running beside T3.
-- Marking ADR-0001 Accepted in this review. Acceptance is G0, recorded in the T1 pull request. This file is Ready. The ADR stays Proposed.
+- Marking ADR-0001 Accepted during the review itself. Shay Berman accepted G0 on 1 November 2026. This file and ADR-0001 are Accepted. T1 does not reopen the decision.
 
 Bridge v3.142.0 and Terraform v2.19.3 belong in one pull request. Splitting them does not compile.

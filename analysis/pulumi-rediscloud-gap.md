@@ -2,7 +2,7 @@
 
 Status: review. Date: 1 November 2026. Owner: Shay Berman.
 
-The refresh plan, with the task graph, is [analysis/design/pulumi-provider-refresh.md](design/pulumi-provider-refresh.md). The decision is [ADR-0001](adr/ADR-0001-published-bridge-mux.md), still Proposed.
+The refresh plan, with the task graph, is [analysis/design/pulumi-provider-refresh.md](design/pulumi-provider-refresh.md). The decision is [ADR-0001](adr/ADR-0001-published-bridge-mux.md), Accepted on 1 November 2026.
 
 This is a maintainer review of `RedisLabs/pulumi-rediscloud`. It is not a Pulumi Registry page. Sources are this repository at `main` (`6a6fa7d`, 22 January 2024), Terraform provider tag `v2.19.3` (published 28 October 2026; `main` is the same commit), and Crossplane provider `main` as of 31 October 2026.
 
