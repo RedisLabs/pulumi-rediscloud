@@ -46,3 +46,5 @@ The following configuration points are available for the `rediscloud` provider:
 ## Reference
 
 For detailed reference documentation, please visit [the Pulumi registry](https://www.pulumi.com/registry/packages/rediscloud/api-docs/).
+
+Repository vocabulary is in [GLOSSARY.md](GLOSSARY.md).
