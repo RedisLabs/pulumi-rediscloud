@@ -1,0 +1,917 @@
+{
+    "auto-aliasing": {
+        "resources": {
+            "rediscloud_acl_role": {
+                "current": "rediscloud:index/aclRole:AclRole",
+                "majorVersion": 1,
+                "fields": {
+                    "rule": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "database": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "regions": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_acl_rule": {
+                "current": "rediscloud:index/aclRule:AclRule",
+                "majorVersion": 1
+            },
+            "rediscloud_acl_user": {
+                "current": "rediscloud:index/aclUser:AclUser",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_private_link": {
+                "current": "rediscloud:index/activeActivePrivateLink:ActiveActivePrivateLink",
+                "majorVersion": 1,
+                "fields": {
+                    "connections": {
+                        "maxItemsOne": false
+                    },
+                    "databases": {
+                        "maxItemsOne": false
+                    },
+                    "principal": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_private_service_connect": {
+                "current": "rediscloud:index/activeActivePrivateServiceConnect:ActiveActivePrivateServiceConnect",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_private_service_connect_endpoint": {
+                "current": "rediscloud:index/activeActivePrivateServiceConnectEndpoint:ActiveActivePrivateServiceConnectEndpoint",
+                "majorVersion": 1,
+                "fields": {
+                    "service_attachments": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_private_service_connect_endpoint_accepter": {
+                "current": "rediscloud:index/activeActivePrivateServiceConnectEndpointAccepter:ActiveActivePrivateServiceConnectEndpointAccepter",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_subscription": {
+                "current": "rediscloud:index/activeActiveSubscription:ActiveActiveSubscription",
+                "majorVersion": 1,
+                "fields": {
+                    "creation_plan": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "modules": {
+                                    "maxItemsOne": false
+                                },
+                                "region": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "customer_managed_key": {
+                        "maxItemsOne": false
+                    },
+                    "maintenance_windows": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "window": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "days": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription_database": {
+                "current": "rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "client_tls_certificates": {
+                        "maxItemsOne": false
+                    },
+                    "global_alert": {
+                        "maxItemsOne": false
+                    },
+                    "global_modules": {
+                        "maxItemsOne": false
+                    },
+                    "global_source_ips": {
+                        "maxItemsOne": false
+                    },
+                    "override_region": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "override_global_alert": {
+                                    "maxItemsOne": false
+                                },
+                                "override_global_source_ips": {
+                                    "maxItemsOne": false
+                                },
+                                "remote_backup": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription_peering": {
+                "current": "rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering",
+                "majorVersion": 1,
+                "fields": {
+                    "vpc_cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription_regions": {
+                "current": "rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions",
+                "majorVersion": 1,
+                "fields": {
+                    "region": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "database": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_active_active_transit_gateway_attachment": {
+                "current": "rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_transit_gateway_invitation_acceptor": {
+                "current": "rediscloud:index/activeActiveTransitGatewayInvitationAcceptor:ActiveActiveTransitGatewayInvitationAcceptor",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_transit_gateway_route": {
+                "current": "rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_cloud_account": {
+                "current": "rediscloud:index/cloudAccount:CloudAccount",
+                "majorVersion": 1
+            },
+            "rediscloud_essentials_database": {
+                "current": "rediscloud:index/essentialsDatabase:EssentialsDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "alert": {
+                        "maxItemsOne": false
+                    },
+                    "client_tls_certificates": {
+                        "maxItemsOne": false
+                    },
+                    "modules": {
+                        "maxItemsOne": false
+                    },
+                    "regex_rules": {
+                        "maxItemsOne": false
+                    },
+                    "replica": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "sync_source": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "source_ips": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_essentials_subscription": {
+                "current": "rediscloud:index/essentialsSubscription:EssentialsSubscription",
+                "majorVersion": 1
+            },
+            "rediscloud_private_link": {
+                "current": "rediscloud:index/privateLink:PrivateLink",
+                "majorVersion": 1,
+                "fields": {
+                    "connections": {
+                        "maxItemsOne": false
+                    },
+                    "databases": {
+                        "maxItemsOne": false
+                    },
+                    "principal": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_private_service_connect": {
+                "current": "rediscloud:index/privateServiceConnect:PrivateServiceConnect",
+                "majorVersion": 1
+            },
+            "rediscloud_private_service_connect_endpoint": {
+                "current": "rediscloud:index/privateServiceConnectEndpoint:PrivateServiceConnectEndpoint",
+                "majorVersion": 1,
+                "fields": {
+                    "service_attachments": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_private_service_connect_endpoint_accepter": {
+                "current": "rediscloud:index/privateServiceConnectEndpointAccepter:PrivateServiceConnectEndpointAccepter",
+                "majorVersion": 1
+            },
+            "rediscloud_subscription": {
+                "current": "rediscloud:index/subscription:Subscription",
+                "majorVersion": 1,
+                "fields": {
+                    "allowlist": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "cidrs": {
+                                    "maxItemsOne": false
+                                },
+                                "security_group_ids": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "cloud_provider": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "region": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "networks": {
+                                                "maxItemsOne": false
+                                            },
+                                            "preferred_availability_zones": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "creation_plan": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "modules": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "customer_managed_key": {
+                        "maxItemsOne": false
+                    },
+                    "maintenance_windows": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "window": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "days": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_subscription_database": {
+                "current": "rediscloud:index/subscriptionDatabase:SubscriptionDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "alert": {
+                        "maxItemsOne": false
+                    },
+                    "client_tls_certificates": {
+                        "maxItemsOne": false
+                    },
+                    "hashing_policy": {
+                        "maxItemsOne": false
+                    },
+                    "modules": {
+                        "maxItemsOne": false
+                    },
+                    "remote_backup": {
+                        "maxItemsOne": true
+                    },
+                    "replica_of": {
+                        "maxItemsOne": false
+                    },
+                    "source_ips": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_subscription_peering": {
+                "current": "rediscloud:index/subscriptionPeering:SubscriptionPeering",
+                "majorVersion": 1,
+                "fields": {
+                    "vpc_cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_transit_gateway_attachment": {
+                "current": "rediscloud:index/transitGatewayAttachment:TransitGatewayAttachment",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_transit_gateway_invitation_acceptor": {
+                "current": "rediscloud:index/transitGatewayInvitationAcceptor:TransitGatewayInvitationAcceptor",
+                "majorVersion": 1
+            },
+            "rediscloud_transit_gateway_route": {
+                "current": "rediscloud:index/transitGatewayRoute:TransitGatewayRoute",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            }
+        },
+        "datasources": {
+            "rediscloud_acl_role": {
+                "current": "rediscloud:index/getAclRole:getAclRole",
+                "majorVersion": 1,
+                "fields": {
+                    "rule": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "database": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "regions": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_acl_rule": {
+                "current": "rediscloud:index/getAclRule:getAclRule",
+                "majorVersion": 1
+            },
+            "rediscloud_acl_user": {
+                "current": "rediscloud:index/getAclUser:getAclUser",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_private_link": {
+                "current": "rediscloud:index/getActiveActivePrivateLink:getActiveActivePrivateLink",
+                "majorVersion": 1,
+                "fields": {
+                    "connections": {
+                        "maxItemsOne": false
+                    },
+                    "databases": {
+                        "maxItemsOne": false
+                    },
+                    "principals": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_private_link_endpoint_script": {
+                "current": "rediscloud:index/getActiveActivePrivateLinkEndpointScript:getActiveActivePrivateLinkEndpointScript",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_private_service_connect": {
+                "current": "rediscloud:index/getActiveActivePrivateServiceConnect:getActiveActivePrivateServiceConnect",
+                "majorVersion": 1
+            },
+            "rediscloud_active_active_private_service_connect_endpoints": {
+                "current": "rediscloud:index/getActiveActivePrivateServiceConnectEndpoints:getActiveActivePrivateServiceConnectEndpoints",
+                "majorVersion": 1,
+                "fields": {
+                    "endpoints": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "service_attachments": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription": {
+                "current": "rediscloud:index/getActiveActiveSubscription:getActiveActiveSubscription",
+                "majorVersion": 1,
+                "fields": {
+                    "maintenance_windows": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "window": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "days": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription_database": {
+                "current": "rediscloud:index/getActiveActiveSubscriptionDatabase:getActiveActiveSubscriptionDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "global_modules": {
+                        "maxItemsOne": false
+                    },
+                    "global_source_ips": {
+                        "maxItemsOne": false
+                    },
+                    "latest_backup_statuses": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "latest_import_status": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "failure_reason_params": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_active_active_subscription_regions": {
+                "current": "rediscloud:index/getActiveActiveSubscriptionRegions:getActiveActiveSubscriptionRegions",
+                "majorVersion": 1,
+                "fields": {
+                    "regions": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "databases": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_active_active_transit_gateway": {
+                "current": "rediscloud:index/getActiveActiveTransitGateway:getActiveActiveTransitGateway",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_active_active_transit_gateway_invitations": {
+                "current": "rediscloud:index/getActiveActiveTransitGatewayInvitations:getActiveActiveTransitGatewayInvitations",
+                "majorVersion": 1,
+                "fields": {
+                    "invitations": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_cloud_account": {
+                "current": "rediscloud:index/getCloudAccount:getCloudAccount",
+                "majorVersion": 1
+            },
+            "rediscloud_data_persistence": {
+                "current": "rediscloud:index/getDataPersistence:getDataPersistence",
+                "majorVersion": 1,
+                "fields": {
+                    "data_persistence": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_database": {
+                "current": "rediscloud:index/getDatabase:getDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "alert": {
+                        "maxItemsOne": false
+                    },
+                    "hashing_policy": {
+                        "maxItemsOne": false
+                    },
+                    "latest_backup_status": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "latest_import_status": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "failure_reason_params": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "module": {
+                        "maxItemsOne": false
+                    },
+                    "replica_of": {
+                        "maxItemsOne": false
+                    },
+                    "source_ips": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_database_modules": {
+                "current": "rediscloud:index/getDatabaseModules:getDatabaseModules",
+                "majorVersion": 1,
+                "fields": {
+                    "modules": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_essentials_database": {
+                "current": "rediscloud:index/getEssentialsDatabase:getEssentialsDatabase",
+                "majorVersion": 1,
+                "fields": {
+                    "alert": {
+                        "maxItemsOne": false
+                    },
+                    "client_tls_certificates": {
+                        "maxItemsOne": false
+                    },
+                    "latest_backup_status": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "latest_import_status": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "error": {
+                                    "maxItemsOne": false
+                                },
+                                "response": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "failure_reason_params": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "modules": {
+                        "maxItemsOne": false
+                    },
+                    "regex_rules": {
+                        "maxItemsOne": false
+                    },
+                    "replica": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "sync_source": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "source_ips": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_essentials_plan": {
+                "current": "rediscloud:index/getEssentialsPlan:getEssentialsPlan",
+                "majorVersion": 1,
+                "fields": {
+                    "supported_alerts": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_essentials_subscription": {
+                "current": "rediscloud:index/getEssentialsSubscription:getEssentialsSubscription",
+                "majorVersion": 1
+            },
+            "rediscloud_payment_method": {
+                "current": "rediscloud:index/getPaymentMethod:getPaymentMethod",
+                "majorVersion": 1
+            },
+            "rediscloud_private_link": {
+                "current": "rediscloud:index/getPrivateLink:getPrivateLink",
+                "majorVersion": 1,
+                "fields": {
+                    "connections": {
+                        "maxItemsOne": false
+                    },
+                    "databases": {
+                        "maxItemsOne": false
+                    },
+                    "principals": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_private_link_endpoint_script": {
+                "current": "rediscloud:index/getPrivateLinkEndpointScript:getPrivateLinkEndpointScript",
+                "majorVersion": 1
+            },
+            "rediscloud_private_service_connect": {
+                "current": "rediscloud:index/getPrivateServiceConnect:getPrivateServiceConnect",
+                "majorVersion": 1
+            },
+            "rediscloud_private_service_connect_endpoints": {
+                "current": "rediscloud:index/getPrivateServiceConnectEndpoints:getPrivateServiceConnectEndpoints",
+                "majorVersion": 1,
+                "fields": {
+                    "endpoints": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "service_attachments": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "rediscloud_regions": {
+                "current": "rediscloud:index/getRegions:getRegions",
+                "majorVersion": 1,
+                "fields": {
+                    "regions": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_subscription": {
+                "current": "rediscloud:index/getSubscription:getSubscription",
+                "majorVersion": 1,
+                "fields": {
+                    "cloud_provider": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "region": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "networks": {
+                                                "maxItemsOne": false
+                                            },
+                                            "preferred_availability_zones": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "maintenance_windows": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "window": {
+                                    "maxItemsOne": false,
+                                    "elem": {
+                                        "fields": {
+                                            "days": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_subscription_peerings": {
+                "current": "rediscloud:index/getSubscriptionPeerings:getSubscriptionPeerings",
+                "majorVersion": 1,
+                "fields": {
+                    "peerings": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_transit_gateway": {
+                "current": "rediscloud:index/getTransitGateway:getTransitGateway",
+                "majorVersion": 1,
+                "fields": {
+                    "cidrs": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "rediscloud_transit_gateway_invitations": {
+                "current": "rediscloud:index/getTransitGatewayInvitations:getTransitGatewayInvitations",
+                "majorVersion": 1,
+                "fields": {
+                    "invitations": {
+                        "maxItemsOne": false
+                    }
+                }
+            }
+        }
+    },
+    "auto-settings": {},
+    "default-resource-schema-fixups": {
+        "resources": {
+            "rediscloud_active_active_subscription_database": {},
+            "rediscloud_cloud_account": {}
+        }
+    },
+    "mux": {
+        "resources": {
+            "rediscloud:index/aclRole:AclRole": 0,
+            "rediscloud:index/aclRule:AclRule": 0,
+            "rediscloud:index/aclUser:AclUser": 0,
+            "rediscloud:index/activeActivePrivateLink:ActiveActivePrivateLink": 0,
+            "rediscloud:index/activeActivePrivateServiceConnect:ActiveActivePrivateServiceConnect": 0,
+            "rediscloud:index/activeActivePrivateServiceConnectEndpoint:ActiveActivePrivateServiceConnectEndpoint": 0,
+            "rediscloud:index/activeActivePrivateServiceConnectEndpointAccepter:ActiveActivePrivateServiceConnectEndpointAccepter": 0,
+            "rediscloud:index/activeActiveSubscription:ActiveActiveSubscription": 0,
+            "rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase": 1,
+            "rediscloud:index/activeActiveSubscriptionPeering:ActiveActiveSubscriptionPeering": 0,
+            "rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions": 0,
+            "rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment": 0,
+            "rediscloud:index/activeActiveTransitGatewayInvitationAcceptor:ActiveActiveTransitGatewayInvitationAcceptor": 0,
+            "rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute": 0,
+            "rediscloud:index/cloudAccount:CloudAccount": 1,
+            "rediscloud:index/essentialsDatabase:EssentialsDatabase": 0,
+            "rediscloud:index/essentialsSubscription:EssentialsSubscription": 0,
+            "rediscloud:index/privateLink:PrivateLink": 0,
+            "rediscloud:index/privateServiceConnect:PrivateServiceConnect": 0,
+            "rediscloud:index/privateServiceConnectEndpoint:PrivateServiceConnectEndpoint": 0,
+            "rediscloud:index/privateServiceConnectEndpointAccepter:PrivateServiceConnectEndpointAccepter": 0,
+            "rediscloud:index/subscription:Subscription": 0,
+            "rediscloud:index/subscriptionDatabase:SubscriptionDatabase": 0,
+            "rediscloud:index/subscriptionPeering:SubscriptionPeering": 0,
+            "rediscloud:index/transitGatewayAttachment:TransitGatewayAttachment": 0,
+            "rediscloud:index/transitGatewayInvitationAcceptor:TransitGatewayInvitationAcceptor": 0,
+            "rediscloud:index/transitGatewayRoute:TransitGatewayRoute": 0
+        },
+        "functions": {
+            "rediscloud:index/getAclRole:getAclRole": 0,
+            "rediscloud:index/getAclRule:getAclRule": 1,
+            "rediscloud:index/getAclUser:getAclUser": 1,
+            "rediscloud:index/getActiveActivePrivateLink:getActiveActivePrivateLink": 0,
+            "rediscloud:index/getActiveActivePrivateLinkEndpointScript:getActiveActivePrivateLinkEndpointScript": 0,
+            "rediscloud:index/getActiveActivePrivateServiceConnect:getActiveActivePrivateServiceConnect": 0,
+            "rediscloud:index/getActiveActivePrivateServiceConnectEndpoints:getActiveActivePrivateServiceConnectEndpoints": 0,
+            "rediscloud:index/getActiveActiveSubscription:getActiveActiveSubscription": 1,
+            "rediscloud:index/getActiveActiveSubscriptionDatabase:getActiveActiveSubscriptionDatabase": 0,
+            "rediscloud:index/getActiveActiveSubscriptionRegions:getActiveActiveSubscriptionRegions": 0,
+            "rediscloud:index/getActiveActiveTransitGateway:getActiveActiveTransitGateway": 0,
+            "rediscloud:index/getActiveActiveTransitGatewayInvitations:getActiveActiveTransitGatewayInvitations": 0,
+            "rediscloud:index/getCloudAccount:getCloudAccount": 1,
+            "rediscloud:index/getDataPersistence:getDataPersistence": 1,
+            "rediscloud:index/getDatabase:getDatabase": 0,
+            "rediscloud:index/getDatabaseModules:getDatabaseModules": 0,
+            "rediscloud:index/getEssentialsDatabase:getEssentialsDatabase": 0,
+            "rediscloud:index/getEssentialsPlan:getEssentialsPlan": 1,
+            "rediscloud:index/getEssentialsSubscription:getEssentialsSubscription": 1,
+            "rediscloud:index/getPaymentMethod:getPaymentMethod": 1,
+            "rediscloud:index/getPrivateLink:getPrivateLink": 0,
+            "rediscloud:index/getPrivateLinkEndpointScript:getPrivateLinkEndpointScript": 0,
+            "rediscloud:index/getPrivateServiceConnect:getPrivateServiceConnect": 0,
+            "rediscloud:index/getPrivateServiceConnectEndpoints:getPrivateServiceConnectEndpoints": 0,
+            "rediscloud:index/getRegions:getRegions": 1,
+            "rediscloud:index/getSubscription:getSubscription": 1,
+            "rediscloud:index/getSubscriptionPeerings:getSubscriptionPeerings": 0,
+            "rediscloud:index/getTransitGateway:getTransitGateway": 0,
+            "rediscloud:index/getTransitGatewayInvitations:getTransitGatewayInvitations": 0
+        }
+    }
+}

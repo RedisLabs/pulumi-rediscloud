@@ -15,12 +15,18 @@
 package rediscloud
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
+	// Allow embedding bridge-metadata.json in the provider.
+	_ "embed"
+
 	"github.com/RedisLabs/pulumi-rediscloud/provider/pkg/version"
 	rediscloud "github.com/RedisLabs/terraform-provider-rediscloud/provider"
+	pftfbridge "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/pf/tfbridge"
 	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge"
+	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge/tokens"
 	shim "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfshim"
 	shimv2 "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfshim/sdk-v2"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
@@ -35,6 +41,9 @@ const (
 	mainMod = "index" // the rediscloud module
 )
 
+//go:embed cmd/pulumi-resource-rediscloud/bridge-metadata.json
+var bridgeMetadata []byte
+
 // preConfigureCallback is called before the providerConfigure function of the underlying provider.
 // It should validate that the provider can be configured, and provide actionable errors in the case
 // it cannot be. Configuration variables can be read from `vars` using the `stringValue` function -
@@ -43,15 +52,32 @@ func preConfigureCallback(vars resource.PropertyMap, c shim.ResourceConfig) erro
 	return nil
 }
 
+// providerVersion is the version string passed to the Terraform v2.19.3 constructors.
+// Those constructors put it on the Cloud API user agent. The Makefile sets
+// version.Version when it links the provider, so a build does not report the
+// Terraform release version.
+func providerVersion() string {
+	if version.Version != "" {
+		return version.Version
+	}
+	return "0.0.0-dev"
+}
+
 // Provider returns additional overlaid schema and metadata associated with the provider..
 func Provider() tfbridge.ProviderInfo {
-	// Instantiate the Terraform provider
-	p := shimv2.NewProvider(rediscloud.New("pulumi")())
+	ctx := context.Background()
+	// The SDK half is wrapped only so the mux can serve it. The loader is the mux.
+	p := pftfbridge.MuxShimWithDisjointgPF(
+		ctx,
+		shimv2.NewProvider(rediscloud.NewSdkProvider(providerVersion())()),
+		rediscloud.NewFrameworkProvider(providerVersion())(),
+	)
 
 	// Create a Pulumi provider mapping
 	prov := tfbridge.ProviderInfo{
-		P:    p,
-		Name: "rediscloud",
+		P:       p,
+		Version: providerVersion(),
+		Name:    "rediscloud",
 		// DisplayName is a way to be able to change the casing of the provider
 		// name when being displayed on the Pulumi registry
 		DisplayName: "Redis Cloud",
@@ -74,24 +100,28 @@ func Provider() tfbridge.ProviderInfo {
 		// category/cloud tag helps with categorizing the package in the Pulumi Registry.
 		// For all available categories, see `Keywords` in
 		// https://www.pulumi.com/docs/guides/pulumi-packages/schema/#package.
-		Keywords:   []string{"pulumi", "rediscloud", "category/cloud"},
-		License:    "Apache-2.0",
-		Homepage:   "https://www.pulumi.com",
-		Repository: "https://github.com/RedisLabs/pulumi-rediscloud",
-		// The GitHub Org for the provider - defaults to `terraform-providers`. Note that this
-		// should match the TF provider module's require directive, not any replace directives.
-		GitHubOrg: "RedisLabs",
+		Keywords:     []string{"pulumi", "rediscloud", "category/cloud"},
+		License:      "Apache-2.0",
+		Homepage:     "https://www.pulumi.com",
+		Repository:   "https://github.com/RedisLabs/pulumi-rediscloud",
+		GitHubOrg:    "RedisLabs",
+		MetadataInfo: tfbridge.NewProviderMetadata(bridgeMetadata),
 		Config: map[string]*tfbridge.SchemaInfo{
 			"api_key": {
 				Secret: tfbridge.True(),
 				Default: &tfbridge.DefaultInfo{
-					EnvVars: []string{"REDISCLOUD_API_KEY"},
+					EnvVars: []string{"REDISCLOUD_ACCESS_KEY"},
 				},
 			},
 			"secret_key": {
 				Secret: tfbridge.True(),
 				Default: &tfbridge.DefaultInfo{
 					EnvVars: []string{"REDISCLOUD_SECRET_KEY"},
+				},
+			},
+			"url": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"REDISCLOUD_URL"},
 				},
 			},
 		},
@@ -152,9 +182,9 @@ func Provider() tfbridge.ProviderInfo {
 			"rediscloud_regions":               {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getRegions")},
 			"rediscloud_subscription":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscription")},
 			"rediscloud_subscription_peerings": {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getSubscriptionPeerings")},
-			"rediscloud_acl_user":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclUser")},
-			"rediscloud_acl_role":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRole")},
-			"rediscloud_acl_rule":          {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRule")},
+			"rediscloud_acl_user":              {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclUser")},
+			"rediscloud_acl_role":              {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRole")},
+			"rediscloud_acl_rule":              {Tok: tfbridge.MakeDataSource(mainPkg, mainMod, "getAclRule")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
 			PackageName: "@rediscloud/pulumi-rediscloud",
@@ -181,7 +211,7 @@ func Provider() tfbridge.ProviderInfo {
 		Golang: &tfbridge.GolangInfo{
 			ImportBasePath: filepath.Join(
 				fmt.Sprintf("github.com/RedisLabs/pulumi-%[1]s/sdk/", mainPkg),
-				tfbridge.GetModuleMajorVersion(version.Version),
+				tfbridge.GetModuleMajorVersion(providerVersion()),
 				"go",
 				mainPkg,
 			),
@@ -198,6 +228,10 @@ func Provider() tfbridge.ProviderInfo {
 		},
 	}
 
+	// Computed tokens fill resources that are not in the hand-written map.
+	// An existing token, including Subscription, is left as written.
+	prov.MustComputeTokens(tokens.SingleModule("rediscloud_", mainMod, tokens.MakeStandard(mainPkg)))
+	prov.MustApplyAutoAliases()
 	prov.SetAutonaming(255, "-")
 
 	return prov
