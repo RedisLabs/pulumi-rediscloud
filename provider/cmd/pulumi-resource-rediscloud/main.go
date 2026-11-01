@@ -17,17 +17,16 @@
 package main
 
 import (
+	"context"
 	_ "embed"
 
 	rediscloud "github.com/RedisLabs/pulumi-rediscloud/provider"
-	"github.com/RedisLabs/pulumi-rediscloud/provider/pkg/version"
-	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge"
+	pftfbridge "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/pf/tfbridge"
 )
 
 //go:embed schema-embed.json
 var pulumiSchema []byte
 
 func main() {
-	// Modify the path to point to the new provider
-	tfbridge.Main("rediscloud", version.Version, rediscloud.Provider(), pulumiSchema)
+	pftfbridge.MainWithMuxer(context.Background(), "rediscloud", rediscloud.Provider(), pulumiSchema)
 }
