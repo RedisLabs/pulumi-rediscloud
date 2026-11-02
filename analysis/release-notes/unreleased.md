@@ -13,6 +13,7 @@ Compared with v1.3.5:
 These behavior changes make this a new major even where the tokens stay the same:
 
 - `payment_method` is ignored after create.
+- `REDISCLOUD_ACCESS_KEY` is the API key environment variable. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset.
 - The database has `redis_version`.
 - Terraform defaults apply for `auto_minor_version_upgrade`, `source_ips`, and `enable_default_user`.
 
