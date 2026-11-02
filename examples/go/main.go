@@ -38,7 +38,7 @@ func main() {
 				},
 			},
 			CreationPlan: &rediscloud.SubscriptionCreationPlanArgs{
-				MemoryLimitInGb:            pulumi.Float64(10),
+				DatasetSizeInGb:            pulumi.Float64(10),
 				Quantity:                   pulumi.Int(1),
 				Replication:                pulumi.Bool(true),
 				SupportOssClusterApi:       pulumi.Bool(false),
@@ -53,7 +53,7 @@ func main() {
 		_, err = rediscloud.NewSubscriptionDatabase(ctx, "database", &rediscloud.SubscriptionDatabaseArgs{
 			SubscriptionId:             subscription.ID().ApplyT(strconv.Atoi).(pulumi.IntOutput),
 			Protocol:                   pulumi.String("redis"),
-			MemoryLimitInGb:            pulumi.Float64(10),
+			DatasetSizeInGb:            pulumi.Float64(10),
 			DataPersistence:            pulumi.String("aof-every-1-second"),
 			ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
 			ThroughputMeasurementValue: pulumi.Int(20000),

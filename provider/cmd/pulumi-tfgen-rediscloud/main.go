@@ -16,11 +16,9 @@ package main
 
 import (
 	rediscloud "github.com/RedisLabs/pulumi-rediscloud/provider"
-	"github.com/RedisLabs/pulumi-rediscloud/provider/pkg/version"
-	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfgen"
+	pftfgen "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/pf/tfgen"
 )
 
 func main() {
-	// Modify the path to point to the new provider
-	tfgen.Main("rediscloud", version.Version, rediscloud.Provider())
+	pftfgen.MainWithMuxer("rediscloud", rediscloud.Provider())
 }
