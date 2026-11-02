@@ -1,0 +1,49 @@
+name: Track Terraform provider release
+
+# Compare the Terraform provider pin with the newest upstream release.
+# A newer release opens a pull request that changes only that pin.
+# The same pin opens nothing. This workflow does not merge.
+
+on:
+  schedule:
+    # Once a day. Release events exist only for this repository, not for
+    # the upstream Terraform provider.
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, such as v2.20.0. Empty uses the latest GitHub release."
+        required: false
+        type: string
+        default: ""
+      dry_run:
+        description: "Print the decision and do not open a pull request."
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: terraform-release
+  cancel-in-progress: false
+
+jobs:
+  track:
+    name: Open a pin pull request
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Compare the Terraform pin and open a pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRACK_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || '' }}
+          TRACK_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
+        run: python3 scripts/track_terraform_release.py
