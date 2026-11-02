@@ -40,7 +40,7 @@ go get github.com/RedisLabs/pulumi-rediscloud/sdk/go/...
 
 The following configuration points are available for the `rediscloud` provider:
 
-- `apiKey` (environment: `REDISCLOUD_ACCESS_KEY`) - This is the Redis Enterprise Cloud API account key. It must be provided but can also be set by the environment variable.
+- `apiKey` (environment: `REDISCLOUD_ACCESS_KEY`, then `REDISCLOUD_API_KEY`) - This is the Redis Enterprise Cloud API account key. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset.
 - `secretKey` (environment: `REDISCLOUD_SECRET_KEY`) - This is the Redis Enterprise Cloud API secret key. It must be provided but can also be set by the environment variable.
 
 ## Reference

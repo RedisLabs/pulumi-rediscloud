@@ -18,7 +18,7 @@ import (
 type Provider struct {
 	pulumi.ProviderResourceState
 
-	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.
+	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.
 	ApiKey pulumi.StringPtrOutput `pulumi:"apiKey"`
 	// This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY` environment variable.
 	SecretKey pulumi.StringPtrOutput `pulumi:"secretKey"`
@@ -34,7 +34,7 @@ func NewProvider(ctx *pulumi.Context,
 	}
 
 	if args.ApiKey == nil {
-		if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_ACCESS_KEY"); d != nil {
+		if d := internal.GetEnvOrDefault(nil, nil, "REDISCLOUD_ACCESS_KEY", "REDISCLOUD_API_KEY"); d != nil {
 			args.ApiKey = pulumi.StringPtr(d.(string))
 		}
 	}
@@ -69,7 +69,7 @@ func NewProvider(ctx *pulumi.Context,
 }
 
 type providerArgs struct {
-	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.
+	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.
 	ApiKey *string `pulumi:"apiKey"`
 	// This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY` environment variable.
 	SecretKey *string `pulumi:"secretKey"`
@@ -79,7 +79,7 @@ type providerArgs struct {
 
 // The set of arguments for constructing a Provider resource.
 type ProviderArgs struct {
-	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.
+	// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.
 	ApiKey pulumi.StringPtrInput
 	// This is the Redis Cloud API secret key. It must be provided but can also be set by the `REDISCLOUD_SECRET_KEY` environment variable.
 	SecretKey pulumi.StringPtrInput
@@ -147,7 +147,7 @@ func (o ProviderOutput) ToProviderOutputWithContext(ctx context.Context) Provide
 	return o
 }
 
-// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.
+// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.
 func (o ProviderOutput) ApiKey() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Provider) pulumi.StringPtrOutput { return v.ApiKey }).(pulumi.StringPtrOutput)
 }

@@ -110,7 +110,9 @@ func Provider() tfbridge.ProviderInfo {
 			"api_key": {
 				Secret: tfbridge.True(),
 				Default: &tfbridge.DefaultInfo{
-					EnvVars: []string{"REDISCLOUD_ACCESS_KEY"},
+					// ACCESS_KEY wins. API_KEY remains so existing v1.3.5
+					// setups keep working. API_KEY is deprecated.
+					EnvVars: []string{"REDISCLOUD_ACCESS_KEY", "REDISCLOUD_API_KEY"},
 				},
 			},
 			"secret_key": {
