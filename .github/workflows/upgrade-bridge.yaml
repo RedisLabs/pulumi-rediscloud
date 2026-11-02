@@ -1,0 +1,211 @@
+# The edit is the module bump only.
+#
+# This workflow opens a pull request when
+# github.com/pulumi/pulumi-terraform-bridge/v3 has a stable v3 release newer
+# than the pin in provider/go.mod. The provider is already on v3.142.0. This
+# workflow is only for a later bridge release after that pin. It is not how
+# v3.60.1 became v3.142.0.
+#
+# The only edit performed is `go get` of
+# github.com/pulumi/pulumi-terraform-bridge/v3 and `go mod tidy` in provider/.
+# That module bump may refresh other requirements that `go get` and `go mod tidy`
+# write into provider/go.mod and provider/go.sum. This workflow does not copy
+# files from pulumi/ci-mgmt or the bridge template, does not rewrite
+# provider/resources.go or provider/cmd/, and does not bump Terraform or Go.
+# If the Terraform provider module version or the Go version would change, the
+# job fails and does not open a pull request.
+#
+# It does not merge. The default is a pull request, not automerge.
+#
+# Triggers: schedule (weekly) and workflow_dispatch.
+# This workflow does not run on pull_request.
+
+name: upgrade-bridge
+
+on:
+  schedule:
+    # Weekly. Monday 07:23 UTC.
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upgrade-bridge
+  cancel-in-progress: false
+
+jobs:
+  open-pull-request:
+    name: open pull request
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # tag=v7.0.1
+
+      - name: Install the Go version already pinned in provider/go.mod
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # tag=v7.0.0
+        with:
+          go-version-file: provider/go.mod
+          cache: false
+
+      - name: Compare the provider pin with the latest bridge release
+        id: bridge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          pin=$(awk '$1 == "github.com/pulumi/pulumi-terraform-bridge/v3" { print $2; exit }' provider/go.mod)
+          if [[ ! "$pin" =~ ^v3\.[0-9]+\.[0-9]+$ ]]; then
+            echo "provider/go.mod bridge pin is not a stable v3 tag: ${pin}" >&2
+            exit 1
+          fi
+
+          tags=$(gh api --paginate \
+            'repos/pulumi/pulumi-terraform-bridge/releases?per_page=100' \
+            --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name')
+          latest=$(printf '%s\n' "$tags" | grep -E '^v3\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)
+          if [[ ! "$latest" =~ ^v3\.[0-9]+\.[0-9]+$ ]]; then
+            echo "no stable v3 release found for pulumi/pulumi-terraform-bridge" >&2
+            exit 1
+          fi
+
+          {
+            echo "pin=${pin}"
+            echo "latest=${latest}"
+            echo "branch=upgrade-bridge-${latest}"
+          } >> "$GITHUB_OUTPUT"
+
+          higher=$(printf '%s\n%s\n' "$pin" "$latest" | sort -V | tail -n 1)
+          if [[ "$higher" == "$pin" ]]; then
+            echo "pin ${pin} is already at least release ${latest}; no pull request"
+            echo "upgrade=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          branch="upgrade-bridge-${latest}"
+          open_count=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --head "${GITHUB_REPOSITORY_OWNER}:${branch}" \
+            --json number \
+            --jq 'length')
+          if [[ "$open_count" != "0" ]]; then
+            echo "an open pull request already proposes ${latest}; no new pull request"
+            echo "upgrade=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
+            echo "branch ${branch} already exists; refusing to force-push" >&2
+            exit 1
+          fi
+
+          echo "upgrade=true" >> "$GITHUB_OUTPUT"
+          echo "release ${latest} is newer than pin ${pin}"
+
+      - name: Bump the bridge module only and open a pull request
+        if: steps.bridge.outputs.upgrade == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PIN: ${{ steps.bridge.outputs.pin }}
+          LATEST: ${{ steps.bridge.outputs.latest }}
+          BRANCH: ${{ steps.bridge.outputs.branch }}
+          BASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          module_field() {
+            awk -v key="$1" '$1 == key { print $2; exit }' "$2"
+          }
+
+          before="${RUNNER_TEMP}/go.mod.before"
+          cp provider/go.mod "$before"
+          go_before=$(module_field go "$before")
+          toolchain_before=$(module_field toolchain "$before")
+          terraform_before=$(module_field github.com/RedisLabs/terraform-provider-rediscloud "$before")
+
+          # The edit is the module bump only.
+          go -C provider get "github.com/pulumi/pulumi-terraform-bridge/v3@${LATEST}"
+          go -C provider mod tidy
+
+          go_after=$(module_field go provider/go.mod)
+          toolchain_after=$(module_field toolchain provider/go.mod)
+          terraform_after=$(module_field github.com/RedisLabs/terraform-provider-rediscloud provider/go.mod)
+          bridge_after=$(module_field github.com/pulumi/pulumi-terraform-bridge/v3 provider/go.mod)
+
+          if [[ "$go_after" != "$go_before" || "$toolchain_after" != "$toolchain_before" ]]; then
+            echo "refusing to bump Go (${go_before} / ${toolchain_before} -> ${go_after} / ${toolchain_after})" >&2
+            exit 1
+          fi
+          if [[ "$terraform_after" != "$terraform_before" ]]; then
+            echo "refusing to bump Terraform (${terraform_before} -> ${terraform_after})" >&2
+            exit 1
+          fi
+          if [[ "$bridge_after" != "$LATEST" ]]; then
+            echo "bridge pin is ${bridge_after}, expected ${LATEST}" >&2
+            exit 1
+          fi
+
+          seen_module=0
+          while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            path=${line:3}
+            case "$path" in
+              provider/go.mod|provider/go.sum)
+                if [[ "$path" == "provider/go.mod" ]]; then
+                  seen_module=1
+                fi
+                ;;
+              *)
+                echo "refusing unexpected change: ${line}" >&2
+                exit 1
+                ;;
+            esac
+          done < <(git status --porcelain)
+
+          if [[ "$seen_module" != "1" ]]; then
+            echo "provider/go.mod did not change" >&2
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add provider/go.mod provider/go.sum
+          git commit -m "Bump pulumi-terraform-bridge to ${LATEST}."
+          git push origin "HEAD:refs/heads/${BRANCH}"
+
+          body="${RUNNER_TEMP}/upgrade-bridge-pr.md"
+          cat > "$body" <<EOF
+          ## Summary
+
+          - Bump \`github.com/pulumi/pulumi-terraform-bridge/v3\` from \`${PIN}\` to \`${LATEST}\`.
+          - The edit is the module bump only: \`go get\` of that module and \`go mod tidy\` in \`provider/\`.
+          - This pull request does not copy files from pulumi/ci-mgmt or the bridge template, does not rewrite \`provider/resources.go\` or \`provider/cmd/\`, and does not bump Terraform or Go.
+          - This workflow does not merge. The default is a pull request, not automerge.
+
+          ## Test plan
+
+          - [ ] Review \`provider/go.mod\` and \`provider/go.sum\`
+          - [ ] A maintainer merges this pull request after review
+          EOF
+
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH" \
+            --title "Bump pulumi-terraform-bridge to ${LATEST}" \
+            --body-file "$body"
+
+          echo "Opened a pull request for ${LATEST}. This workflow does not merge."
+          {
+            echo "## Bridge module bump"
+            echo "The edit is the module bump only."
+            echo ""
+            echo "Opened a pull request from \`${PIN}\` to \`${LATEST}\`. This workflow does not merge."
+          } >> "$GITHUB_STEP_SUMMARY"

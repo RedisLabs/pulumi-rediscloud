@@ -1,0 +1,63 @@
+name: QA nightly acceptance
+
+# Not a required check. A red run does not block merges.
+# The live Cloud call waits until REDISCLOUD_QA is present.
+# This file has the secret reference and not the secret value.
+
+on:
+  schedule:
+    - cron: "17 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-live
+  cancel-in-progress: false
+
+jobs:
+  qa-live:
+    name: QA create and delete
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      PULUMI_CONFIG_PASSPHRASE: ""
+      QA_RUN_ID: ${{ github.run_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # tag=v7.0.1
+
+      - name: Install Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # tag=v7.0.0
+        with:
+          go-version: "1.26.10"
+          cache: false
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
+
+      - name: Build bin/pulumi-resource-rediscloud
+        env:
+          VERSION: "0.0.0"
+        run: |
+          set -euo pipefail
+          (cd provider/cmd/pulumi-resource-rediscloud && go run ./generate.go)
+          go -C provider build -ldflags "-X github.com/RedisLabs/pulumi-rediscloud/provider/pkg/version.Version=0.0.0" -o "${GITHUB_WORKSPACE}/bin/pulumi-resource-rediscloud" ./cmd/pulumi-resource-rediscloud
+
+      - name: Install the provider plugin from the built binary
+        run: pulumi plugin install resource rediscloud 0.0.0 --file "${GITHUB_WORKSPACE}/bin/pulumi-resource-rediscloud"
+
+      - name: Log in to the local Pulumi backend
+        run: pulumi login --local
+
+      - name: Map REDISCLOUD_QA to REDISCLOUD_ACCESS_KEY, REDISCLOUD_SECRET_KEY, and REDISCLOUD_URL
+        env:
+          REDISCLOUD_QA: ${{ secrets.REDISCLOUD_QA }}
+        run: python3 scripts/qa_live.py
+
+      - name: Delete a leftover pulumi-ci- subscription created by this run
+        if: always()
+        env:
+          REDISCLOUD_QA: ${{ secrets.REDISCLOUD_QA }}
+        run: python3 scripts/qa_live.py --cleanup-only

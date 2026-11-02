@@ -21,7 +21,7 @@ subscription = pulumi_rediscloud.Subscription(
         ]
     ),
     creation_plan=pulumi_rediscloud.SubscriptionCreationPlanArgs(
-        memory_limit_in_gb=10,
+        dataset_size_in_gb=10,
         quantity=1,
         replication=True,
         support_oss_cluster_api=False,
@@ -36,7 +36,7 @@ database = pulumi_rediscloud.SubscriptionDatabase(
     name="my-db",
     subscription_id=subscription.id,
     protocol="redis",
-    memory_limit_in_gb=10,
+    dataset_size_in_gb=10,
     data_persistence="aof-every-1-second",
     throughput_measurement_by="operations-per-second",
     throughput_measurement_value=20000,

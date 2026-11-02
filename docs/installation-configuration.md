@@ -65,5 +65,5 @@ Use `pulumi config set rediscloud:<option>` or pass options to the [constructor 
 
 | Option      | Environment Variables   | Required/Optional | Description            |
 | ----------- | ----------------------- | ----------------- | ---------------------- |
-| `apiKey`    | `REDISCLOUD_ACCESS_KEY` | Required          | Redis Cloud access     |
+| `apiKey`    | `REDISCLOUD_ACCESS_KEY`, then `REDISCLOUD_API_KEY` | Required          | Redis Cloud access key. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset. |
 | `secretKey` | `REDISCLOUD_SECRET_KEY` | Required          | Redis Cloud secret key |

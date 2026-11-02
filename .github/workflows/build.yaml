@@ -1,0 +1,108 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROVIDER: rediscloud
+  TF_APPEND_USER_AGENT: pulumi
+  PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
+  PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
+  NPM_PUBLISH: false
+  NUGET_PUBLISH: false
+  PYPI_PUBLISH: false
+  JAVA_PUBLISH: "false"
+
+jobs:
+  build-provider:
+    name: build provider
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
+        with:
+          repo: pulumi/pulumictl
+          tag: v0.0.43
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
+
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          install-only: true
+          version: "~> v2"
+
+      - name: Build provider snapshot
+        run: goreleaser build --clean --snapshot
+
+  build-sdks:
+    name: Build ${{ matrix.language }} SDK
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        language:
+          - nodejs
+          - python
+          - dotnet
+          - go
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
+        with:
+          repo: pulumi/pulumictl
+          tag: v0.0.43
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
+
+      - name: Setup Node
+        if: matrix.language == 'nodejs'
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Enable Yarn
+        if: matrix.language == 'nodejs'
+        run: npm install --global yarn
+
+      - name: Setup Python
+        if: matrix.language == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Setup DotNet
+        if: matrix.language == 'dotnet'
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build SDK
+        run: make build_${{ matrix.language }}
