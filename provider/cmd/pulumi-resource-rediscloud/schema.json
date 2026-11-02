@@ -64,10 +64,11 @@
         "variables": {
             "apiKey": {
                 "type": "string",
-                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.",
                 "defaultInfo": {
                     "environment": [
-                        "REDISCLOUD_ACCESS_KEY"
+                        "REDISCLOUD_ACCESS_KEY",
+                        "REDISCLOUD_API_KEY"
                     ]
                 },
                 "secret": true
@@ -2973,7 +2974,7 @@
         "properties": {
             "apiKey": {
                 "type": "string",
-                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.",
                 "secret": true
             },
             "secretKey": {
@@ -2989,10 +2990,11 @@
         "inputProperties": {
             "apiKey": {
                 "type": "string",
-                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.",
+                "description": "This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.",
                 "defaultInfo": {
                     "environment": [
-                        "REDISCLOUD_ACCESS_KEY"
+                        "REDISCLOUD_ACCESS_KEY",
+                        "REDISCLOUD_API_KEY"
                     ]
                 },
                 "secret": true

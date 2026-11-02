@@ -66,6 +66,13 @@ func TestPublishedTokensStay(t *testing.T) {
 	}
 }
 
+func TestApiKeyAcceptsTheLegacyEnvVar(t *testing.T) {
+	env := rediscloud.Provider().Config["api_key"].Default.EnvVars
+	if len(env) != 2 || env[0] != "REDISCLOUD_ACCESS_KEY" || env[1] != "REDISCLOUD_API_KEY" {
+		t.Fatalf("api_key env vars = %#v", env)
+	}
+}
+
 func TestLoaderIsMux(t *testing.T) {
 	src := string(mustRead(t, "resources.go"))
 	if strings.Contains(src, "p := shimv2.NewProvider") || strings.Contains(src, "P: shimv2.NewProvider") {
