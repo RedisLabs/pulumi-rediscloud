@@ -83,9 +83,9 @@ Keep these data source names: `getCloudAccount`, `getDataPersistence`, `getDatab
 
 New Terraform resources get computed tokens, with `MustApplyAutoAliases` so a later mapping change keeps the old name. The hand-written map for the eleven existing resources stays, so a computed name cannot replace `Subscription`.
 
-`api_key` reads `REDISCLOUD_ACCESS_KEY`. The schema description already says that. The bridge overlay today defaults the environment to `REDISCLOUD_API_KEY`. `secret_key` stays `REDISCLOUD_SECRET_KEY`. `url` reads `REDISCLOUD_URL`.
+`api_key` reads `REDISCLOUD_ACCESS_KEY` first, then `REDISCLOUD_API_KEY`. `REDISCLOUD_ACCESS_KEY` wins when both are set. `REDISCLOUD_API_KEY` remains so a v1.3.5 setup that only sets that name keeps working, and it is deprecated. `secret_key` stays `REDISCLOUD_SECRET_KEY`. `url` reads `REDISCLOUD_URL`.
 
-The user agent on Cloud API calls identifies this provider. The v2.19.3 constructors take a version string. T1 uses that constructor. Traffic should not be reported as the Terraform provider.
+The v2.19.3 constructors take a version string and hardcode the product name `terraform-provider-rediscloud`. T1 passes this provider's version and does not rename the product. A different product name needs a change in the Terraform provider.
 
 ### Testing concept
 
@@ -183,8 +183,8 @@ One pull request. G0 is already Accepted. This pull request does not change that
 - Delete the `replace` of `github.com/hashicorp/terraform-plugin-sdk/v2`.
 - Replace `shimv2.NewProvider` with `MuxShimWithDisjointgPF`. Generate with `pf/tfgen.MainWithMuxer`. Serve with `pf/tfbridge.MainWithMuxer`. Embed `bridge-metadata.json`.
 - Keep the eleven resource tokens and eleven data source tokens listed above. Compute tokens for everything new. Apply auto aliases.
-- Add `url` to the bridge `Config` with default env `REDISCLOUD_URL`. Point `api_key` at `REDISCLOUD_ACCESS_KEY`. There is no `url` entry in `Config` today.
-- Set the user agent through the v2.19.3 constructor.
+- Add `url` to the bridge `Config` with default env `REDISCLOUD_URL`. Point `api_key` at `REDISCLOUD_ACCESS_KEY`, then `REDISCLOUD_API_KEY`. `REDISCLOUD_ACCESS_KEY` wins when both are set. `REDISCLOUD_API_KEY` stays for existing setups and is deprecated. There is no `url` entry in `Config` today.
+- Pass this provider's version to the v2.19.3 constructor. Leave the product name `terraform-provider-rediscloud`, which that constructor hardcodes.
 - `make test` runs `go test` in `provider/` and `python3 -m unittest discover -s scripts -p '*_test.py'` when `scripts/` exists. The examples package is no longer the only test root. Later tasks drop tests into `provider/` or `scripts/` and do not edit this target.
 - `build_python` uses `python -m build`, matching the current bridge template. It does not call `setup.py`.
 - `build_sdks` does not call `build_java`. The Java target may remain unused.
@@ -196,7 +196,7 @@ Exit:
 - `make provider` and `make tfgen` succeed.
 - The schema lists 27 resources and 29 data sources.
 - A unit test fails if any of the eleven old tokens is renamed, and fails if the loader is `shimv2.NewProvider`.
-- `git grep` finds no `REDISCLOUD_API_KEY` and no Plugin SDK `replace`.
+- `git grep` finds no Plugin SDK `replace`. `api_key` lists `REDISCLOUD_ACCESS_KEY` before `REDISCLOUD_API_KEY`.
 - `make test` runs the provider package. It does not call Redis Cloud.
 - No workflow file, no tag, no live Cloud API call.
 
@@ -267,13 +267,13 @@ Edits: `.github/workflows/qa-live.yaml`, `scripts/qa_live.py`, `scripts/qa_live_
 
 The job does not log in to Pulumi Cloud and does not download a plugin from GitHub Releases. `PluginDownloadURL` would fetch v1.3.5, because this plan does not publish a newer plugin. The wrapper builds `bin/pulumi-resource-rediscloud`, runs `pulumi plugin install resource rediscloud --file` on that binary, runs `pulumi login --local`, and sets `PULUMI_CONFIG_PASSPHRASE` to empty so the secret config does not prompt. State stays on the runner.
 
-The workflow triggers are `schedule` (`17 8 * * *`) and `workflow_dispatch`. Concurrency group `qa-live`, cancel in progress false. Timeout 120 minutes. An `always()` cleanup deletes a leftover `pulumi-ci-` subscription. The Makefile is unchanged. `make test` picks up `scripts/qa_live_test.py`.
+The workflow triggers are `schedule` (`17 8 * * *`) and `workflow_dispatch`. Concurrency group `qa-live`, cancel in progress false. Timeout 120 minutes. An `always()` cleanup deletes only the `pulumi-ci-<this run id>` subscription this run created. It leaves any other `pulumi-ci-` name alone. The Makefile is unchanged. `make test` picks up `scripts/qa_live_test.py`.
 
 Before merge, the secret exists in this repository's Actions secrets. Do not print it. One local run, or one `workflow_dispatch` after the secret is present, completes the live order and leaves no `pulumi-ci-` subscription. The first scheduled run is after merge.
 
 Exit:
 
-- Hermetic tests: an existing `pulumi-ci-` subscription skips create; a failed database step still deletes the subscription; success requires Cloud `active`, both endpoint output names, and HTTP 404; an empty URL, a non-HTTPS URL, and a hostname of `api.redislabs.com` with any path or trailing slash refuse before create.
+- Hermetic tests: an existing `pulumi-ci-` subscription refuses create; a failed database step still deletes the subscription this run created; success requires Cloud `active`, both endpoint output names, and HTTP 404; an empty URL, a non-HTTPS URL, and a hostname of `api.redislabs.com` with any path or trailing slash refuse before create.
 - The workflow YAML has no `pull_request` key.
 - The live run's result is recorded in the pull request as: lookups returned, ACL created and gone, subscription active then 404, database active then 404, endpoint names present. No values.
 
@@ -320,7 +320,7 @@ T2 is not a task. The pin note is an exit check of T1, so the tracker cannot lag
 
 The QA account key lives in a GitHub Actions secret and, for the one local run, in a file outside the repository. T6 is the only workflow that reads it. A fork cannot start that workflow.
 
-The job may hold one Pro subscription for the length of the run. The Crossplane run on 27 October 2026 was under 20 minutes to create and under 5 minutes to delete. This job refuses a second `pulumi-ci-` subscription. The next run deletes a leftover.
+The job may hold one Pro subscription for the length of the run. The Crossplane run on 27 October 2026 was under 20 minutes to create and under 5 minutes to delete. This job refuses to start when a `pulumi-ci-` subscription already exists. Cleanup deletes only the subscription this run created. A later run does not delete a leftover from an earlier failure.
 
 v1.3.5 stays published. Merging T1 does not change what `pulumi plugin install` downloads until a tag exists, and this plan does not create a tag.
 
