@@ -1,0 +1,110 @@
+package rediscloud_test
+
+import (
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"testing"
+)
+
+func TestSubscriptionExampleShape(t *testing.T) {
+	examples := []struct {
+		path    string
+		needles []string
+	}{
+		{
+			path: filepath.Join("examples", "nodejs", "index.js"),
+			needles: []string{
+				"paymentMethodId: card.id",
+				"datasetSizeInGb",
+				"operations-per-second",
+			},
+		},
+		{
+			path: filepath.Join("examples", "python", "__main__.py"),
+			needles: []string{
+				"payment_method_id=card.id",
+				"dataset_size_in_gb",
+				"operations-per-second",
+			},
+		},
+		{
+			path: filepath.Join("examples", "go", "main.go"),
+			needles: []string{
+				"PaymentMethodId: pulumi.String(cardId)",
+				"DatasetSizeInGb",
+				"operations-per-second",
+			},
+		},
+		{
+			path: filepath.Join("examples", "yaml", "Pulumi.yaml"),
+			needles: []string{
+				"paymentMethodId: ${cardId}",
+				"datasetSizeInGb",
+				"operations-per-second",
+			},
+		},
+	}
+	for _, example := range examples {
+		src := string(readRepoFile(t, example.path))
+		for _, needle := range example.needles {
+			if !strings.Contains(src, needle) {
+				t.Errorf("%s missing %q", example.path, needle)
+			}
+		}
+	}
+}
+
+func TestResourcesAddedSinceTerraformV131(t *testing.T) {
+	var schema struct {
+		Resources map[string]json.RawMessage `json:"resources"`
+	}
+	contents := readRepoFile(t, filepath.Join("provider", "cmd", "pulumi-resource-rediscloud", "schema.json"))
+	if err := json.Unmarshal(contents, &schema); err != nil {
+		t.Fatal(err)
+	}
+
+	// These managed resources are absent from Terraform v1.3.1.
+	want := []string{
+		"rediscloud:index/essentialsSubscription:EssentialsSubscription",
+		"rediscloud:index/essentialsDatabase:EssentialsDatabase",
+		"rediscloud:index/privateServiceConnect:PrivateServiceConnect",
+		"rediscloud:index/privateServiceConnectEndpoint:PrivateServiceConnectEndpoint",
+		"rediscloud:index/privateServiceConnectEndpointAccepter:PrivateServiceConnectEndpointAccepter",
+		"rediscloud:index/activeActivePrivateServiceConnect:ActiveActivePrivateServiceConnect",
+		"rediscloud:index/activeActivePrivateServiceConnectEndpoint:ActiveActivePrivateServiceConnectEndpoint",
+		"rediscloud:index/activeActivePrivateServiceConnectEndpointAccepter:ActiveActivePrivateServiceConnectEndpointAccepter",
+		"rediscloud:index/privateLink:PrivateLink",
+		"rediscloud:index/activeActivePrivateLink:ActiveActivePrivateLink",
+		"rediscloud:index/transitGatewayAttachment:TransitGatewayAttachment",
+		"rediscloud:index/transitGatewayRoute:TransitGatewayRoute",
+		"rediscloud:index/transitGatewayInvitationAcceptor:TransitGatewayInvitationAcceptor",
+		"rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment",
+		"rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute",
+		"rediscloud:index/activeActiveTransitGatewayInvitationAcceptor:ActiveActiveTransitGatewayInvitationAcceptor",
+	}
+	if len(want) != 16 {
+		t.Fatalf("guard must list sixteen resources, got %d", len(want))
+	}
+	for _, token := range want {
+		if _, ok := schema.Resources[token]; !ok {
+			t.Errorf("schema missing %s", token)
+		}
+	}
+}
+
+func readRepoFile(t *testing.T, rel string) []byte {
+	t.Helper()
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("runtime.Caller failed")
+	}
+	path := filepath.Join(filepath.Dir(filename), "..", rel)
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return contents
+}

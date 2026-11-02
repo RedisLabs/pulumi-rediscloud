@@ -26,7 +26,7 @@ const subscription = new rediscloud.Subscription(
 		},
 
 		creationPlan: {
-			memoryLimitInGb: 10,
+			datasetSizeInGb: 10,
 			quantity: 1,
 			replication: true,
 			supportOssClusterApi: false,
@@ -41,7 +41,7 @@ const database = new rediscloud.SubscriptionDatabase("my-db", {
 	name: "my-db",
 	subscriptionId: subscription.id,
 	protocol: "redis",
-	memoryLimitInGb: 10,
+	datasetSizeInGb: 10,
 	dataPersistence: "aof-every-1-second",
 	throughputMeasurementBy: "operations-per-second",
 	throughputMeasurementValue: 20000,

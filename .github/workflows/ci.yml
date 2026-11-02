@@ -1,0 +1,262 @@
+# Required pull-request CI.
+#
+# Triggers: pull_request only. No workflow_dispatch and no schedule.
+# No Cloud API secret, no REDISCLOUD_* secret, no Pulumi Cloud login,
+# no tag, and no publish.
+#
+# ci-success is the check to require. It does not depend on qa-live or any
+# nightly workflow. A docs-only pull request skips the heavy jobs and still
+# passes. ci-success fails when a needed job fails or is cancelled, and when
+# a heavy job is skipped for any reason other than a docs-only pull request.
+#
+# Lint does not run golangci-lint. Version 2.14.0 rejects .golangci.yml
+# ("unsupported version of the configuration") because that file has no v2
+# version field and still names removed linters. Lint is gofmt and go vet
+# until that config is migrated. This workflow does not migrate it.
+
+name: ci
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  changes:
+    name: changes
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.detect.outputs.docs_only }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Detect docs-only changes
+        id: detect
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          diff_file="$(mktemp)"
+          git diff --name-only -z "${BASE_SHA}...${HEAD_SHA}" > "${diff_file}"
+          docs_only=true
+          count=0
+          while IFS= read -r -d '' path; do
+            count=$((count + 1))
+            case "${path}" in
+              *.md|*.markdown|docs/*|LICENSE)
+                ;;
+              *)
+                docs_only=false
+                ;;
+            esac
+          done < "${diff_file}"
+          rm -f "${diff_file}"
+          # An empty file list is not docs-only.
+          if [ "${count}" -eq 0 ]; then
+            docs_only=false
+          fi
+          echo "changed_files=${count}"
+          echo "docs_only=${docs_only}"
+          echo "docs_only=${docs_only}" >> "${GITHUB_OUTPUT}"
+
+  lint:
+    name: lint
+    needs: changes
+    if: needs.changes.result == 'success' && needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: gofmt and go vet
+        working-directory: provider
+        env:
+          VERSION: 0.0.0-dev
+        run: |
+          set -euo pipefail
+          unformatted="$(gofmt -l .)"
+          if [ -n "${unformatted}" ]; then
+            echo "gofmt -l found unformatted Go files:"
+            printf '%s\n' "${unformatted}"
+            exit 1
+          fi
+          # main.go embeds schema-embed.json, which is gitignored. Generate it
+          # from the committed schema so go vet ./... can load the command.
+          (cd cmd/pulumi-resource-rediscloud && go run ./generate.go)
+          go vet ./...
+
+  provider-build:
+    name: provider build
+    needs: changes
+    if: needs.changes.result == 'success' && needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: Build the provider command
+        working-directory: provider
+        env:
+          VERSION: 0.0.0-dev
+        run: |
+          set -euo pipefail
+          (cd cmd/pulumi-resource-rediscloud && go run ./generate.go)
+          go build -o "${RUNNER_TEMP}/pulumi-resource-rediscloud" ./cmd/pulumi-resource-rediscloud
+
+  tfgen-diff:
+    name: tfgen diff
+    needs: changes
+    if: needs.changes.result == 'success' && needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
+        with:
+          repo: pulumi/pulumictl
+          tag: v0.0.43
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
+
+      - name: Generate schema and fail on drift
+        run: |
+          set -euo pipefail
+          make tfgen
+          git diff --exit-code -- \
+            provider/cmd/pulumi-resource-rediscloud/schema.json \
+            provider/cmd/pulumi-resource-rediscloud/bridge-metadata.json
+
+  test:
+    name: make test
+    needs: changes
+    if: needs.changes.result == 'success' && needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: Run make test
+        run: make test
+
+  govulncheck:
+    name: govulncheck
+    needs: changes
+    if: needs.changes.result == 'success' && needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: Scan the provider module
+        working-directory: provider
+        run: |
+          set -euo pipefail
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+  ci-success:
+    name: ci-success
+    needs:
+      - changes
+      - lint
+      - provider-build
+      - tfgen-diff
+      - test
+      - govulncheck
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the needed jobs
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
+          LINT: ${{ needs.lint.result }}
+          PROVIDER_BUILD: ${{ needs.provider-build.result }}
+          TFGEN_DIFF: ${{ needs.tfgen-diff.result }}
+          TEST: ${{ needs.test.result }}
+          GOVULNCHECK: ${{ needs.govulncheck.result }}
+        run: |
+          set -euo pipefail
+          fail=0
+          echo "changes=${CHANGES} docs_only=${DOCS_ONLY}"
+          if [ "${CHANGES}" != "success" ]; then
+            echo "changes did not succeed (${CHANGES})"
+            fail=1
+          fi
+          check_heavy() {
+            name="$1"
+            result="$2"
+            echo "${name}=${result}"
+            case "${result}" in
+              success)
+                ;;
+              failure|cancelled)
+                echo "${name} ${result}"
+                fail=1
+                ;;
+              skipped)
+                if [ "${DOCS_ONLY}" != "true" ]; then
+                  echo "${name} was skipped, and this pull request is not docs-only"
+                  fail=1
+                fi
+                ;;
+              *)
+                echo "${name} has unexpected result ${result}"
+                fail=1
+                ;;
+            esac
+          }
+          check_heavy lint "${LINT}"
+          check_heavy provider-build "${PROVIDER_BUILD}"
+          check_heavy tfgen-diff "${TFGEN_DIFF}"
+          check_heavy test "${TEST}"
+          check_heavy govulncheck "${GOVULNCHECK}"
+          if [ "${fail}" -ne 0 ]; then
+            exit 1
+          fi
