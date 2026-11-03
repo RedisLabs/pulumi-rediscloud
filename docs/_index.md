@@ -4,7 +4,7 @@ meta_desc: Provides an overview of the RedisCloud Provider for Pulumi.
 layout: package
 ---
 
-The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. Please note that the provider is available only for Flexible or Annual subscriptions. It is not supported for Fixed or Free subscriptions.
+The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private service connect, private link, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
 
 ## Example
 
@@ -36,7 +36,7 @@ const subscription = new rediscloud.Subscription("my-subscription", {
   },
 
   creationPlan: {
-    memoryLimitInGb: 10,
+    datasetSizeInGb: 10,
     quantity: 1,
     replication: true,
     supportOssClusterApi: false,
@@ -50,11 +50,16 @@ const database = new rediscloud.SubscriptionDatabase("my-db", {
   name: "my-db",
   subscriptionId: subscription.id,
   protocol: "redis",
-  memoryLimitInGb: 10,
+  datasetSizeInGb: 10,
   dataPersistence: "aof-every-1-second",
   throughputMeasurementBy: "operations-per-second",
   throughputMeasurementValue: 20000,
   replication: true,
+  modules: [
+    {
+      name: "RedisJSON",
+    },
+  ],
 });
 ```
 
@@ -85,7 +90,7 @@ subscription = pulumi_rediscloud.Subscription(
         ]
     ),
     creation_plan=pulumi_rediscloud.SubscriptionCreationPlanArgs(
-        memory_limit_in_gb=10,
+        dataset_size_in_gb=10,
         quantity=1,
         replication=True,
         support_oss_cluster_api=False,
@@ -100,11 +105,16 @@ database = pulumi_rediscloud.SubscriptionDatabase(
     name="my-db",
     subscription_id=subscription.id,
     protocol="redis",
-    memory_limit_in_gb=10,
+    dataset_size_in_gb=10,
     data_persistence="aof-every-1-second",
     throughput_measurement_by="operations-per-second",
     throughput_measurement_value=20000,
     replication=True,
+    modules=[
+        pulumi_rediscloud.SubscriptionDatabaseModuleArgs(
+            name="RedisJSON",
+        )
+    ],
 )
 ```
 
@@ -150,13 +160,13 @@ func main() {
 				},
 			},
 			CreationPlan: &rediscloud.SubscriptionCreationPlanArgs{
-				MemoryLimitInGb:            pulumi.Float64(10),
+				DatasetSizeInGb:            pulumi.Float64(10),
 				Quantity:                   pulumi.Int(1),
 				Replication:                pulumi.Bool(true),
 				SupportOssClusterApi:       pulumi.Bool(false),
 				ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
 				ThroughputMeasurementValue: pulumi.Int(20000),
-				Modules:                    pulumi.StringArray{"RedisJSON"},
+				Modules:                    pulumi.StringArray{pulumi.String("RedisJSON")},
 			},
 		})
 		if err != nil {
@@ -165,12 +175,17 @@ func main() {
 		_, err = rediscloud.NewSubscriptionDatabase(ctx, "database", &rediscloud.SubscriptionDatabaseArgs{
 			SubscriptionId:             subscription.ID(),
 			Protocol:                   pulumi.String("redis"),
-			MemoryLimitInGb:            pulumi.Float64(10),
+			DatasetSizeInGb:            pulumi.Float64(10),
 			DataPersistence:            pulumi.String("aof-every-1-second"),
 			ThroughputMeasurementBy:    pulumi.String("operations-per-second"),
 			ThroughputMeasurementValue: pulumi.Int(20000),
 			SupportOssClusterApi:       pulumi.Bool(false),
 			Replication:                pulumi.Bool(true),
+			Modules: rediscloud.SubscriptionDatabaseModuleArray{
+				&rediscloud.SubscriptionDatabaseModuleArgs{
+					Name: pulumi.String("RedisJSON"),
+				},
+			},
 		})
 		if err != nil {
 			return err
@@ -213,7 +228,7 @@ resources:
               - "use1-az2"
               - "use1-az5"
       creationPlan:
-        memoryLimitInGb: 10
+        datasetSizeInGb: 10
         quantity: 1
         replication: true
         supportOssClusterApi: false
@@ -226,7 +241,7 @@ resources:
     properties:
       subscriptionId: ${subscription.id}
       protocol: redis
-      memoryLimitInGb: 10
+      datasetSizeInGb: 10
       dataPersistence: aof-every-1-second
       throughputMeasurementBy: "operations-per-second"
       throughputMeasurementValue: 20000

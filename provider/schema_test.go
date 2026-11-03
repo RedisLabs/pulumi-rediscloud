@@ -96,6 +96,20 @@ func TestResourcesAddedSinceTerraformV131(t *testing.T) {
 	}
 }
 
+func TestGoExampleSubscriptionIdIsTheStringID(t *testing.T) {
+	src := string(readRepoFile(t, filepath.Join("examples", "go", "main.go")))
+	if strings.Contains(src, "strconv.Atoi") {
+		t.Fatal("Pro SubscriptionId is a string; the Go example must not convert subscription.ID()")
+	}
+	if !strings.Contains(src, "SubscriptionId:             subscription.ID(),") {
+		t.Fatal("Go example must pass subscription.ID() to SubscriptionId")
+	}
+	docs := string(readRepoFile(t, filepath.Join("docs", "_index.md")))
+	if strings.Contains(docs, "strconv.Atoi") {
+		t.Fatal("registry Go example must not convert subscription.ID()")
+	}
+}
+
 func TestSchemaResourceAndDataSourceCounts(t *testing.T) {
 	var schema struct {
 		Resources map[string]json.RawMessage `json:"resources"`

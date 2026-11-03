@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -51,7 +49,7 @@ func main() {
 			return err
 		}
 		_, err = rediscloud.NewSubscriptionDatabase(ctx, "database", &rediscloud.SubscriptionDatabaseArgs{
-			SubscriptionId:             subscription.ID().ApplyT(strconv.Atoi).(pulumi.IntOutput),
+			SubscriptionId:             subscription.ID(),
 			Protocol:                   pulumi.String("redis"),
 			DatasetSizeInGb:            pulumi.Float64(10),
 			DataPersistence:            pulumi.String("aof-every-1-second"),

@@ -18,9 +18,9 @@ Source: `provider/resources.go`; Terraform provider resources of the same name.
 
 ## Alignment
 
-Keeping a generated Redis Cloud provider on a named `terraform-provider-rediscloud` release. The Crossplane provider records that in `docs/terraform-alignment.md` and is aligned to v2.19.3. This Pulumi provider is still generated from v1.3.1. The refresh follows that Crossplane sequence: move the generator onto a supported release, regenerate, then track later Terraform releases with a pull request that does not merge itself.
+Keeping a generated Redis Cloud provider on a named `terraform-provider-rediscloud` release. The Crossplane provider records that in `docs/terraform-alignment.md` and is aligned to v2.19.3. This Pulumi provider is aligned to the same Terraform release. Later Terraform releases open a pull request that does not merge itself.
 
-Source: `RedisLabs/crossplane-provider-rediscloud` `docs/terraform-alignment.md`.
+Source: `RedisLabs/crossplane-provider-rediscloud` `docs/terraform-alignment.md`; `provider/go.mod`.
 
 ## Any Terraform Provider
 
@@ -30,9 +30,9 @@ Source: Pulumi docs, "Any Terraform Provider", read 1 November 2026.
 
 ## Automatic token mapping
 
-The current bridge's way of naming resources. `MustComputeTokens` turns every Terraform name into a Pulumi token without a hand-written entry. `MustApplyAutoAliases` keeps an older name working after a mapping change. This repo still lists each token in `provider/resources.go`.
+The current bridge's way of naming resources. `MustComputeTokens` turns every Terraform name into a Pulumi token without a hand-written entry. `MustApplyAutoAliases` keeps an older name working after a mapping change. This repo keeps a hand-written map for the eleven tokens published in v1.3.5 and computes tokens for everything added since Terraform v1.3.1.
 
-Source: `pulumi/pulumi-tf-provider-boilerplate` `provider/resources.go`, read 1 November 2026.
+Source: `provider/resources.go`; `pulumi/pulumi-tf-provider-boilerplate` `provider/resources.go`, read 1 November 2026.
 
 ## Cloud API
 
@@ -44,15 +44,15 @@ Source: Terraform provider schema for `url`; `provider/resources.go`.
 
 ## Essentials
 
-Redis Cloud fixed and free plans. Terraform resources use the prefix `rediscloud_essentials_`. This Pulumi provider has no Essentials resources. The README's "Fixed or Free" limitation is this tier.
+Redis Cloud fixed and free plans. Terraform resources use the prefix `rediscloud_essentials_`. This Pulumi provider exposes those resources and their data sources from the Terraform v2.19.3 schema.
 
-Source: Terraform provider changelog 1.7.0; this repo's README.
+Source: Terraform provider changelog 1.7.0; `provider/cmd/pulumi-resource-rediscloud/schema.json`.
 
 ## Mux
 
-The Terraform provider serving Plugin SDK resources and Plugin Framework resources on one gRPC server. Bridge v3.142.0 wraps that server with `MuxShimWithDisjointgPF` and `MainWithMuxer`. Bridge v3.60.1, the pin in this repository, loads a provider with `shimv2.NewProvider` and cannot serve that server.
+The Terraform provider serving Plugin SDK resources and Plugin Framework resources on one gRPC server. Bridge v3.142.0 wraps that server with `MuxShimWithDisjointgPF` and `MainWithMuxer`. This repository loads Terraform v2.19.3 that way. Bridge v3.60.1 could only load a provider with `shimv2.NewProvider` and cannot serve that server.
 
-Source: bridge guide `docs/guides/upgrade-sdk-to-mux.md` at v3.142.0; Terraform `main.go` at v2.19.3.
+Source: bridge guide `docs/guides/upgrade-sdk-to-mux.md` at v3.142.0; Terraform `main.go` at v2.19.3; `provider/resources.go`.
 
 ## Native provider
 
@@ -82,7 +82,7 @@ Source: [the refresh plan](analysis/design/pulumi-provider-refresh.md).
 
 ## rediscloud-go-api
 
-Go client module `github.com/RedisLabs/rediscloud-go-api` for the Cloud API. The Terraform provider is the caller. This repo receives it indirectly from `terraform-provider-rediscloud` v1.3.1, which selects v0.5.3.
+Go client module `github.com/RedisLabs/rediscloud-go-api` for the Cloud API. The Terraform provider is the caller. This repo receives it indirectly from `terraform-provider-rediscloud` v2.19.3, which selects v0.52.1.
 
 Source: `provider/go.mod`.
 

@@ -36,6 +36,7 @@ Once you have provisioned these credentials, you can set environment variables t
 ```bash
 $ export REDISCLOUD_ACCESS_KEY=<REDISCLOUD_ACCESS_KEY>
 $ export REDISCLOUD_SECRET_KEY=<REDISCLOUD_SECRET_KEY>
+$ export REDISCLOUD_URL=<REDISCLOUD_URL>
 ```
 
 {{% /choosable %}}
@@ -45,6 +46,7 @@ $ export REDISCLOUD_SECRET_KEY=<REDISCLOUD_SECRET_KEY>
 ```bash
 $ export REDISCLOUD_ACCESS_KEY=<REDISCLOUD_ACCESS_KEY>
 $ export REDISCLOUD_SECRET_KEY=<REDISCLOUD_SECRET_KEY>
+$ export REDISCLOUD_URL=<REDISCLOUD_URL>
 ```
 
 {{% /choosable %}}
@@ -54,10 +56,13 @@ $ export REDISCLOUD_SECRET_KEY=<REDISCLOUD_SECRET_KEY>
 ```powershell
 > $env:REDISCLOUD_ACCESS_KEY = "<REDISCLOUD_ACCESS_KEY>"
 > $env:REDISCLOUD_SECRET_KEY = "<REDISCLOUD_SECRET_KEY>"
+> $env:REDISCLOUD_URL = "<REDISCLOUD_URL>"
 ```
 
 {{% /choosable %}}
 {{< /chooser >}}
+
+`REDISCLOUD_URL` is optional. Leave it unset to use the default Cloud API base URL. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset.
 
 ## Configuration Options
 
@@ -67,3 +72,4 @@ Use `pulumi config set rediscloud:<option>` or pass options to the [constructor 
 | ----------- | ----------------------- | ----------------- | ---------------------- |
 | `apiKey`    | `REDISCLOUD_ACCESS_KEY`, then `REDISCLOUD_API_KEY` | Required          | Redis Cloud access key. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset. |
 | `secretKey` | `REDISCLOUD_SECRET_KEY` | Required          | Redis Cloud secret key |
+| `url`       | `REDISCLOUD_URL`        | Optional          | Cloud API base URL. Defaults to the production Cloud API when unset. |
