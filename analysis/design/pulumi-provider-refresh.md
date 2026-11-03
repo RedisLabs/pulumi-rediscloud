@@ -1,6 +1,6 @@
 # Refresh the Pulumi Redis Cloud provider
 
-Status: Accepted. G0 accepted by Shay Berman on 1 November 2026.
+Status: Accepted. G0 accepted by Shay Berman on 1 November 2026. Implementation tasks T1 through T9 are on `main` as of 3 November 2026. T10 draft notes stay open. T11 Java stays deferred. No tag.
 Owner: Shay Berman.
 Date: 1 November 2026.
 Ticket: none.
@@ -14,6 +14,8 @@ This file is the implementation plan. It is not a Pulumi Registry page. Registry
 ## TLDR
 
 Move this package from Pulumi Terraform Bridge v3.60.1 and Terraform v1.3.1 onto bridge v3.142.0 and Terraform v2.19.3, using the mux entrypoints the current Terraform provider requires. Keep the Pulumi names that v1.3.5 already published. Add pull-request checks that do not call Redis Cloud, and a nightly create-and-delete on a QA account that is not a required check. Do not tag a release until the notes pull request is accepted.
+
+On `main` after that work: schema coverage is 27 resources and 29 data sources, CI requires `ci-success`, nightly QA is green, and the published package is still v1.3.5.
 
 ## Problem
 
@@ -46,9 +48,9 @@ The Crossplane provider already closed this feature gap against the same Terrafo
 
 ## Current testing
 
-Checked in this repository on 1 November 2026.
+Checked in this repository on 1 November 2026, before the refresh landed. That baseline:
 
-| What exists | What it does |
+| What existed | What it did |
 | --- | --- |
 | `make test` | `cd examples && go test -v -tags=all -parallel -timeout 2h` |
 | `examples/examples_test.go` | Sets `RunUpdateTest: false` and `ExpectRefreshChanges: true`. No test function. |
@@ -56,7 +58,9 @@ Checked in this repository on 1 November 2026.
 | `examples/nodejs/index.js` | Sample program: payment method lookup, Pro subscription, database. Nothing invokes it. |
 | `.github/workflows/` | `release.yaml` only. No pull-request workflow. |
 
-A green `make test` today means the helpers compiled. It does not mean a resource can be created.
+A green `make test` on that baseline meant the helpers compiled. It did not mean a resource could be created.
+
+After T1 through T9 on `main`: `make test` runs provider unit tests and `scripts/*_test.py`. Pull-request CI is `.github/workflows/ci.yml` with required `ci-success`. Nightly QA is `.github/workflows/qa-live.yaml`. The examples use `datasetSizeInGb` and `operations-per-second`.
 
 ## Proposed behavior
 
