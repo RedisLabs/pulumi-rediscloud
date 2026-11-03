@@ -121,10 +121,19 @@ def fake_gh():
 class TrackTerraformReleaseTest(unittest.TestCase):
     def setUp(self) -> None:
         self._saved = {
-            name: os.environ.get(name) for name in ("TRACK_TAG", "TRACK_DRY_RUN")
+            name: os.environ.get(name)
+            for name in (
+                "TRACK_TAG",
+                "TRACK_DRY_RUN",
+                "TRACK_CANDIDATE",
+                "TRACK_BUNDLE",
+                "TRACK_REUSE",
+                "GH_TOKEN",
+                "RUNNER_TEMP",
+            )
         }
-        os.environ.pop("TRACK_TAG", None)
-        os.environ.pop("TRACK_DRY_RUN", None)
+        for name in self._saved:
+            os.environ.pop(name, None)
         self.original = (REPO / "provider" / "go.mod").read_text()
 
     def tearDown(self) -> None:
@@ -184,39 +193,73 @@ class TrackTerraformReleaseTest(unittest.TestCase):
         )
         self.assertNotIn("terraform-provider-rediscloud v2.", updated)
 
+        def generate(root: Path) -> None:
+            if "GH_TOKEN" in os.environ or "GITHUB_TOKEN" in os.environ:
+                raise SystemExit("token was visible to generate")
+            schema = root / "provider/cmd/pulumi-resource-rediscloud/schema.json"
+            schema.parent.mkdir(parents=True)
+            schema.write_text("{}\n")
+            sdk = root / "sdk/go/rediscloud/doc.go"
+            sdk.parent.mkdir(parents=True)
+            sdk.write_text("package rediscloud\n")
+
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "repo"
             repo.mkdir()
             init_repo(repo, self.original)
             output = io.StringIO()
+            bundle_dir = Path(tmp) / "runner"
+            bundle_dir.mkdir()
+            os.environ["GH_TOKEN"] = "token-sentinel"
+            os.environ["RUNNER_TEMP"] = str(bundle_dir)
             with fake_gh() as log, redirect_stdout(output):
                 code = track.main(
-                    ["--repo-root", str(repo), "--github-repo", "local/test"],
+                    ["--repo-root", str(repo), "--github-repo", "local/test", "--prepare-only"],
                     fetch=lambda upstream, tag: NEWER,
+                    generate=generate,
+                )
+                self.assertEqual(code, 0)
+                self.assertIn("decision=prepared", output.getvalue())
+                self.assertNotIn("token-sentinel", output.getvalue())
+                names = set(git(repo, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split())
+                self.assertIn("provider/go.mod", names)
+                self.assertIn("provider/cmd/pulumi-resource-rediscloud/schema.json", names)
+                self.assertIn("sdk/go/rediscloud/doc.go", names)
+                committed = git(repo, "show", "HEAD:provider/go.mod").stdout
+                self.assertEqual(committed, updated)
+                parent = git(repo, "show", "HEAD^:provider/go.mod").stdout
+                self.assertEqual(parent, self.original)
+                remote = git(repo, "ls-remote", "origin", "refs/heads/track/terraform-provider-v2.20.0").stdout
+                self.assertEqual(remote, "")
+                os.environ["TRACK_CANDIDATE"] = "v2.20.0"
+                os.environ["TRACK_BUNDLE"] = str(bundle_dir / "track-release.bundle")
+                git(repo, "checkout", "main")
+                code = track.main(
+                    ["--repo-root", str(repo), "--github-repo", "local/test", "--publish-only"],
                 )
             self.assertEqual(code, 0)
             self.assertIn("decision=opened", output.getvalue())
             self.assertIn("https://example.test/pull/1", output.getvalue())
-            names = git(repo, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split()
-            self.assertEqual(names, ["provider/go.mod"])
-            committed = git(repo, "show", "HEAD:provider/go.mod").stdout
-            self.assertEqual(committed, updated)
-            parent = git(repo, "show", "HEAD^:provider/go.mod").stdout
-            self.assertEqual(parent, self.original)
             commands = [call["argv"][:2] for call in log.calls]
             self.assertEqual(commands, [["pr", "list"], ["pr", "create"]])
             self.assertNotIn("merge", log.calls[1]["argv"])
-            self.assertIn("A person regenerates and reviews.", log.calls[1]["body"])
+            self.assertIn("make tfgen", log.calls[1]["body"])
             self.assertIn("does not merge", log.calls[1]["body"])
+            self.assertNotIn("token-sentinel", log.calls[1]["body"])
 
     def test_workflow_runs_on_schedule_and_dispatch_only(self) -> None:
         text = (REPO / ".github/workflows/terraform-release.yaml").read_text()
         self.assertIn("schedule:", text)
         self.assertIn("workflow_dispatch:", text)
-        self.assertIn("scripts/track_terraform_release.py", text)
+        self.assertIn("--prepare-only", text)
+        self.assertIn("--publish-only", text)
+        self.assertIn("go mod tidy", text)
         self.assertNotIn("pull_request", text)
-        self.assertNotIn("tfgen", text)
         self.assertNotIn("pr merge", text)
+        script = (REPO / "scripts/track_terraform_release.py").read_text()
+        self.assertIn('"tfgen"', script)
+        self.assertIn('"build_go"', script)
+        self.assertIn("without_github_tokens", script)
 
     def test_fetch_uses_the_tag_commit_not_the_branch_name(self) -> None:
         urls: list[str] = []

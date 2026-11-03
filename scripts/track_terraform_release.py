@@ -4,8 +4,11 @@
 The pin in provider/go.mod is the require line for that module plus the two
 comments above it. The require cannot be the v2 tag: the module path has no
 /v2 suffix, so Go rejects it. The require stays a pseudo-version of the
-release commit. A newer release rewrites only those pin lines. It does not
-bump the bridge, Go, or Pulumi, it does not run tfgen, and it does not merge.
+release commit. A newer release rewrites that pin, then runs go mod tidy,
+make tfgen, and make build_go with GitHub tokens removed from the environment.
+The prepare job bundles that commit. The publish job pushes it and opens the
+pull request. The pull request includes the regenerated schema and Go SDK.
+It does not bump the bridge, Go, or Pulumi, and it does not merge.
 """
 
 from __future__ import annotations
@@ -266,6 +269,59 @@ def run(args: list[str], cwd: Path | None = None) -> str:
     return completed.stdout
 
 
+TOKEN_ENV_NAMES = ("GH_TOKEN", "GITHUB_TOKEN", "GITHUB_ENTERPRISE_TOKEN")
+
+
+def without_github_tokens() -> dict[str, str]:
+    saved: dict[str, str] = {}
+    for name in TOKEN_ENV_NAMES:
+        if name in os.environ:
+            saved[name] = os.environ.pop(name)
+    return saved
+
+
+def restore_github_tokens(saved: dict[str, str]) -> None:
+    os.environ.update(saved)
+
+
+def default_regenerate(root: Path) -> None:
+    """Regenerate the provider with GitHub tokens already removed."""
+    run(["go", "mod", "tidy"], root / "provider")
+    run(["make", "tfgen"], root)
+    run(["make", "build_go"], root)
+
+
+def github_output(values: dict[str, str]) -> None:
+    path = os.environ.get("GITHUB_OUTPUT")
+    if not path:
+        return
+    with open(path, "a", encoding="utf-8") as handle:
+        for key, value in values.items():
+            if "\n" in value or "\r" in value:
+                raise SystemExit(f"refusing multiline GitHub output for {key}")
+            handle.write(f"{key}={value}\n")
+
+
+def bundle_destination() -> Path:
+    directory = Path(os.environ.get("RUNNER_TEMP", tempfile.gettempdir()))
+    directory.mkdir(parents=True, exist_ok=True)
+    return directory / "track-release.bundle"
+
+
+def stage_release(root: Path) -> None:
+    paths = [
+        "provider/go.mod",
+        "provider/go.sum",
+        "provider/cmd/pulumi-resource-rediscloud/schema.json",
+        "provider/cmd/pulumi-resource-rediscloud/bridge-metadata.json",
+        "sdk/go",
+    ]
+    existing = [path for path in paths if (root / path).exists()]
+    if not existing:
+        raise SystemExit("release commit has no files to stage")
+    run(["git", "-C", str(root), "add", "--", *existing])
+
+
 def write_temp(name: str, content: str) -> str:
     handle = tempfile.NamedTemporaryFile(
         "w",
@@ -284,11 +340,12 @@ def pull_request_body(pin: Pin, release: Release) -> str:
             "This pull request was opened by `.github/workflows/terraform-release.yaml`.",
             "",
             f"`RedisLabs/terraform-provider-rediscloud` published {release.tag}, which is newer than the pin {pin.tag}.",
-            "This changes only the Terraform provider pin in `provider/go.mod`.",
+            "This updates the Terraform provider pin in `provider/go.mod`.",
             "Go cannot require the v2 tag because the module path has no /v2 suffix, so the require stays a pseudo-version of the release commit.",
             "",
-            "A person regenerates and reviews.",
-            "This workflow does not run tfgen, does not bump the bridge, Go, or Pulumi, and does not merge.",
+            "The prepare job removed `GH_TOKEN` and `GITHUB_TOKEN`, then ran `go mod tidy`, `make tfgen`, and `make build_go`.",
+            "The regenerated `schema.json` and `sdk/go` are in this pull request so `tfgen-diff` can pass.",
+            "This workflow does not bump the bridge, Go, or Pulumi, and does not merge.",
             "",
         ]
     )
@@ -299,7 +356,7 @@ def commit_message(pin: Pin, release: Release) -> str:
         [
             f"Track Terraform provider {release.tag}.",
             "",
-            f"The pin moves from {pin.tag} to {release.tag}. A person regenerates and reviews. This does not merge.",
+            f"The pin moves from {pin.tag} to {release.tag}. The schema and Go SDK are regenerated. This does not merge.",
             "",
         ]
     )
@@ -372,42 +429,7 @@ def create_pull_request(
         os.unlink(body)
 
 
-def open_pull_request(
-    root: Path,
-    before: str,
-    after: str,
-    release: Release,
-    github_repo: str,
-) -> str:
-    root = root.resolve()
-    github_repo = validate_repo(github_repo)
-    pin = read_pin(before)
-    desired = read_pin(after)
-    branch = f"track/terraform-provider-{release.tag}"
-    if existing_pull_request(root, github_repo, branch):
-        print(f"decision=already-open pin={pin.tag} candidate={release.tag}")
-        return "already-open"
-    base = run(["git", "-C", str(root), "rev-parse", "--abbrev-ref", "HEAD"]).strip()
-    if base in ("", "HEAD"):
-        raise SystemExit("refusing to open a pull request from a detached HEAD")
-    remote = remote_branch_sha(root, branch)
-    if remote:
-        run(["git", "-C", str(root), "fetch", "origin", f"refs/heads/{branch}"])
-        remote_pin = read_pin(
-            run(["git", "-C", str(root), "show", "FETCH_HEAD:provider/go.mod"])
-        )
-        if remote_pin.version != desired.version:
-            raise SystemExit(
-                f"remote branch {branch} exists with a different pin; not replacing it"
-            )
-        url = create_pull_request(root, github_repo, base, branch, pin, release)
-        print(f"decision=retried pin={pin.tag} candidate={release.tag} url={url}")
-        return url
-
-    gomod = root / "provider" / "go.mod"
-    gomod.write_text(after)
-    run(["git", "-C", str(root), "checkout", "-B", branch])
-    run(["git", "-C", str(root), "add", "--", "provider/go.mod"])
+def commit_release(root: Path, pin: Pin, release: Release) -> None:
     message = write_temp("commit", commit_message(pin, release))
     try:
         run(
@@ -428,13 +450,113 @@ def open_pull_request(
         )
     finally:
         os.unlink(message)
+
+
+def open_pull_request(
+    root: Path,
+    before: str,
+    after: str,
+    release: Release,
+    github_repo: str,
+    generate_fn=default_regenerate,
+    prepare_only: bool = False,
+) -> str:
+    root = root.resolve()
+    github_repo = validate_repo(github_repo)
+    pin = read_pin(before)
+    desired = read_pin(after)
+    branch = f"track/terraform-provider-{release.tag}"
+    if existing_pull_request(root, github_repo, branch):
+        print(f"decision=already-open pin={pin.tag} candidate={release.tag}")
+        github_output({"action": "already-open", "candidate": release.tag, "branch": branch})
+        return "already-open"
+    base = run(["git", "-C", str(root), "rev-parse", "--abbrev-ref", "HEAD"]).strip()
+    if base in ("", "HEAD"):
+        raise SystemExit("refusing to open a pull request from a detached HEAD")
+    remote = remote_branch_sha(root, branch)
+    if remote:
+        run(["git", "-C", str(root), "fetch", "origin", f"refs/heads/{branch}"])
+        remote_pin = read_pin(
+            run(["git", "-C", str(root), "show", "FETCH_HEAD:provider/go.mod"])
+        )
+        if remote_pin.version != desired.version:
+            raise SystemExit(
+                f"remote branch {branch} exists with a different pin; not replacing it"
+            )
+        print(f"decision=retry pin={pin.tag} candidate={release.tag}")
+        github_output({"action": "retry", "candidate": release.tag, "branch": branch})
+        if prepare_only:
+            return "retry"
+        url = create_pull_request(root, github_repo, base, branch, pin, release)
+        print(f"decision=retried pin={pin.tag} candidate={release.tag} url={url}")
+        return url
+
+    gomod = root / "provider" / "go.mod"
+    gomod.write_text(after)
+    saved = without_github_tokens()
+    try:
+        generate_fn(root)
+    finally:
+        restore_github_tokens(saved)
+    run(["git", "-C", str(root), "checkout", "-B", branch])
+    stage_release(root)
+    commit_release(root, pin, release)
+    if prepare_only:
+        destination = bundle_destination()
+        if destination.exists():
+            destination.unlink()
+        run(["git", "-C", str(root), "bundle", "create", str(destination), branch])
+        print(f"decision=prepared pin={pin.tag} candidate={release.tag} bundle={destination}")
+        github_output(
+            {
+                "action": "publish",
+                "candidate": release.tag,
+                "branch": branch,
+                "bundle": str(destination),
+            }
+        )
+        return "publish"
     run(["git", "-C", str(root), "push", "--set-upstream", "origin", branch])
     url = create_pull_request(root, github_repo, base, branch, pin, release)
     print(f"decision=opened pin={pin.tag} candidate={release.tag} url={url}")
     return url
 
 
-def main(argv: list[str] | None = None, *, fetch=None, open_pr=None) -> int:
+def publish_release(root: Path, github_repo: str, candidate: str, bundle: str, reuse: bool) -> str:
+    root = root.resolve()
+    github_repo = validate_repo(github_repo)
+    tag = normalize_tag(candidate)
+    branch = f"track/terraform-provider-{tag}"
+    base = "main"
+    if reuse:
+        run(["git", "-C", str(root), "fetch", "origin", f"refs/heads/{branch}"])
+    else:
+        if not bundle:
+            raise SystemExit("release bundle is missing")
+        run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "fetch",
+                bundle,
+                f"refs/heads/{branch}:refs/heads/{branch}",
+            ]
+        )
+    before = run(["git", "-C", str(root), "show", "main:provider/go.mod"])
+    pin = read_pin(before)
+    after = run(["git", "-C", str(root), "show", f"{branch}:provider/go.mod"])
+    desired = read_pin(after)
+    if desired.tag != tag:
+        raise SystemExit(f"bundled pin {desired.tag} is not {tag}")
+    release = Release(tag=tag, commit=desired.commit, committed_at=datetime.now(timezone.utc))
+    run(["git", "-C", str(root), "push", "--set-upstream", "origin", branch])
+    url = create_pull_request(root, github_repo, base, branch, pin, release)
+    print(f"decision=opened pin={pin.tag} candidate={tag} url={url}")
+    return url
+
+
+def main(argv: list[str] | None = None, *, fetch=None, open_pr=None, generate=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--upstream", default=UPSTREAM)
@@ -444,17 +566,32 @@ def main(argv: list[str] | None = None, *, fetch=None, open_pr=None) -> int:
     )
     parser.add_argument("--tag", default="")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--publish-only", action="store_true")
     args = parser.parse_args(argv)
+    if args.prepare_only and args.publish_only:
+        raise SystemExit("pass only one of --prepare-only and --publish-only")
     if not args.tag:
-        args.tag = os.environ.get("TRACK_TAG", "")
+        args.tag = os.environ.get("TRACK_TAG", "") or os.environ.get("TRACK_CANDIDATE", "")
     if os.environ.get("TRACK_DRY_RUN", "").lower() == "true":
         args.dry_run = True
+    root = Path(args.repo_root)
+    if args.publish_only:
+        publish_release(
+            root,
+            args.github_repo,
+            args.tag,
+            os.environ.get("TRACK_BUNDLE", ""),
+            os.environ.get("TRACK_REUSE", "").lower() == "true",
+        )
+        return 0
     if fetch is None:
         fetch = fetch_release
     if open_pr is None:
         open_pr = open_pull_request
+    if generate is None:
+        generate = default_regenerate
 
-    root = Path(args.repo_root)
     gomod = root / "provider" / "go.mod"
     before = gomod.read_text()
     pin = read_pin(before)
@@ -462,11 +599,21 @@ def main(argv: list[str] | None = None, *, fetch=None, open_pr=None) -> int:
     after = apply_pin(before, release)
     if after == before:
         print(f"decision=none pin={pin.tag} candidate={normalize_tag(release.tag)}")
+        github_output({"action": "none", "candidate": normalize_tag(release.tag)})
         return 0
     if args.dry_run:
         print(f"decision=would-open pin={pin.tag} candidate={normalize_tag(release.tag)}")
+        github_output({"action": "would-open", "candidate": normalize_tag(release.tag)})
         return 0
-    open_pr(root, before, after, release, args.github_repo)
+    open_pr(
+        root,
+        before,
+        after,
+        release,
+        args.github_repo,
+        generate_fn=generate,
+        prepare_only=args.prepare_only,
+    )
     return 0
 
 

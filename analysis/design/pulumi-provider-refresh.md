@@ -222,7 +222,7 @@ Edits: `.github/workflows/release.yaml`, `.github/workflows/build.yaml`, `.gorel
 `release.yaml` today sets `NPM_PUBLISH`, `PYPI_PUBLISH`, and `JAVA_PUBLISH` to true and runs on a tag. Do not add `workflow_dispatch` to that file. A dispatch on it would publish.
 
 - Add `build.yaml`, triggered only by `workflow_dispatch`. It builds the plugin with `goreleaser build --clean --snapshot` and builds the Node.js, Python, Go, and .NET SDKs. It does not publish, does not create a GitHub release, and does not create an `sdk/` tag.
-- Update `release.yaml` so a future tag uses current actions, Go 1.26.10, Node 24, Python 3.13, and GoReleaser v2 `--clean`. Set `JAVA_PUBLISH` to false. Leave `NUGET_PUBLISH` false. The `on` key stays `push` of `v*.*.*`. Do not push a tag in this task.
+- Update `release.yaml` so a future tag uses current actions, Go 1.26.10, Node 24, Python 3.13, and GoReleaser v2 `--clean`. Set `JAVA_PUBLISH` to false. Leave Java out of the publish matrix, and do not download `pulumi-language-java` or the AWS and GCP plugins on that job. Leave `NUGET_PUBLISH` false. The `on` key stays `push` of `v*.*.*`. Do not push a tag in this task.
 - .NET 10 is the SDK image if the job still builds a package and does not publish it. .NET 8 and 9 end support on 10 November 2026.
 
 Exit: the dispatch build is green. `release.yaml` has no `workflow_dispatch` trigger. `JAVA_PUBLISH` is false. No step reads a Cloud API key.
@@ -233,9 +233,9 @@ Depends: T1.
 Wave: 2, beside T3, T5, and T8.
 Edits: `.github/workflows/terraform-release.yaml`, `scripts/track_terraform_release.py`, and `scripts/track_terraform_release_test.py`. Does not edit the Makefile, `ci.yml`, or the bridge workflow. `make test` discovers `scripts/*_test.py` from T1, so T4 does not need a new edge to run this test.
 
-The workflow runs on a schedule and on `workflow_dispatch`. A newer Terraform release opens a pull request that changes only the pin. The same pin opens nothing. The pull request body says a person regenerates and reviews. The workflow does not merge and does not change the bridge version.
+The workflow runs on a schedule and on `workflow_dispatch`. A newer Terraform release opens a pull request. Prepare removes GitHub tokens, runs `go mod tidy`, `make tfgen`, and `make build_go`, and bundles the commit. Publish pushes that bundle and opens the pull request, including regenerated `schema.json` and `sdk/go`. The same pin opens nothing. The workflow does not merge and does not change the bridge version.
 
-Exit: a hermetic test covers "same pin opens nothing" and "newer tag changes only the pin". The workflow file has no `pull_request` trigger.
+Exit: a hermetic test covers "same pin opens nothing" and "a newer tag prepares a commit that includes the regenerated schema, then publish opens the pull request". The workflow file has no `pull_request` trigger.
 
 ### T8. Later bridge upgrades
 
@@ -255,7 +255,7 @@ Depends: T3.
 Wave: 3, beside T6.
 Edits: `.github/workflows/ci.yml`. Does not edit the nightly workflow.
 
-Jobs: lint, provider build, `tfgen` diff, `make test`, `govulncheck`. A final job `ci-success` depends on those. A docs-only pull request skips them and still passes `ci-success`. A failed job fails `ci-success`. No Cloud API secret. No Pulumi Cloud login.
+Jobs: lint, provider build, `tfgen` diff, `make test`, `govulncheck`. Lint runs golangci-lint v2. `govulncheck` is pinned to v1.9.0. The workflow runs on pull requests and on push to `main`. A final job `ci-success` depends on those. A docs-only change skips them and still passes `ci-success`. A failed job fails `ci-success`. No Cloud API secret. No Pulumi Cloud login. It does not depend on the nightly workflow, the Terraform tracker, or the bridge tracker.
 
 Exit: `ci-success` is green on this pull request. The job's `needs` list does not include the nightly workflow.
 
@@ -267,13 +267,13 @@ Edits: `.github/workflows/qa-live.yaml`, `scripts/qa_live.py`, `scripts/qa_live_
 
 The job does not log in to Pulumi Cloud and does not download a plugin from GitHub Releases. `PluginDownloadURL` would fetch v1.3.5, because this plan does not publish a newer plugin. The wrapper builds `bin/pulumi-resource-rediscloud`, runs `pulumi plugin install resource rediscloud --file` on that binary, runs `pulumi login --local`, and sets `PULUMI_CONFIG_PASSPHRASE` to empty so the secret config does not prompt. State stays on the runner.
 
-The workflow triggers are `schedule` (`17 8 * * *`) and `workflow_dispatch`. Concurrency group `qa-live`, cancel in progress false. Timeout 120 minutes. An `always()` cleanup deletes only the `pulumi-ci-<this run id>` subscription this run created. It leaves any other `pulumi-ci-` name alone. The Makefile is unchanged. `make test` picks up `scripts/qa_live_test.py`.
+The workflow triggers are `schedule` (`17 8 * * *`) and `workflow_dispatch`. Concurrency group `qa-live`, cancel in progress false. Timeout 120 minutes. Before create, the wrapper deletes every leftover subscription whose name starts with `pulumi-ci-` and waits until those names are gone. It refuses to create if one is still present when that wait ends. It does not delete a subscription with any other name. An `always()` cleanup still deletes only the `pulumi-ci-<this run id>` subscription this run created. The Makefile is unchanged. `make test` picks up `scripts/qa_live_test.py`.
 
 Before merge, the secret exists in this repository's Actions secrets. Do not print it. One local run, or one `workflow_dispatch` after the secret is present, completes the live order and leaves no `pulumi-ci-` subscription. The first scheduled run is after merge.
 
 Exit:
 
-- Hermetic tests: an existing `pulumi-ci-` subscription refuses create; a failed database step still deletes the subscription this run created; success requires Cloud `active`, both endpoint output names, and HTTP 404; an empty URL, a non-HTTPS URL, and a hostname of `api.redislabs.com` with any path or trailing slash refuse before create.
+- Hermetic tests: a leftover `pulumi-ci-` subscription is deleted before create, and create is refused if that leftover is still present after the wait; a failed database step still deletes the subscription this run created; success requires Cloud `active`, both endpoint output names, and HTTP 404; an empty URL, a non-HTTPS URL, and a hostname of `api.redislabs.com` with any path or trailing slash refuse before create.
 - The workflow YAML has no `pull_request` key.
 - The live run's result is recorded in the pull request as: lookups returned, ACL created and gone, subscription active then 404, database active then 404, endpoint names present. No values.
 
@@ -320,7 +320,7 @@ T2 is not a task. The pin note is an exit check of T1, so the tracker cannot lag
 
 The QA account key lives in a GitHub Actions secret and, for the one local run, in a file outside the repository. T6 is the only workflow that reads it. A fork cannot start that workflow.
 
-The job may hold one Pro subscription for the length of the run. The Crossplane run on 27 October 2026 was under 20 minutes to create and under 5 minutes to delete. This job refuses to start when a `pulumi-ci-` subscription already exists. Cleanup deletes only the subscription this run created. A later run does not delete a leftover from an earlier failure.
+The job may hold one Pro subscription for the length of the run. The Crossplane run on 27 October 2026 was under 20 minutes to create and under 5 minutes to delete. Before create, the job deletes leftover `pulumi-ci-` subscriptions from an earlier crashed run and waits until they are gone. The end-of-job cleanup still deletes only the subscription this run created. A subscription whose name does not start with `pulumi-ci-` is not deleted.
 
 v1.3.5 stays published. Merging T1 does not change what `pulumi plugin install` downloads until a tag exists, and this plan does not create a tag.
 
