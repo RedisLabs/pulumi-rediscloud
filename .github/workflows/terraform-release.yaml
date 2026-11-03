@@ -1,7 +1,8 @@
 name: Track Terraform provider release
 
 # Compare the Terraform provider pin with the newest upstream release.
-# A newer release opens a pull request that changes only that pin.
+# Prepare runs go mod tidy, make tfgen, and make build_go with GitHub tokens
+# removed, then bundles the commit. Publish opens the pull request.
 # The same pin opens nothing. This workflow does not merge.
 
 on:
@@ -22,28 +23,90 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: terraform-release
   cancel-in-progress: false
 
 jobs:
-  track:
-    name: Open a pin pull request
+  prepare:
+    name: Prepare the pin and schema
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      action: ${{ steps.prepare.outputs.action }}
+      candidate: ${{ steps.prepare.outputs.candidate }}
+      branch: ${{ steps.prepare.outputs.branch }}
+      bundle: ${{ steps.prepare.outputs.bundle }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.10"
+          cache-dependency-path: provider/go.sum
+
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@c5ead9a448b4660cf1e7866ee22e4dc56538031a # tag=v1.10.0
+        with:
+          repo: pulumi/pulumictl
+          tag: v0.0.43
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # tag=v2.0.0
+
+      - name: Prepare the release
+        id: prepare
+        env:
+          # Read by gh before generate. The script removes it before go and make.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRACK_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || '' }}
+          TRACK_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
+        run: python3 scripts/track_terraform_release.py --prepare-only
+
+      - name: Upload the release bundle
+        if: steps.prepare.outputs.action == 'publish'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: track-release-bundle
+          path: ${{ steps.prepare.outputs.bundle }}
+          if-no-files-found: error
+
+  publish:
+    name: Open the pull request
+    needs: prepare
+    if: needs.prepare.outputs.action == 'publish' || needs.prepare.outputs.action == 'retry'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
-      - name: Compare the Terraform pin and open a pull request
+      - name: Download the release bundle
+        if: needs.prepare.outputs.action == 'publish'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: track-release-bundle
+          path: track-release-artifact
+
+      - name: Publish the pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TRACK_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || '' }}
-          TRACK_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
-        run: python3 scripts/track_terraform_release.py
+          TRACK_CANDIDATE: ${{ needs.prepare.outputs.candidate }}
+          TRACK_REUSE: ${{ needs.prepare.outputs.action == 'retry' && 'true' || 'false' }}
+          TRACK_BUNDLE: ${{ needs.prepare.outputs.action == 'publish' && 'track-release-artifact/track-release.bundle' || '' }}
+        run: python3 scripts/track_terraform_release.py --publish-only

@@ -97,7 +97,7 @@ func TestLoaderIsMux(t *testing.T) {
 
 func mustRead(t *testing.T, path string) []byte {
 	t.Helper()
-	contents, err := os.ReadFile(path)
+	contents, err := os.ReadFile(path) //nolint:gosec // path is a repo-relative test fixture, not user input
 	if err != nil {
 		t.Fatal(err)
 	}

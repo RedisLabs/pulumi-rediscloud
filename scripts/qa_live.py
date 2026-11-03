@@ -2,10 +2,11 @@
 """Nightly QA acceptance for one ACL rule, one Pro subscription, and one database.
 
 The Pulumi program in examples/qa creates the resources. This wrapper refuses a
-missing or production REDISCLOUD_URL, picks a deployment CIDR, destroys on a
-failed database step, and checks HTTP 404 after destroy. Hermetic tests point
-the HTTP client at a fake server. This script does not call Redis Cloud unless
-a person runs it with a non-production URL.
+missing or production REDISCLOUD_URL, deletes leftover pulumi-ci- subscriptions
+before create, picks a deployment CIDR, destroys on a failed database step, and
+checks HTTP 404 after destroy. Hermetic tests point the HTTP client at a fake
+server. This script does not call Redis Cloud unless a person runs it with a
+non-production URL.
 """
 
 from __future__ import annotations
@@ -397,15 +398,35 @@ class Deps:
         }
 
 
+def clear_leftovers(deps: Deps) -> None:
+    """Delete leftover pulumi-ci- subscriptions and wait until they are gone.
+
+    A crashed runner used to leave a pulumi-ci- name that made every later
+    run refuse to create. Names that do not start with pulumi-ci- are left
+    alone. cleanup_only still deletes only this run.
+    """
+    leftovers = prefixed(deps.cloud.list_subscriptions())
+    if not leftovers:
+        return
+    deps.log(f"deleting {len(leftovers)} leftover pulumi-ci- subscription(s)")
+    for sub in leftovers:
+        if sub.get("id") in (None, ""):
+            raise SuiteFailure("leftover pulumi-ci- subscription has no id")
+        deps.cloud.delete_run_subscription(str(sub.get("id")))
+    deadline = deps.now() + deps.timeouts["delete"]
+    while prefixed(deps.cloud.list_subscriptions()):
+        if deps.now() >= deadline:
+            deps.log("pulumi-ci- subscription still present; refusing to create")
+            raise SuiteFailure("pulumi-ci- subscription still present")
+        deps.sleep(deps.poll)
+
+
 def run_acceptance(deps: Deps) -> None:
-    """Create and delete this run, or refuse before create."""
+    """Create and delete this run. Clear leftover pulumi-ci- names first."""
     refuse_url(deps.url)
     run_id = safe_run_id(deps.run_id)
+    clear_leftovers(deps)
     subscriptions = deps.cloud.list_subscriptions()
-    existing = prefixed(subscriptions)
-    if existing:
-        deps.log("pulumi-ci- subscription already present")
-        raise SuiteFailure("pulumi-ci- subscription already present")
 
     cidr = choose_cidr(deployment_cidrs(subscriptions))
     deps.log(f"cidr {cidr}")

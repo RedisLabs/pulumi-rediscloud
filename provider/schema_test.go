@@ -10,6 +10,7 @@ import (
 )
 
 func TestSubscriptionExampleShape(t *testing.T) {
+	const operationsPerSecond = "operations-per-second"
 	examples := []struct {
 		path    string
 		needles []string
@@ -19,7 +20,7 @@ func TestSubscriptionExampleShape(t *testing.T) {
 			needles: []string{
 				"paymentMethodId: card.id",
 				"datasetSizeInGb",
-				"operations-per-second",
+				operationsPerSecond,
 			},
 		},
 		{
@@ -27,7 +28,7 @@ func TestSubscriptionExampleShape(t *testing.T) {
 			needles: []string{
 				"payment_method_id=card.id",
 				"dataset_size_in_gb",
-				"operations-per-second",
+				operationsPerSecond,
 			},
 		},
 		{
@@ -35,7 +36,7 @@ func TestSubscriptionExampleShape(t *testing.T) {
 			needles: []string{
 				"PaymentMethodId: pulumi.String(cardId)",
 				"DatasetSizeInGb",
-				"operations-per-second",
+				operationsPerSecond,
 			},
 		},
 		{
@@ -43,7 +44,7 @@ func TestSubscriptionExampleShape(t *testing.T) {
 			needles: []string{
 				"paymentMethodId: ${cardId}",
 				"datasetSizeInGb",
-				"operations-per-second",
+				operationsPerSecond,
 			},
 		},
 	}
@@ -95,6 +96,39 @@ func TestResourcesAddedSinceTerraformV131(t *testing.T) {
 	}
 }
 
+func TestSchemaResourceAndDataSourceCounts(t *testing.T) {
+	var schema struct {
+		Resources map[string]json.RawMessage `json:"resources"`
+		Functions map[string]json.RawMessage `json:"functions"`
+	}
+	contents := readRepoFile(t, filepath.Join("provider", "cmd", "pulumi-resource-rediscloud", "schema.json"))
+	if err := json.Unmarshal(contents, &schema); err != nil {
+		t.Fatal(err)
+	}
+	if len(schema.Resources) != 27 {
+		t.Fatalf("resources = %d, want 27", len(schema.Resources))
+	}
+	const providerConfig = "pulumi:providers:rediscloud/terraformConfig"
+	if _, ok := schema.Functions[providerConfig]; !ok {
+		t.Fatalf("schema functions missing %s", providerConfig)
+	}
+	// Pulumi adds the provider config function beside the data sources.
+	// The 29 data sources are the count that matches the Terraform provider.
+	dataSources := 0
+	for name := range schema.Functions {
+		if name == providerConfig {
+			continue
+		}
+		dataSources++
+	}
+	if dataSources != 29 {
+		t.Fatalf("data sources = %d, want 29", dataSources)
+	}
+	if len(schema.Functions) != 30 {
+		t.Fatalf("functions = %d, want 30 (29 data sources plus provider config)", len(schema.Functions))
+	}
+}
+
 func readRepoFile(t *testing.T, rel string) []byte {
 	t.Helper()
 	_, filename, _, ok := runtime.Caller(0)
@@ -102,7 +136,7 @@ func readRepoFile(t *testing.T, rel string) []byte {
 		t.Fatal("runtime.Caller failed")
 	}
 	path := filepath.Join(filepath.Dir(filename), "..", rel)
-	contents, err := os.ReadFile(path)
+	contents, err := os.ReadFile(path) //nolint:gosec // path is a repo-relative test fixture, not user input
 	if err != nil {
 		t.Fatal(err)
 	}

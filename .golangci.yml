@@ -1,24 +1,38 @@
+# golangci-lint v2. The previous file had no version and named linters
+# that v2 removed (deadcode, golint, interfacer, megacheck, structcheck,
+# varcheck). unused covers the retired unused-code checks. gofmt is a
+# formatter. schema.go and pulumiManifest.go stay excluded.
+
+version: "2"
+
+run:
+  timeout: 20m
+
 linters:
+  default: none
+  settings:
+    lll:
+      line-length: 160
   enable:
-    - deadcode
     - errcheck
     - goconst
-    - gofmt
-    - golint
     - gosec
     - govet
     - ineffassign
-    - interfacer
     - lll
-    - megacheck
     - misspell
     - nakedret
-    - structcheck
     - unconvert
-    - varcheck
-  enable-all: false
-run:
-  skip-files:
-    - schema.go
-    - pulumiManifest.go
-  timeout: 20m
+    - unused
+  exclusions:
+    paths:
+      - schema\.go
+      - pulumiManifest\.go
+
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    paths:
+      - schema\.go
+      - pulumiManifest\.go

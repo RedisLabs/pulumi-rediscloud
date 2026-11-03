@@ -39,6 +39,8 @@ const (
 	mainPkg = "rediscloud"
 	// modules:
 	mainMod = "index" // the rediscloud module
+	// gitHubOrg is the registry publisher and the C# root namespace.
+	gitHubOrg = "RedisLabs"
 )
 
 //go:embed cmd/pulumi-resource-rediscloud/bridge-metadata.json
@@ -85,7 +87,7 @@ func Provider() tfbridge.ProviderInfo {
 		// Change this to your personal name (or a company name) that you
 		// would like to be shown in the Pulumi Registry if this package is published
 		// there.
-		Publisher: "RedisLabs",
+		Publisher: gitHubOrg,
 		// LogoURL is optional but useful to help identify your package in the Pulumi Registry
 		// if this package is published there.
 		//
@@ -104,7 +106,7 @@ func Provider() tfbridge.ProviderInfo {
 		License:      "Apache-2.0",
 		Homepage:     "https://www.pulumi.com",
 		Repository:   "https://github.com/RedisLabs/pulumi-rediscloud",
-		GitHubOrg:    "RedisLabs",
+		GitHubOrg:    gitHubOrg,
 		MetadataInfo: tfbridge.NewProviderMetadata(bridgeMetadata),
 		Config: map[string]*tfbridge.SchemaInfo{
 			"api_key": {
@@ -220,7 +222,7 @@ func Provider() tfbridge.ProviderInfo {
 			GenerateResourceContainerTypes: true,
 		},
 		CSharp: &tfbridge.CSharpInfo{
-			RootNamespace: "RedisLabs",
+			RootNamespace: gitHubOrg,
 			PackageReferences: map[string]string{
 				"Pulumi": "3.*",
 			},

@@ -91,6 +91,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(500, {"error": "create is not allowed from the wrapper"})
             return
         if method == "DELETE":
+            parts = path.strip("/").split("/")
+            if self.server.drop_deleted and parts[:2] == ["v1", "subscriptions"] and len(parts) == 3:
+                sub_id = parts[2]
+                self.server.subscriptions = [
+                    row
+                    for row in self.server.subscriptions
+                    if str(row.get("id")) != sub_id
+                ]
             self._send(200, {})
             return
         body = self.server.route_get(path)
@@ -111,9 +119,10 @@ class Handler(BaseHTTPRequestHandler):
 class CloudServer(ThreadingHTTPServer):
     allow_reuse_address = True
 
-    def __init__(self, subscriptions: list) -> None:
+    def __init__(self, subscriptions: list, drop_deleted: bool = True) -> None:
         super().__init__(("127.0.0.1", 0), Handler)
         self.subscriptions = subscriptions
+        self.drop_deleted = drop_deleted
         self.requests: list[tuple[str, str]] = []
         self.destroyed = False
         self.headers: list[tuple[str, str]] = []
@@ -143,8 +152,8 @@ class CloudServer(ThreadingHTTPServer):
 
 
 class ServerHandle:
-    def __init__(self, subscriptions: list) -> None:
-        self.httpd = CloudServer(subscriptions)
+    def __init__(self, subscriptions: list, drop_deleted: bool = True) -> None:
+        self.httpd = CloudServer(subscriptions, drop_deleted=drop_deleted)
         self.thread = threading.Thread(target=self.httpd.serve_forever, daemon=True)
         self.thread.start()
 
@@ -206,7 +215,7 @@ def assert_clean(test: unittest.TestCase, log: qa_live.Log) -> None:
 
 
 class QaLiveTest(unittest.TestCase):
-    def test_existing_pulumi_ci_subscription_skips_create(self) -> None:
+    def test_leftover_pulumi_ci_subscription_is_deleted_before_create(self) -> None:
         subscriptions = [
             {
                 "id": 555,
@@ -216,9 +225,45 @@ class QaLiveTest(unittest.TestCase):
                 "cloudDetails": [
                     {"regions": [{"networking": [{"deploymentCIDR": "10.0.0.0/24"}]}]}
                 ],
-            }
+            },
+            {
+                "id": 7,
+                "name": "kept-subscription",
+                "status": "active",
+                "cloudDetails": [
+                    {"regions": [{"networking": [{"deploymentCIDR": "10.1.0.0/24"}]}]}
+                ],
+            },
         ]
         server = ServerHandle(subscriptions)
+        try:
+            program = FakeProgram()
+            program.server = server.httpd
+            hosts: list[str] = []
+            opener = forwarder(server.httpd.server_address[1], hosts)
+            deps = deps_for("https://qa.example.test/v1/", program, opener, run_id="run42")
+            qa_live.run_acceptance(deps)
+            names = [str(row.get("name")) for row in server.httpd.subscriptions]
+            self.assertNotIn("pulumi-ci-already", names)
+            self.assertIn("kept-subscription", names)
+            self.assertEqual(program.creates, [("pulumi-ci-run42", "10.0.0.0/24")])
+            methods = [method for method, _path in server.requests]
+            self.assertIn("DELETE", methods)
+            self.assertNotIn("POST", methods)
+            self.assertNotIn("PUT", methods)
+            assert_clean(self, deps.log)
+        finally:
+            server.close()
+
+    def test_leftover_that_stays_refuses_create(self) -> None:
+        subscriptions = [
+            {
+                "id": 555,
+                "name": "pulumi-ci-already",
+                "status": "active",
+            }
+        ]
+        server = ServerHandle(subscriptions, drop_deleted=False)
         try:
             program = FakeProgram()
             hosts: list[str] = []
@@ -227,14 +272,26 @@ class QaLiveTest(unittest.TestCase):
             with self.assertRaises(qa_live.SuiteFailure):
                 qa_live.run_acceptance(deps)
             self.assertEqual(program.creates, [])
-            self.assertEqual(program.databases, [])
-            self.assertEqual(program.deletes, [])
-            self.assertEqual(program.destroys, 0)
-            methods = [method for method, _path in server.requests]
-            self.assertIn("GET", methods)
-            self.assertNotIn("POST", methods)
-            self.assertNotIn("DELETE", methods)
-            self.assertNotIn("PUT", methods)
+            self.assertIn("DELETE", [method for method, _path in server.requests])
+            assert_clean(self, deps.log)
+        finally:
+            server.close()
+
+    def test_cleanup_only_leaves_another_pulumi_ci_name(self) -> None:
+        subscriptions = [
+            {
+                "id": 555,
+                "name": "pulumi-ci-already",
+                "status": "active",
+                "paymentMethodId": PAYMENT_ID,
+            }
+        ]
+        server = ServerHandle(subscriptions)
+        try:
+            program = FakeProgram()
+            hosts: list[str] = []
+            opener = forwarder(server.httpd.server_address[1], hosts)
+            deps = deps_for("https://qa.example.test/v1/", program, opener)
             qa_live.cleanup_only(qa_live.Deps(
                 deps.url,
                 "other-run",
@@ -245,6 +302,7 @@ class QaLiveTest(unittest.TestCase):
                 now=deps.now,
             ))
             self.assertNotIn("DELETE", [method for method, _path in server.requests])
+            self.assertEqual(server.httpd.subscriptions[0]["name"], "pulumi-ci-already")
             assert_clean(self, deps.log)
         finally:
             server.close()
