@@ -4,7 +4,7 @@ meta_desc: Provides an overview of the RedisCloud Provider for Pulumi.
 layout: package
 ---
 
-The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private connectivity, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
+The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private service connect, private link, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
 
 ## Example
 
@@ -125,8 +125,6 @@ database = pulumi_rediscloud.SubscriptionDatabase(
 package main
 
 import (
-	"strconv"
-
 	"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -175,7 +173,7 @@ func main() {
 			return err
 		}
 		_, err = rediscloud.NewSubscriptionDatabase(ctx, "database", &rediscloud.SubscriptionDatabaseArgs{
-			SubscriptionId:             subscription.ID().ApplyT(strconv.Atoi).(pulumi.IntOutput),
+			SubscriptionId:             subscription.ID(),
 			Protocol:                   pulumi.String("redis"),
 			DatasetSizeInGb:            pulumi.Float64(10),
 			DataPersistence:            pulumi.String("aof-every-1-second"),

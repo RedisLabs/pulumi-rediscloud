@@ -1,6 +1,6 @@
 # Redis Cloud Resource Provider
 
-The Redis Cloud Resource Provider lets you manage [Redis Cloud](https://redislabs.com/redis-enterprise-cloud/overview) resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private connectivity, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
+The Redis Cloud Resource Provider lets you manage [Redis Cloud](https://redislabs.com/redis-enterprise-cloud/overview) resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private service connect, private link, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
 
 ## Installing
 

@@ -8,7 +8,7 @@ This is a maintainer review of `RedisLabs/pulumi-rediscloud`. It is not a Pulumi
 
 ## Verdict
 
-This repository is a Pulumi Terraform bridge. `provider/resources.go` wraps `terraform-provider-rediscloud` v2.19.3 through bridge v3.142.0 mux entrypoints. `pulumi-tfgen` generates the Go, Node.js, Python, .NET, and Java SDKs from that Terraform schema.
+This repository is a Pulumi Terraform bridge. `provider/resources.go` wraps `terraform-provider-rediscloud` v2.19.3 through bridge v3.142.0 mux entrypoints. `pulumi-tfgen` writes the schema. The checked-in SDK is Go. Node.js, Python, and .NET are produced at release time. Java is not published.
 
 The Terraform provider is the handwritten client of the Redis Cloud API, through `rediscloud-go-api` v0.52.1. The Crossplane provider is a different generator: Upjet reads the same Terraform schema and emits Kubernetes CRDs and controllers. Crossplane and Pulumi are both pinned to Terraform v2.19.3.
 
@@ -36,8 +36,8 @@ The Crossplane refresh is the pattern this repository followed. Both providers g
 
 Crossplane open gaps that do not apply here:
 
-- Cross-resource refs for numeric `subscription_id` (Crossplane G3). Pulumi passes the id as a program value.
-- Lookup CRDs for only three data sources, with the other 26 left as pasted ids (Crossplane G8). The Pulumi bridge exposes all 29 data sources as functions.
+- Crossplane keeps a numeric subscription id on databases and does not add a subscription reference field, because its references write strings. Pulumi passes the subscription id as a program value. Pro `SubscriptionDatabase.subscriptionId` is a string so it can take `subscription.id`. Essentials database `subscriptionId` stays an integer, matching Terraform.
+- Crossplane exposes three lookups and leaves the other 26 data sources as pasted ids. The Pulumi bridge exposes all 29 data sources as functions.
 
 ## How the provider is built
 
@@ -55,7 +55,7 @@ Runtime path in this repo:
 2. The same file keeps a hand-written map for the eleven v1.3.5 tokens, computes tokens for everything else, and applies auto aliases. Provider config maps `api_key` to `REDISCLOUD_ACCESS_KEY` then `REDISCLOUD_API_KEY`, `secret_key` to `REDISCLOUD_SECRET_KEY`, and `url` to `REDISCLOUD_URL`.
 3. `provider/cmd/pulumi-tfgen-rediscloud` is the build-time generator. `make tfgen` writes `schema.json`, then `go generate` embeds it.
 4. `provider/cmd/pulumi-resource-rediscloud` is the binary users install. It serves the embedded schema and forwards CRUD to the Terraform provider.
-5. `make build_sdks` generates the language SDKs. The Go SDK is checked in under `sdk/go`. Node.js, Python, .NET, and Java are gitignored and produced at release time. Java is not published.
+5. `make build_sdks` generates the Node.js, Python, Go, and .NET SDKs. The Go SDK is checked in under `sdk/go`. The other three are gitignored and produced at release time. `build_sdks` does not build Java, and Java is not published.
 
 `provider/go.mod` pins:
 

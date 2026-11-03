@@ -60,7 +60,7 @@ Checked in this repository on 1 November 2026, before the refresh landed. That b
 
 A green `make test` on that baseline meant the helpers compiled. It did not mean a resource could be created.
 
-After T1 through T9 on `main`: `make test` runs provider unit tests and `scripts/*_test.py`. Pull-request CI is `.github/workflows/ci.yml` with required `ci-success`. Nightly QA is `.github/workflows/qa-live.yaml`. The examples use `datasetSizeInGb` and `operations-per-second`.
+After T1 through T9 on `main`: `make test` runs provider unit tests and `scripts/*_test.py`. Pull-request CI is `.github/workflows/ci.yml` with required `ci-success`. Nightly QA is `.github/workflows/qa-live.yaml`. The examples use `datasetSizeInGb` and `operations-per-second`. The Go example passes `subscription.ID()` to Pro `SubscriptionId`, which is a string.
 
 ## Proposed behavior
 
