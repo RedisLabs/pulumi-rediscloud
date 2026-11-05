@@ -237,6 +237,12 @@ func (ActiveActiveSubscriptionState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActiveSubscriptionState)(nil)).Elem()
 }
 
+// ActiveActiveSubscriptionExists checks whether an existing ActiveActiveSubscription resource with the given ID exists.
+func ActiveActiveSubscriptionExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveSubscriptionState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveSubscription:ActiveActiveSubscription", id, state, "", opts...)
+}
+
 type activeActiveSubscriptionArgs struct {
 	// The cloud provider to use with the subscription, (either `AWS` or `GCP`). Default: ‘AWS’. **Modifying this attribute will force creation of a new resource.**
 	CloudProvider *string `pulumi:"cloudProvider"`

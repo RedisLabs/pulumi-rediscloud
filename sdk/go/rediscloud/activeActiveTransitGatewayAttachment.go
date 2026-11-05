@@ -178,6 +178,12 @@ func (ActiveActiveTransitGatewayAttachmentState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActiveTransitGatewayAttachmentState)(nil)).Elem()
 }
 
+// ActiveActiveTransitGatewayAttachmentExists checks whether an existing ActiveActiveTransitGatewayAttachment resource with the given ID exists.
+func ActiveActiveTransitGatewayAttachmentExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveTransitGatewayAttachmentState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment", id, state, "", opts...)
+}
+
 type activeActiveTransitGatewayAttachmentArgs struct {
 	// A list of consumer CIDR blocks. It is recommended to use the `ActiveActiveTransitGatewayRoute` resource instead for managing CIDRs.
 	Cidrs []string `pulumi:"cidrs"`

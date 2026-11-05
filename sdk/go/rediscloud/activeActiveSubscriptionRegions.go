@@ -144,6 +144,12 @@ func (ActiveActiveSubscriptionRegionsState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActiveSubscriptionRegionsState)(nil)).Elem()
 }
 
+// ActiveActiveSubscriptionRegionsExists checks whether an existing ActiveActiveSubscriptionRegions resource with the given ID exists.
+func ActiveActiveSubscriptionRegionsExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveSubscriptionRegionsState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveSubscriptionRegions:ActiveActiveSubscriptionRegions", id, state, "", opts...)
+}
+
 type activeActiveSubscriptionRegionsArgs struct {
 	// Flag required to be set when one or more regions is to be deleted, if the flag is not set an error will be thrown
 	DeleteRegions *bool `pulumi:"deleteRegions"`

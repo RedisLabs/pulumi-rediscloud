@@ -325,6 +325,12 @@ func (PrivateServiceConnectEndpointState) ElementType() reflect.Type {
 	return reflect.TypeOf((*privateServiceConnectEndpointState)(nil)).Elem()
 }
 
+// PrivateServiceConnectEndpointExists checks whether an existing PrivateServiceConnectEndpoint resource with the given ID exists.
+func PrivateServiceConnectEndpointExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *PrivateServiceConnectEndpointState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/privateServiceConnectEndpoint:PrivateServiceConnectEndpoint", id, state, "", opts...)
+}
+
 type privateServiceConnectEndpointArgs struct {
 	// The endpoint connection name prefix. This prefix that will be used to create the Private Service Connect endpoint in your Google Cloud account **Modifying this attribute will force creation of a new resource.**
 	EndpointConnectionName string `pulumi:"endpointConnectionName"`

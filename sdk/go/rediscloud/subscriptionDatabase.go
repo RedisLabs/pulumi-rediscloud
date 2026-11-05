@@ -423,6 +423,12 @@ func (SubscriptionDatabaseState) ElementType() reflect.Type {
 	return reflect.TypeOf((*subscriptionDatabaseState)(nil)).Elem()
 }
 
+// SubscriptionDatabaseExists checks whether an existing SubscriptionDatabase resource with the given ID exists.
+func SubscriptionDatabaseExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *SubscriptionDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/subscriptionDatabase:SubscriptionDatabase", id, state, "", opts...)
+}
+
 type subscriptionDatabaseArgs struct {
 	// A block defining Redis database alert, documented below, can be specified multiple times
 	Alerts []SubscriptionDatabaseAlert `pulumi:"alerts"`
