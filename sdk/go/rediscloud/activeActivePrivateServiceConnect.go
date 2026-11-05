@@ -93,6 +93,12 @@ func (ActiveActivePrivateServiceConnectState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActivePrivateServiceConnectState)(nil)).Elem()
 }
 
+// ActiveActivePrivateServiceConnectExists checks whether an existing ActiveActivePrivateServiceConnect resource with the given ID exists.
+func ActiveActivePrivateServiceConnectExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActivePrivateServiceConnectState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActivePrivateServiceConnect:ActiveActivePrivateServiceConnect", id, state, "", opts...)
+}
+
 type activeActivePrivateServiceConnectArgs struct {
 	// The ID of the region, as created by the API **Modifying this attribute will force creation of a new resource.**
 	RegionId int `pulumi:"regionId"`

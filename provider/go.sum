@@ -80,10 +80,10 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
 github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
-github.com/RedisLabs/rediscloud-go-api v0.52.1 h1:BOQxuF7bOebwv2lk3FNa2qqm8VFlLme/HyhcvZtofIQ=
-github.com/RedisLabs/rediscloud-go-api v0.52.1/go.mod h1:YyQD1dTkfIntAxGoluZV0sOJQDKGUq+/DY2g7V76ywY=
-github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261028130956-ca1e97245378 h1:IpP4rkTqf2AdYCBXhw88qrTjOKUqz0UC5ATOefMHo9o=
-github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261028130956-ca1e97245378/go.mod h1:jZ60XN06PExE5MPDg/8edlumqonK4C0BrwUDnwe8CTY=
+github.com/RedisLabs/rediscloud-go-api v0.53.0 h1:dlk4No35VpHYcV0CaEs1MRF4+nIs8RVa4yJ4Z7LUwh0=
+github.com/RedisLabs/rediscloud-go-api v0.53.0/go.mod h1:EMsRRD8gfBeWEz2I+gMDT12beKYTYO5DZtUELhfBjeY=
+github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261104071649-89239cdf9846 h1:gZdgHQH8gv2QIJlSpxD1Bv+0+uJZF8yCVjvebgtf9v8=
+github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261104071649-89239cdf9846/go.mod h1:hA2HvIMfW+NoZCTarC6X1EOrVSUG0Bic6skutDhuMaQ=
 github.com/VividCortex/ewma v1.2.0 h1:f58SaIzcDXrSy3kWaHNvuJgJ3Nmz59Zji6XoJR/q1ow=
 github.com/VividCortex/ewma v1.2.0/go.mod h1:nz4BbCtbLyFDeC9SUHbtcT5644juEuWfUAUnGx7j5l4=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d h1:licZJFw2RwpHMqeKTCYkitsPqHNxTmd4SNR5r94FGM8=

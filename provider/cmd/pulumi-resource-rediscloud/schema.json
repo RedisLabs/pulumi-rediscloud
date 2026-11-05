@@ -355,6 +355,14 @@
                     "type": "boolean",
                     "description": "Whether the default user should be enabled for this specific region. If not set, inherits from \u003cspan pulumi-lang-nodejs=\"`globalEnableDefaultUser`\" pulumi-lang-dotnet=\"`GlobalEnableDefaultUser`\" pulumi-lang-go=\"`globalEnableDefaultUser`\" pulumi-lang-python=\"`global_enable_default_user`\" pulumi-lang-yaml=\"`globalEnableDefaultUser`\" pulumi-lang-java=\"`globalEnableDefaultUser`\" pulumi-lang-hcl=\"`global_enable_default_user`\"\u003e`globalEnableDefaultUser`\u003c/span\u003e. Only set this if you need a different value for this region than the global setting\n"
                 },
+                "localReadOperationsPerSecond": {
+                    "type": "integer",
+                    "description": "Local read operations per second for this region, the same value as **Local read ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with \u003cspan pulumi-lang-nodejs=\"`localWriteOperationsPerSecond`\" pulumi-lang-dotnet=\"`LocalWriteOperationsPerSecond`\" pulumi-lang-go=\"`localWriteOperationsPerSecond`\" pulumi-lang-python=\"`local_write_operations_per_second`\" pulumi-lang-yaml=\"`localWriteOperationsPerSecond`\" pulumi-lang-java=\"`localWriteOperationsPerSecond`\" pulumi-lang-hcl=\"`local_write_operations_per_second`\"\u003e`localWriteOperationsPerSecond`\u003c/span\u003e. Do not also set throughput for this database on \u003cspan pulumi-lang-nodejs=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-dotnet=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-go=\"`ActiveActiveSubscriptionRegions`\" pulumi-lang-python=\"`ActiveActiveSubscriptionRegions`\" pulumi-lang-yaml=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-java=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-hcl=\"`rediscloud_active_active_subscription_regions`\"\u003e`rediscloud.ActiveActiveSubscriptionRegions`\u003c/span\u003e\n"
+                },
+                "localWriteOperationsPerSecond": {
+                    "type": "integer",
+                    "description": "Local write operations per second for this region, the same value as **Local write ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with \u003cspan pulumi-lang-nodejs=\"`localReadOperationsPerSecond`\" pulumi-lang-dotnet=\"`LocalReadOperationsPerSecond`\" pulumi-lang-go=\"`localReadOperationsPerSecond`\" pulumi-lang-python=\"`local_read_operations_per_second`\" pulumi-lang-yaml=\"`localReadOperationsPerSecond`\" pulumi-lang-java=\"`localReadOperationsPerSecond`\" pulumi-lang-hcl=\"`local_read_operations_per_second`\"\u003e`localReadOperationsPerSecond`\u003c/span\u003e. Do not also set throughput for this database on \u003cspan pulumi-lang-nodejs=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-dotnet=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-go=\"`ActiveActiveSubscriptionRegions`\" pulumi-lang-python=\"`ActiveActiveSubscriptionRegions`\" pulumi-lang-yaml=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-java=\"`rediscloud.ActiveActiveSubscriptionRegions`\" pulumi-lang-hcl=\"`rediscloud_active_active_subscription_regions`\"\u003e`rediscloud.ActiveActiveSubscriptionRegions`\u003c/span\u003e\n"
+                },
                 "name": {
                     "type": "string",
                     "description": "Region name.\n"
@@ -627,7 +635,7 @@
                 },
                 "localReadOperationsPerSecond": {
                     "type": "integer",
-                    "description": "Local read operations per second for this active-active region\n"
+                    "description": "Local read operations per second for this active-active region\n\nSet a database's local throughput here or on \u003cspan pulumi-lang-nodejs=\"`overrideRegion`\" pulumi-lang-dotnet=\"`OverrideRegion`\" pulumi-lang-go=\"`overrideRegion`\" pulumi-lang-python=\"`override_region`\" pulumi-lang-yaml=\"`overrideRegion`\" pulumi-lang-java=\"`overrideRegion`\" pulumi-lang-hcl=\"`override_region`\"\u003e`overrideRegion`\u003c/span\u003e of \u003cspan pulumi-lang-nodejs=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-dotnet=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-go=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-python=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-yaml=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-java=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-hcl=\"`rediscloud_active_active_subscription_database`\"\u003e`rediscloud.ActiveActiveSubscriptionDatabase`\u003c/span\u003e, not on both. The last apply wins.\n"
                 },
                 "localWriteOperationsPerSecond": {
                     "type": "integer",
@@ -641,6 +649,467 @@
                 "localReadOperationsPerSecond",
                 "localWriteOperationsPerSecond"
             ]
+        },
+        "rediscloud:index/AgentMemoryApiKeyTimeouts:AgentMemoryApiKeyTimeouts": {
+            "properties": {
+                "create": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours).\n"
+                },
+                "delete": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.\n"
+                },
+                "read": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.\n"
+                }
+            },
+            "type": "object"
+        },
+        "rediscloud:index/AgentMemoryCustomMemoryType:AgentMemoryCustomMemoryType": {
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "Custom type description. Maximum length is validated by the Agent Memory API.\n"
+                },
+                "extractionStrategy": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryCustomMemoryTypeExtractionStrategy:AgentMemoryCustomMemoryTypeExtractionStrategy",
+                    "description": "Optional extraction strategy for this custom memory type.\n"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryCustomMemoryTypeField:AgentMemoryCustomMemoryTypeField"
+                    },
+                    "description": "Structured fields for this custom memory type.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Custom type name. Format and maximum length are validated by the Agent Memory API.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ]
+        },
+        "rediscloud:index/AgentMemoryCustomMemoryTypeExtractionStrategy:AgentMemoryCustomMemoryTypeExtractionStrategy": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether extraction is enabled for this custom type.\n"
+                },
+                "prompt": {
+                    "type": "string",
+                    "description": "Prompt used to extract memories of this custom type. Required when this extraction strategy block is present. Additional limits are determined by the Agent Memory service.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryCustomMemoryTypeField:AgentMemoryCustomMemoryTypeField": {
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "Field description. Maximum length is validated by the Agent Memory API.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Field name. Format and maximum length are validated by the Agent Memory API.\n"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Field type validated by the Agent Memory API. Examples include \u003cspan pulumi-lang-nodejs=\"`str`\" pulumi-lang-dotnet=\"`Str`\" pulumi-lang-go=\"`str`\" pulumi-lang-python=\"`str`\" pulumi-lang-yaml=\"`str`\" pulumi-lang-java=\"`str`\" pulumi-lang-hcl=\"`str`\"\u003e`str`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`int`\" pulumi-lang-dotnet=\"`Int`\" pulumi-lang-go=\"`int`\" pulumi-lang-python=\"`int`\" pulumi-lang-yaml=\"`int`\" pulumi-lang-java=\"`int`\" pulumi-lang-hcl=\"`int`\"\u003e`int`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`float`\" pulumi-lang-dotnet=\"`Float`\" pulumi-lang-go=\"`float`\" pulumi-lang-python=\"`float`\" pulumi-lang-yaml=\"`float`\" pulumi-lang-java=\"`float`\" pulumi-lang-hcl=\"`float`\"\u003e`float`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`bool`\" pulumi-lang-dotnet=\"`Bool`\" pulumi-lang-go=\"`bool`\" pulumi-lang-python=\"`bool`\" pulumi-lang-yaml=\"`bool`\" pulumi-lang-java=\"`bool`\" pulumi-lang-hcl=\"`bool`\"\u003e`bool`\u003c/span\u003e, `list[str]`, `list[float]`, and \u003cspan pulumi-lang-nodejs=\"`object`\" pulumi-lang-dotnet=\"`Object`\" pulumi-lang-go=\"`object`\" pulumi-lang-python=\"`object`\" pulumi-lang-yaml=\"`object`\" pulumi-lang-java=\"`object`\" pulumi-lang-hcl=\"`object`\"\u003e`object`\u003c/span\u003e.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "type"
+            ]
+        },
+        "rediscloud:index/AgentMemoryEmbedding:AgentMemoryEmbedding": {
+            "properties": {
+                "credentials": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryEmbeddingCredentials:AgentMemoryEmbeddingCredentials",
+                    "description": "Required when creating a store with customer-managed models; optional on existing/imported stores. When present, \u003cspan pulumi-lang-nodejs=\"`type`\" pulumi-lang-dotnet=\"`Type`\" pulumi-lang-go=\"`type`\" pulumi-lang-python=\"`type`\" pulumi-lang-yaml=\"`type`\" pulumi-lang-java=\"`type`\" pulumi-lang-hcl=\"`type`\"\u003e`type`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`apiKey`\" pulumi-lang-dotnet=\"`ApiKey`\" pulumi-lang-go=\"`apiKey`\" pulumi-lang-python=\"`api_key`\" pulumi-lang-yaml=\"`apiKey`\" pulumi-lang-java=\"`apiKey`\" pulumi-lang-hcl=\"`api_key`\"\u003e`apiKey`\u003c/span\u003e, and \u003cspan pulumi-lang-nodejs=\"`apiKeyVersion`\" pulumi-lang-dotnet=\"`ApiKeyVersion`\" pulumi-lang-go=\"`apiKeyVersion`\" pulumi-lang-python=\"`api_key_version`\" pulumi-lang-yaml=\"`apiKeyVersion`\" pulumi-lang-java=\"`apiKeyVersion`\" pulumi-lang-hcl=\"`api_key_version`\"\u003e`apiKeyVersion`\u003c/span\u003e must be configured.\n"
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Model name advertised by the provider. Changing an explicitly configured model requires replacement.\n"
+                },
+                "provider": {
+                    "type": "string",
+                    "description": "Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "model",
+                        "provider"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryEmbeddingCredentials:AgentMemoryEmbeddingCredentials": {
+            "properties": {
+                "apiKey": {
+                    "type": "string",
+                    "description": "**NOTE:** This field is write-only and its value will not be updated in state as part of read operations.\nProvider API key omitted from plan/state values. Requires \u003cspan pulumi-lang-nodejs=\"`apiKeyVersion`\" pulumi-lang-dotnet=\"`ApiKeyVersion`\" pulumi-lang-go=\"`apiKeyVersion`\" pulumi-lang-python=\"`api_key_version`\" pulumi-lang-yaml=\"`apiKeyVersion`\" pulumi-lang-java=\"`apiKeyVersion`\" pulumi-lang-hcl=\"`api_key_version`\"\u003e`apiKeyVersion`\u003c/span\u003e.\n",
+                    "secret": true
+                },
+                "apiKeyVersion": {
+                    "type": "integer",
+                    "description": "Positive version for in-place credential rotation. Change it whenever the write-only key changes.\n"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Credential type validated by the Agent Memory API.\n"
+                }
+            },
+            "type": "object"
+        },
+        "rediscloud:index/AgentMemoryEndpoint:AgentMemoryEndpoint": {
+            "properties": {
+                "egressIps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Egress IP addresses used by the endpoint.\n"
+                },
+                "isAccessible": {
+                    "type": "boolean",
+                    "description": "Whether the endpoint is reachable from the store's database network.\n"
+                },
+                "provider": {
+                    "type": "string",
+                    "description": "Cloud provider hosting the endpoint.\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Cloud region of the endpoint.\n"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "Endpoint URL.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "egressIps",
+                "isAccessible",
+                "provider",
+                "region",
+                "url"
+            ]
+        },
+        "rediscloud:index/AgentMemoryLlm:AgentMemoryLlm": {
+            "properties": {
+                "credentials": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLlmCredentials:AgentMemoryLlmCredentials",
+                    "description": "Required when creating a store with customer-managed models; optional on existing/imported stores. When present, \u003cspan pulumi-lang-nodejs=\"`type`\" pulumi-lang-dotnet=\"`Type`\" pulumi-lang-go=\"`type`\" pulumi-lang-python=\"`type`\" pulumi-lang-yaml=\"`type`\" pulumi-lang-java=\"`type`\" pulumi-lang-hcl=\"`type`\"\u003e`type`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`apiKey`\" pulumi-lang-dotnet=\"`ApiKey`\" pulumi-lang-go=\"`apiKey`\" pulumi-lang-python=\"`api_key`\" pulumi-lang-yaml=\"`apiKey`\" pulumi-lang-java=\"`apiKey`\" pulumi-lang-hcl=\"`api_key`\"\u003e`apiKey`\u003c/span\u003e, and \u003cspan pulumi-lang-nodejs=\"`apiKeyVersion`\" pulumi-lang-dotnet=\"`ApiKeyVersion`\" pulumi-lang-go=\"`apiKeyVersion`\" pulumi-lang-python=\"`api_key_version`\" pulumi-lang-yaml=\"`apiKeyVersion`\" pulumi-lang-java=\"`apiKeyVersion`\" pulumi-lang-hcl=\"`api_key_version`\"\u003e`apiKeyVersion`\u003c/span\u003e must be configured.\n"
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Model name advertised by the provider.\n"
+                },
+                "provider": {
+                    "type": "string",
+                    "description": "Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "model",
+                        "provider"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLlmCredentials:AgentMemoryLlmCredentials": {
+            "properties": {
+                "apiKey": {
+                    "type": "string",
+                    "description": "**NOTE:** This field is write-only and its value will not be updated in state as part of read operations.\nProvider API key omitted from plan/state values. Requires \u003cspan pulumi-lang-nodejs=\"`apiKeyVersion`\" pulumi-lang-dotnet=\"`ApiKeyVersion`\" pulumi-lang-go=\"`apiKeyVersion`\" pulumi-lang-python=\"`api_key_version`\" pulumi-lang-yaml=\"`apiKeyVersion`\" pulumi-lang-java=\"`apiKeyVersion`\" pulumi-lang-hcl=\"`api_key_version`\"\u003e`apiKeyVersion`\u003c/span\u003e.\n",
+                    "secret": true
+                },
+                "apiKeyVersion": {
+                    "type": "integer",
+                    "description": "Positive version for in-place credential rotation. Change it whenever the write-only key changes.\n"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Credential type validated by the Agent Memory API.\n"
+                }
+            },
+            "type": "object"
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusions:AgentMemoryLongTermMemoryExclusions": {
+            "properties": {
+                "builtInDetectors": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsBuiltInDetectors:AgentMemoryLongTermMemoryExclusionsBuiltInDetectors",
+                    "description": "Built-in sensitive-data detector configuration.\n"
+                },
+                "customDetectors": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectors:AgentMemoryLongTermMemoryExclusionsCustomDetectors",
+                    "description": "Custom regex detector configuration.\n"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Master toggle for long-term memory exclusions.\n"
+                },
+                "semantic": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsSemantic:AgentMemoryLongTermMemoryExclusionsSemantic",
+                    "description": "Semantic exclusion configuration.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsBuiltInDetectors:AgentMemoryLongTermMemoryExclusionsBuiltInDetectors": {
+            "properties": {
+                "detectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector:AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector"
+                    },
+                    "description": "Built-in detector selections.\n"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether built-in detectors are enabled.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector:AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector": {
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "description": "Action when the detector matches. Examples include \u003cspan pulumi-lang-nodejs=\"`redact`\" pulumi-lang-dotnet=\"`Redact`\" pulumi-lang-go=\"`redact`\" pulumi-lang-python=\"`redact`\" pulumi-lang-yaml=\"`redact`\" pulumi-lang-java=\"`redact`\" pulumi-lang-hcl=\"`redact`\"\u003e`redact`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`drop`\" pulumi-lang-dotnet=\"`Drop`\" pulumi-lang-go=\"`drop`\" pulumi-lang-python=\"`drop`\" pulumi-lang-yaml=\"`drop`\" pulumi-lang-java=\"`drop`\" pulumi-lang-hcl=\"`drop`\"\u003e`drop`\u003c/span\u003e; accepted values are validated by the Agent Memory API. When omitted, the provider records the value returned by the API.\n"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether this detector is enabled.\n"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Non-blank built-in detector ID validated by the Agent Memory API. Examples include `credit-card`, \u003cspan pulumi-lang-nodejs=\"`email`\" pulumi-lang-dotnet=\"`Email`\" pulumi-lang-go=\"`email`\" pulumi-lang-python=\"`email`\" pulumi-lang-yaml=\"`email`\" pulumi-lang-java=\"`email`\" pulumi-lang-hcl=\"`email`\"\u003e`email`\u003c/span\u003e, `ip-address`, \u003cspan pulumi-lang-nodejs=\"`phone`\" pulumi-lang-dotnet=\"`Phone`\" pulumi-lang-go=\"`phone`\" pulumi-lang-python=\"`phone`\" pulumi-lang-yaml=\"`phone`\" pulumi-lang-java=\"`phone`\" pulumi-lang-hcl=\"`phone`\"\u003e`phone`\u003c/span\u003e, and `us-ssn`; the available catalogue is managed by the service.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "enabled",
+                "id"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "action",
+                        "enabled",
+                        "id"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectors:AgentMemoryLongTermMemoryExclusionsCustomDetectors": {
+            "properties": {
+                "detectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector"
+                    },
+                    "description": "Custom detector definitions.\n"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether custom detectors are enabled.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector": {
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "description": "Action when the detector matches. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.\n"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether this detector is enabled.\n"
+                },
+                "matcher": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher",
+                    "description": "Detector matcher configuration.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Custom detector name. Format, maximum length and conflicts with built-in detector names are validated by the Agent Memory API.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "enabled",
+                "matcher",
+                "name"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "action",
+                        "enabled",
+                        "matcher",
+                        "name"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher": {
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "description": "Matcher kind validated by the Agent Memory API. When \u003cspan pulumi-lang-nodejs=\"`kind`\" pulumi-lang-dotnet=\"`Kind`\" pulumi-lang-go=\"`kind`\" pulumi-lang-python=\"`kind`\" pulumi-lang-yaml=\"`kind`\" pulumi-lang-java=\"`kind`\" pulumi-lang-hcl=\"`kind`\"\u003e`kind`\u003c/span\u003e is \u003cspan pulumi-lang-nodejs=\"`regex`\" pulumi-lang-dotnet=\"`Regex`\" pulumi-lang-go=\"`regex`\" pulumi-lang-python=\"`regex`\" pulumi-lang-yaml=\"`regex`\" pulumi-lang-java=\"`regex`\" pulumi-lang-hcl=\"`regex`\"\u003e`regex`\u003c/span\u003e, the \u003cspan pulumi-lang-nodejs=\"`regex`\" pulumi-lang-dotnet=\"`Regex`\" pulumi-lang-go=\"`regex`\" pulumi-lang-python=\"`regex`\" pulumi-lang-yaml=\"`regex`\" pulumi-lang-java=\"`regex`\" pulumi-lang-hcl=\"`regex`\"\u003e`regex`\u003c/span\u003e block is required. The published API currently documents \u003cspan pulumi-lang-nodejs=\"`regex`\" pulumi-lang-dotnet=\"`Regex`\" pulumi-lang-go=\"`regex`\" pulumi-lang-python=\"`regex`\" pulumi-lang-yaml=\"`regex`\" pulumi-lang-java=\"`regex`\" pulumi-lang-hcl=\"`regex`\"\u003e`regex`\u003c/span\u003e; other kinds needing additional fields require SDK/schema support.\n* `regex.pattern` - Regex pattern used by the matcher. Maximum length and syntax are validated by the Agent Memory API. Non-empty patterns known to match empty text are rejected locally.\n"
+                },
+                "regex": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex",
+                    "description": "Regex matcher configuration.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "kind"
+            ]
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex:AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex": {
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "Regex pattern used by the matcher.\n"
+                }
+            },
+            "type": "object"
+        },
+        "rediscloud:index/AgentMemoryLongTermMemoryExclusionsSemantic:AgentMemoryLongTermMemoryExclusionsSemantic": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether semantic exclusions are enabled.\n"
+                },
+                "prompt": {
+                    "type": "string",
+                    "description": "Prompt describing concepts that should not be kept in long-term memory.\n\nExclusions apply when the service extracts new long-term memories from sessions.\nThey do not filter session events or summaries, or long-term memories written\ndirectly by the application. Changes do not re-evaluate existing memories.\nSemantic exclusions guide the extraction model but do not guarantee exclusion.\nSee the [service exclusion documentation](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#sensitive-data-exclusions)\nfor scope and limitations.\n\nRemoving every \u003cspan pulumi-lang-nodejs=\"`detectors`\" pulumi-lang-dotnet=\"`Detectors`\" pulumi-lang-go=\"`detectors`\" pulumi-lang-python=\"`detectors`\" pulumi-lang-yaml=\"`detectors`\" pulumi-lang-java=\"`detectors`\" pulumi-lang-hcl=\"`detectors`\"\u003e`detectors`\u003c/span\u003e block from a configured detector group sends an empty\nlist to clear its selections. Disabling a group preserves explicitly configured\ndefinitions so it can be enabled again later. Removing the optional group itself\ndoes not send a deletion request for its stored definitions.\n\nAll time-based arguments are expressed in seconds.\n\nMost configuration can be updated in place. Changes to \u003cspan pulumi-lang-nodejs=\"`databaseId`\" pulumi-lang-dotnet=\"`DatabaseId`\" pulumi-lang-go=\"`databaseId`\" pulumi-lang-python=\"`database_id`\" pulumi-lang-yaml=\"`databaseId`\" pulumi-lang-java=\"`databaseId`\" pulumi-lang-hcl=\"`database_id`\"\u003e`databaseId`\u003c/span\u003e or an\nexplicitly configured \u003cspan pulumi-lang-nodejs=\"`extractionStrategy`\" pulumi-lang-dotnet=\"`ExtractionStrategy`\" pulumi-lang-go=\"`extractionStrategy`\" pulumi-lang-python=\"`extraction_strategy`\" pulumi-lang-yaml=\"`extractionStrategy`\" pulumi-lang-java=\"`extractionStrategy`\" pulumi-lang-hcl=\"`extraction_strategy`\"\u003e`extractionStrategy`\u003c/span\u003e require store replacement because the\nAPI only accepts these settings on create. Omitting \u003cspan pulumi-lang-nodejs=\"`extractionStrategy`\" pulumi-lang-dotnet=\"`ExtractionStrategy`\" pulumi-lang-go=\"`extractionStrategy`\" pulumi-lang-python=\"`extraction_strategy`\" pulumi-lang-yaml=\"`extractionStrategy`\" pulumi-lang-java=\"`extractionStrategy`\" pulumi-lang-hcl=\"`extraction_strategy`\"\u003e`extractionStrategy`\u003c/span\u003e keeps\nthe existing strategy; it does not reset it to the service default. A configured\nvalue that remains unknown during planning can conservatively require replacement,\neven if it later resolves to the previous value.\n\nFor customer-managed models, \u003cspan pulumi-lang-nodejs=\"`llm`\" pulumi-lang-dotnet=\"`Llm`\" pulumi-lang-go=\"`llm`\" pulumi-lang-python=\"`llm`\" pulumi-lang-yaml=\"`llm`\" pulumi-lang-java=\"`llm`\" pulumi-lang-hcl=\"`llm`\"\u003e`llm`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e must be configured together\non create. Adding or removing both blocks requires replacement. Changing\n`llm[0].provider`, `embedding[0].provider`, or `embedding[0].model` also requires\nreplacement. `llm[0].model` can be updated within the existing provider, and model\ncredentials can be rotated without replacement by updating `credentials[0].api_key`\nand changing `credentials[0].api_key_version`.\n\nIf the presence of \u003cspan pulumi-lang-nodejs=\"`llm`\" pulumi-lang-dotnet=\"`Llm`\" pulumi-lang-go=\"`llm`\" pulumi-lang-python=\"`llm`\" pulumi-lang-yaml=\"`llm`\" pulumi-lang-java=\"`llm`\" pulumi-lang-hcl=\"`llm`\"\u003e`llm`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e is unknown, Terraform conservatively\nplans replacement. The same applies when an existing custom memory type's\nextraction strategy might be removed. Prefer block counts known during planning\nwhen an unnecessary replacement would be disruptive.\n\nA replacement destroys and recreates the store with a new store ID. It does not\nmigrate the existing agent context to that new identity. Use\n`lifecycle.prevent_destroy` when destruction must be blocked.\n\nDeleting a store, including during replacement, is destructive. The\n[Agent Memory service documentation](https://redis.io/docs/latest/operate/iris/agent-memory/view-service/#delete-service)\nstates that deletion permanently removes the associated memory data, service\nconfiguration, search index, and stored model provider key, and revokes the\nservice API keys. The replacement creates a new store from the Terraform\nconfiguration; it does not migrate existing memories or preserve the old\nservice API keys.\n\nIf an immutable selector depends on a value that is unknown during planning,\nTerraform may conservatively plan replacement even when that value later\nresolves to the previous value. Model blocks must explicitly configure their provider and model selectors.\nExplicitly unknown expressions remain unknown.\n\nA replacement plan is not a validation dry run. If replacement inputs resolve to\ninvalid values only during apply, the old store may already have been destroyed\nbefore the error is reported. Use values known during planning or\n`lifecycle.prevent_destroy` instead of relying on late validation to preserve it.\n\nThe control-plane API stores model credentials, while data-plane operations\nsuch as long-term memory create/search validate them when the model provider is\ncalled. If a credential is missing or invalid, those data-plane operations can\nreturn an `Invalid Model Credentials` error.\n\nFor \u003cspan pulumi-lang-nodejs=\"`customMemoryTypes`\" pulumi-lang-dotnet=\"`CustomMemoryTypes`\" pulumi-lang-go=\"`customMemoryTypes`\" pulumi-lang-python=\"`custom_memory_types`\" pulumi-lang-yaml=\"`customMemoryTypes`\" pulumi-lang-java=\"`customMemoryTypes`\" pulumi-lang-hcl=\"`custom_memory_types`\"\u003e`customMemoryTypes`\u003c/span\u003e, the provider follows the Agent Memory API behavior:\nnew custom memory types can be added in place, and `extraction_strategy[0].prompt`\nor `extraction_strategy[0].enabled` can be updated for existing custom memory\ntypes. Removing an existing custom memory type, changing its description, or\nchanging its fields, or removing its extraction strategy requires replacement of\nthe entire Agent Memory service because the API cannot apply those changes in place.\nTo disable extraction without replacement, keep the strategy and set `enabled = false`.\nReordering types or fields does not require replacement. Unknown existing names or\nimmutable definitions can conservatively require replacement, even if they later\nresolve to their previous values; unknown values belonging only to new types do\nnot make existing definitions immutable changes.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled",
+                        "prompt"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemorySummarization:AgentMemorySummarization": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether automatic summarization is enabled.\n"
+                },
+                "eventCount": {
+                    "$ref": "#/types/rediscloud:index/AgentMemorySummarizationEventCount:AgentMemorySummarizationEventCount",
+                    "description": "Event-count thresholds. Numeric limits are validated by the Agent Memory API. Both fields must be configured when this block is present.\n"
+                },
+                "triggerStrategy": {
+                    "type": "string",
+                    "description": "Summarization trigger strategy. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "enabled",
+                        "triggerStrategy"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemorySummarizationEventCount:AgentMemorySummarizationEventCount": {
+            "properties": {
+                "retainCount": {
+                    "type": "integer",
+                    "description": "Number of most recent messages retained in full.\n"
+                },
+                "threshold": {
+                    "type": "integer",
+                    "description": "Number of messages that triggers summarization. Must be greater than \u003cspan pulumi-lang-nodejs=\"`retainCount`\" pulumi-lang-dotnet=\"`RetainCount`\" pulumi-lang-go=\"`retainCount`\" pulumi-lang-python=\"`retain_count`\" pulumi-lang-yaml=\"`retainCount`\" pulumi-lang-java=\"`retainCount`\" pulumi-lang-hcl=\"`retain_count`\"\u003e`retainCount`\u003c/span\u003e.\n"
+                }
+            },
+            "type": "object",
+            "language": {
+                "nodejs": {
+                    "requiredOutputs": [
+                        "retainCount",
+                        "threshold"
+                    ]
+                }
+            }
+        },
+        "rediscloud:index/AgentMemoryTimeouts:AgentMemoryTimeouts": {
+            "properties": {
+                "create": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours).\n"
+                },
+                "delete": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.\n"
+                },
+                "read": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.\n"
+                },
+                "update": {
+                    "type": "string",
+                    "description": "A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as \"30s\" or \"2h45m\". Valid time units are \"s\" (seconds), \"m\" (minutes), \"h\" (hours).\n"
+                }
+            },
+            "type": "object"
         },
         "rediscloud:index/CloudAccountTimeouts:CloudAccountTimeouts": {
             "properties": {
@@ -3865,7 +4334,7 @@
             }
         },
         "rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase": {
-            "description": "This resource allows you to manage a database within your Redis Enterprise Cloud account.\n\n\u003e **Note:** This is for databases within Active-Active Subscriptions only. See also \u003cspan pulumi-lang-nodejs=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-dotnet=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-go=\"`SubscriptionDatabase`\" pulumi-lang-python=\"`SubscriptionDatabase`\" pulumi-lang-yaml=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-java=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-hcl=\"`rediscloud_subscription_database`\"\u003e`rediscloud.SubscriptionDatabase`\u003c/span\u003e (Pro) and \u003cspan pulumi-lang-nodejs=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-dotnet=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-go=\"`EssentialsDatabase`\" pulumi-lang-python=\"`EssentialsDatabase`\" pulumi-lang-yaml=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-java=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-hcl=\"`rediscloud_essentials_database`\"\u003e`rediscloud.EssentialsDatabase`\u003c/span\u003e.\n\n## Example Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nexport = async () =\u003e {\n    const card = await rediscloud.getPaymentMethod({\n        cardType: \"Visa\",\n    });\n    const subscription_resource = new rediscloud.ActiveActiveSubscription(\"subscription-resource\", {\n        creationPlan: {\n            regions: [\n                {\n                    region: \"us-east-1\",\n                    networkingDeploymentCidr: \"192.168.0.0/24\",\n                    writeOperationsPerSecond: 1000,\n                    readOperationsPerSecond: 1000,\n                },\n                {\n                    region: \"us-east-2\",\n                    networkingDeploymentCidr: \"10.0.1.0/24\",\n                    writeOperationsPerSecond: 1000,\n                    readOperationsPerSecond: 2000,\n                },\n            ],\n            datasetSizeInGb: 1,\n            quantity: 1,\n        },\n        name: \"subscription-name\",\n        paymentMethodId: card.id,\n        cloudProvider: \"AWS\",\n    });\n    const database_resource = new rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\", {\n        globalAlerts: [{\n            name: \"dataset-size\",\n            value: 1,\n        }],\n        overrideRegions: [\n            {\n                name: \"us-east-2\",\n                overrideGlobalSourceIps: [\"192.10.0.0/16\"],\n            },\n            {\n                overrideGlobalAlerts: [{\n                    name: \"dataset-size\",\n                    value: 60,\n                }],\n                name: \"us-east-1\",\n                overrideGlobalDataPersistence: \"none\",\n                overrideGlobalPassword: \"region-specific-password\",\n            },\n        ],\n        subscriptionId: subscription_resource.id,\n        name: \"database-name\",\n        datasetSizeInGb: 1,\n        globalDataPersistence: \"aof-every-1-second\",\n        globalPassword: \"some-random-pass-2\",\n        globalSourceIps: [\"192.168.0.0/16\"],\n        tags: {\n            environment: \"production\",\n            cost_center: \"0700\",\n        },\n    });\n    return {\n        \"us-east-1-public-endpoints\": database_resource.publicEndpoint[\"us-east-1\"],\n        \"us-east-2-private-endpoints\": database_resource.privateEndpoint[\"us-east-2\"],\n    };\n}\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\ncard = rediscloud.get_payment_method(card_type=\"Visa\")\nsubscription_resource = rediscloud.ActiveActiveSubscription(\"subscription-resource\",\n    creation_plan={\n        \"regions\": [\n            {\n                \"region\": \"us-east-1\",\n                \"networking_deployment_cidr\": \"192.168.0.0/24\",\n                \"write_operations_per_second\": 1000,\n                \"read_operations_per_second\": 1000,\n            },\n            {\n                \"region\": \"us-east-2\",\n                \"networking_deployment_cidr\": \"10.0.1.0/24\",\n                \"write_operations_per_second\": 1000,\n                \"read_operations_per_second\": 2000,\n            },\n        ],\n        \"dataset_size_in_gb\": float(1),\n        \"quantity\": 1,\n    },\n    name=\"subscription-name\",\n    payment_method_id=card.id,\n    cloud_provider=\"AWS\")\ndatabase_resource = rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\",\n    global_alerts=[{\n        \"name\": \"dataset-size\",\n        \"value\": 1,\n    }],\n    override_regions=[\n        {\n            \"name\": \"us-east-2\",\n            \"override_global_source_ips\": [\"192.10.0.0/16\"],\n        },\n        {\n            \"override_global_alerts\": [{\n                \"name\": \"dataset-size\",\n                \"value\": 60,\n            }],\n            \"name\": \"us-east-1\",\n            \"override_global_data_persistence\": \"none\",\n            \"override_global_password\": \"region-specific-password\",\n        },\n    ],\n    subscription_id=subscription_resource.id,\n    name=\"database-name\",\n    dataset_size_in_gb=float(1),\n    global_data_persistence=\"aof-every-1-second\",\n    global_password=\"some-random-pass-2\",\n    global_source_ips=[\"192.168.0.0/16\"],\n    tags={\n        \"environment\": \"production\",\n        \"cost_center\": \"0700\",\n    })\npulumi.export(\"us-east-1-public-endpoints\", database_resource.public_endpoint[\"us-east-1\"])\npulumi.export(\"us-east-2-private-endpoints\", database_resource.private_endpoint[\"us-east-2\"])\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var card = Rediscloud.GetPaymentMethod.Invoke(new()\n    {\n        CardType = \"Visa\",\n    });\n\n    var subscription_resource = new Rediscloud.ActiveActiveSubscription(\"subscription-resource\", new()\n    {\n        CreationPlan = new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanArgs\n        {\n            Regions = new[]\n            {\n                new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanRegionArgs\n                {\n                    Region = \"us-east-1\",\n                    NetworkingDeploymentCidr = \"192.168.0.0/24\",\n                    WriteOperationsPerSecond = 1000,\n                    ReadOperationsPerSecond = 1000,\n                },\n                new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanRegionArgs\n                {\n                    Region = \"us-east-2\",\n                    NetworkingDeploymentCidr = \"10.0.1.0/24\",\n                    WriteOperationsPerSecond = 1000,\n                    ReadOperationsPerSecond = 2000,\n                },\n            },\n            DatasetSizeInGb = 1.0,\n            Quantity = 1,\n        },\n        Name = \"subscription-name\",\n        PaymentMethodId = card.Apply(getPaymentMethodResult =\u003e getPaymentMethodResult.Id),\n        CloudProvider = \"AWS\",\n    });\n\n    var database_resource = new Rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\", new()\n    {\n        GlobalAlerts = new[]\n        {\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseGlobalAlertArgs\n            {\n                Name = \"dataset-size\",\n                Value = 1,\n            },\n        },\n        OverrideRegions = new[]\n        {\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs\n            {\n                Name = \"us-east-2\",\n                OverrideGlobalSourceIps = new[]\n                {\n                    \"192.10.0.0/16\",\n                },\n            },\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs\n            {\n                OverrideGlobalAlerts = new[]\n                {\n                    new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs\n                    {\n                        Name = \"dataset-size\",\n                        Value = 60,\n                    },\n                },\n                Name = \"us-east-1\",\n                OverrideGlobalDataPersistence = \"none\",\n                OverrideGlobalPassword = \"region-specific-password\",\n            },\n        },\n        SubscriptionId = subscription_resource.Id,\n        Name = \"database-name\",\n        DatasetSizeInGb = 1.0,\n        GlobalDataPersistence = \"aof-every-1-second\",\n        GlobalPassword = \"some-random-pass-2\",\n        GlobalSourceIps = new[]\n        {\n            \"192.168.0.0/16\",\n        },\n        Tags = \n        {\n            { \"environment\", \"production\" },\n            { \"cost_center\", \"0700\" },\n        },\n    });\n\n    return new Dictionary\u003cstring, object?\u003e\n    {\n        [\"us-east-1-public-endpoints\"] = database_resource.PublicEndpoint.Apply(publicEndpoint =\u003e publicEndpoint.Us_east_1),\n        [\"us-east-2-private-endpoints\"] = database_resource.PrivateEndpoint.Apply(privateEndpoint =\u003e privateEndpoint.Us_east_2),\n    };\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\tcard, err := rediscloud.GetPaymentMethod(ctx, \u0026rediscloud.GetPaymentMethodArgs{\n\t\t\tCardType: pulumi.StringRef(\"Visa\"),\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tsubscription_resource, err := rediscloud.NewActiveActiveSubscription(ctx, \"subscription-resource\", \u0026rediscloud.ActiveActiveSubscriptionArgs{\n\t\t\tCreationPlan: \u0026rediscloud.ActiveActiveSubscriptionCreationPlanArgs{\n\t\t\t\tRegions: rediscloud.ActiveActiveSubscriptionCreationPlanRegionArray{\n\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{\n\t\t\t\t\t\tRegion:                   pulumi.String(\"us-east-1\"),\n\t\t\t\t\t\tNetworkingDeploymentCidr: pulumi.String(\"192.168.0.0/24\"),\n\t\t\t\t\t\tWriteOperationsPerSecond: pulumi.Int(1000),\n\t\t\t\t\t\tReadOperationsPerSecond:  pulumi.Int(1000),\n\t\t\t\t\t},\n\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{\n\t\t\t\t\t\tRegion:                   pulumi.String(\"us-east-2\"),\n\t\t\t\t\t\tNetworkingDeploymentCidr: pulumi.String(\"10.0.1.0/24\"),\n\t\t\t\t\t\tWriteOperationsPerSecond: pulumi.Int(1000),\n\t\t\t\t\t\tReadOperationsPerSecond:  pulumi.Int(2000),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\tDatasetSizeInGb: pulumi.Float64(1),\n\t\t\t\tQuantity:        pulumi.Int(1),\n\t\t\t},\n\t\t\tName:            pulumi.String(\"subscription-name\"),\n\t\t\tPaymentMethodId: pulumi.String(card.Id),\n\t\t\tCloudProvider:   pulumi.String(\"AWS\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tdatabase_resource, err := rediscloud.NewActiveActiveSubscriptionDatabase(ctx, \"database-resource\", \u0026rediscloud.ActiveActiveSubscriptionDatabaseArgs{\n\t\t\tGlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArray{\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArgs{\n\t\t\t\t\tName:  pulumi.String(\"dataset-size\"),\n\t\t\t\t\tValue: pulumi.Int(1),\n\t\t\t\t},\n\t\t\t},\n\t\t\tOverrideRegions: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArray{\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{\n\t\t\t\t\tName: pulumi.String(\"us-east-2\"),\n\t\t\t\t\tOverrideGlobalSourceIps: pulumi.StringArray{\n\t\t\t\t\t\tpulumi.String(\"192.10.0.0/16\"),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{\n\t\t\t\t\tOverrideGlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{\n\t\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{\n\t\t\t\t\t\t\tName:  pulumi.String(\"dataset-size\"),\n\t\t\t\t\t\t\tValue: pulumi.Int(60),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tName:                          pulumi.String(\"us-east-1\"),\n\t\t\t\t\tOverrideGlobalDataPersistence: pulumi.String(\"none\"),\n\t\t\t\t\tOverrideGlobalPassword:        pulumi.String(\"region-specific-password\"),\n\t\t\t\t},\n\t\t\t},\n\t\t\tSubscriptionId:        subscription_resource.ID(),\n\t\t\tName:                  pulumi.String(\"database-name\"),\n\t\t\tDatasetSizeInGb:       pulumi.Float64(1),\n\t\t\tGlobalDataPersistence: pulumi.String(\"aof-every-1-second\"),\n\t\t\tGlobalPassword:        pulumi.String(\"some-random-pass-2\"),\n\t\t\tGlobalSourceIps: pulumi.StringArray{\n\t\t\t\tpulumi.String(\"192.168.0.0/16\"),\n\t\t\t},\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"environment\": pulumi.String(\"production\"),\n\t\t\t\t\"cost_center\": pulumi.String(\"0700\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tctx.Export(\"us-east-1-public-endpoints\", database_resource.PublicEndpoint.ApplyT(func(publicEndpoint map[string]string) (string, error) {\n\t\t\treturn publicEndpoint[\"us-east-1\"], nil\n\t\t}).(pulumi.StringOutput))\n\t\tctx.Export(\"us-east-2-private-endpoints\", database_resource.PrivateEndpoint.ApplyT(func(privateEndpoint map[string]string) (string, error) {\n\t\t\treturn privateEndpoint[\"us-east-2\"], nil\n\t\t}).(pulumi.StringOutput))\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\ndata \"rediscloud_payment_method\" \"card\" {\n  card_type = \"Visa\"\n}\n\nresource \"rediscloud_active_active_subscription\" \"subscription-resource\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  creation_plan {\n    region {\n      region                      = \"us-east-1\"\n      networking_deployment_cidr  = \"192.168.0.0/24\"\n      write_operations_per_second = 1000\n      read_operations_per_second  = 1000\n    }\n    region {\n      region                      = \"us-east-2\"\n      networking_deployment_cidr  = \"10.0.1.0/24\"\n      write_operations_per_second = 1000\n      read_operations_per_second  = 2000\n    }\n    dataset_size_in_gb = 1\n    quantity           = 1\n  }\n  name              = \"subscription-name\"\n  payment_method_id = data.rediscloud_payment_method.card.id\n  cloud_provider    = \"AWS\"\n}\nresource \"rediscloud_active_active_subscription_database\" \"database-resource\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  global_alert {\n    name  = \"dataset-size\"\n    value = 1\n  }\n  override_region {\n    name                       = \"us-east-2\"\n    override_global_source_ips = [\"192.10.0.0/16\"]\n  }\n  override_region {\n    override_global_alert {\n      name  = \"dataset-size\"\n      value = 60\n    }\n    name                             = \"us-east-1\"\n    override_global_data_persistence = \"none\"\n    override_global_password         = \"region-specific-password\"\n  }\n  subscription_id         = rediscloud_active_active_subscription.subscription-resource.id\n  name                    = \"database-name\"\n  dataset_size_in_gb      = 1\n  global_data_persistence = \"aof-every-1-second\"\n  global_password         = \"some-random-pass-2\"\n  global_source_ips       = [\"192.168.0.0/16\"]\n  tags = {\n    \"environment\" = \"production\"\n    \"cost_center\" = \"0700\"\n  }\n}\noutput \"us-east-1-public-endpoints\" {\n  value = rediscloud_active_active_subscription_database.database-resource.public_endpoint.us-east-1\n}\noutput \"us-east-2-private-endpoints\" {\n  value = rediscloud_active_active_subscription_database.database-resource.private_endpoint.us-east-2\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.rediscloud.RediscloudFunctions;\nimport com.pulumi.rediscloud.inputs.GetPaymentMethodArgs;\nimport com.redislabs.rediscloud.ActiveActiveSubscription;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionCreationPlanArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionCreationPlanRegionArgs;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionDatabase;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionDatabaseArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseGlobalAlertArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var card = RediscloudFunctions.getPaymentMethod(GetPaymentMethodArgs.builder()\n            .cardType(\"Visa\")\n            .build());\n\n        var subscription_resource = new ActiveActiveSubscription(\"subscription-resource\", ActiveActiveSubscriptionArgs.builder()\n            .creationPlan(ActiveActiveSubscriptionCreationPlanArgs.builder()\n                .regions(                \n                    ActiveActiveSubscriptionCreationPlanRegionArgs.builder()\n                        .region(\"us-east-1\")\n                        .networkingDeploymentCidr(\"192.168.0.0/24\")\n                        .writeOperationsPerSecond(1000)\n                        .readOperationsPerSecond(1000)\n                        .build(),\n                    ActiveActiveSubscriptionCreationPlanRegionArgs.builder()\n                        .region(\"us-east-2\")\n                        .networkingDeploymentCidr(\"10.0.1.0/24\")\n                        .writeOperationsPerSecond(1000)\n                        .readOperationsPerSecond(2000)\n                        .build())\n                .datasetSizeInGb(1.0)\n                .quantity(1)\n                .build())\n            .name(\"subscription-name\")\n            .paymentMethodId(card.id())\n            .cloudProvider(\"AWS\")\n            .build());\n\n        var database_resource = new ActiveActiveSubscriptionDatabase(\"database-resource\", ActiveActiveSubscriptionDatabaseArgs.builder()\n            .globalAlerts(ActiveActiveSubscriptionDatabaseGlobalAlertArgs.builder()\n                .name(\"dataset-size\")\n                .value(1)\n                .build())\n            .overrideRegions(            \n                ActiveActiveSubscriptionDatabaseOverrideRegionArgs.builder()\n                    .name(\"us-east-2\")\n                    .overrideGlobalSourceIps(\"192.10.0.0/16\")\n                    .build(),\n                ActiveActiveSubscriptionDatabaseOverrideRegionArgs.builder()\n                    .overrideGlobalAlerts(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs.builder()\n                        .name(\"dataset-size\")\n                        .value(60)\n                        .build())\n                    .name(\"us-east-1\")\n                    .overrideGlobalDataPersistence(\"none\")\n                    .overrideGlobalPassword(\"region-specific-password\")\n                    .build())\n            .subscriptionId(subscription_resource.id())\n            .name(\"database-name\")\n            .datasetSizeInGb(1.0)\n            .globalDataPersistence(\"aof-every-1-second\")\n            .globalPassword(\"some-random-pass-2\")\n            .globalSourceIps(\"192.168.0.0/16\")\n            .tags(Map.ofEntries(\n                Map.entry(\"environment\", \"production\"),\n                Map.entry(\"cost_center\", \"0700\")\n            ))\n            .build());\n\n        ctx.export(\"us-east-1-public-endpoints\", database_resource.publicEndpoint().applyValue(_publicEndpoint -\u003e _publicEndpoint.get(\"us-east-1\")));\n        ctx.export(\"us-east-2-private-endpoints\", database_resource.privateEndpoint().applyValue(_privateEndpoint -\u003e _privateEndpoint.get(\"us-east-2\")));\n    }\n}\n```\n```yaml\nresources:\n  subscription-resource:\n    type: rediscloud:ActiveActiveSubscription\n    properties:\n      creationPlan:\n        regions:\n          - region: us-east-1\n            networkingDeploymentCidr: 192.168.0.0/24\n            writeOperationsPerSecond: 1000\n            readOperationsPerSecond: 1000\n          - region: us-east-2\n            networkingDeploymentCidr: 10.0.1.0/24\n            writeOperationsPerSecond: 1000\n            readOperationsPerSecond: 2000\n        datasetSizeInGb: 1\n        quantity: 1\n      name: subscription-name\n      paymentMethodId: ${card.id}\n      cloudProvider: AWS\n  database-resource:\n    type: rediscloud:ActiveActiveSubscriptionDatabase\n    properties:\n      globalAlerts:\n        - name: dataset-size\n          value: 1\n      overrideRegions:\n        - name: us-east-2\n          overrideGlobalSourceIps:\n            - 192.10.0.0/16\n        - overrideGlobalAlerts:\n            - name: dataset-size\n              value: 60\n          name: us-east-1\n          overrideGlobalDataPersistence: none\n          overrideGlobalPassword: region-specific-password\n      subscriptionId: ${[\"subscription-resource\"].id}\n      name: database-name\n      datasetSizeInGb: 1\n      globalDataPersistence: aof-every-1-second\n      globalPassword: some-random-pass-2\n      globalSourceIps:\n        - 192.168.0.0/16\n      tags:\n        environment: production\n        cost_center: '0700'\nvariables:\n  card:\n    fn::invoke:\n      function: rediscloud:getPaymentMethod\n      arguments:\n        cardType: Visa\noutputs:\n  us-east-1-public-endpoints: ${[\"database-resource\"].publicEndpoint[\"us-east-1\"]}\n  us-east-2-private-endpoints: ${[\"database-resource\"].privateEndpoint[\"us-east-2\"]}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\n\u003cspan pulumi-lang-nodejs=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-dotnet=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-go=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-python=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-yaml=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-java=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-hcl=\"`rediscloud_active_active_subscription_database`\"\u003e`rediscloud.ActiveActiveSubscriptionDatabase`\u003c/span\u003e can be imported using the ID of the Active-Active subscription and the ID of the database in the format {subscription ID}/{database ID}, e.g.\n\n```sh\n$ pulumi import rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase database-resource 123456/12345678\n```\n\nNote: Due to constraints in the Redis Cloud API, the import process will not import global attributes or override region attributes. If you wish to use these attributes in your Terraform configuration, you will need to manually add them to your Terraform configuration and run `pulumi up` to update the database.\n\nAdditionally, the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e cannot be set during imports as it is deprecated. If you need to set the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e attribute, you will need to create a new database resource. It is recommended to use the \u003cspan pulumi-lang-nodejs=\"`datasetSizeInGb`\" pulumi-lang-dotnet=\"`DatasetSizeInGb`\" pulumi-lang-go=\"`datasetSizeInGb`\" pulumi-lang-python=\"`dataset_size_in_gb`\" pulumi-lang-yaml=\"`datasetSizeInGb`\" pulumi-lang-java=\"`datasetSizeInGb`\" pulumi-lang-hcl=\"`dataset_size_in_gb`\"\u003e`datasetSizeInGb`\u003c/span\u003e attribute instead since imports are supported.\n\nTo update an existing configuration for a database which uses the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e field to use \u003cspan pulumi-lang-nodejs=\"`datasetSizeInGb`\" pulumi-lang-dotnet=\"`DatasetSizeInGb`\" pulumi-lang-go=\"`datasetSizeInGb`\" pulumi-lang-python=\"`dataset_size_in_gb`\" pulumi-lang-yaml=\"`datasetSizeInGb`\" pulumi-lang-java=\"`datasetSizeInGb`\" pulumi-lang-hcl=\"`dataset_size_in_gb`\"\u003e`datasetSizeInGb`\u003c/span\u003e, you need to remove it from the state and import the resource again. e.g.\n\n```sh\n$ terraform state rm rediscloud_active_active_subscription_database.database-resource\n(Update the configuration to use `dataset_size_in_gb` instead of `memory_limit_in_gb`)\n$ pulumi import rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase database-resource 123456/12345678\n```\n\n",
+            "description": "This resource allows you to manage a database within your Redis Enterprise Cloud account.\n\n\u003e **Note:** This is for databases within Active-Active Subscriptions only. See also \u003cspan pulumi-lang-nodejs=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-dotnet=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-go=\"`SubscriptionDatabase`\" pulumi-lang-python=\"`SubscriptionDatabase`\" pulumi-lang-yaml=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-java=\"`rediscloud.SubscriptionDatabase`\" pulumi-lang-hcl=\"`rediscloud_subscription_database`\"\u003e`rediscloud.SubscriptionDatabase`\u003c/span\u003e (Pro) and \u003cspan pulumi-lang-nodejs=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-dotnet=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-go=\"`EssentialsDatabase`\" pulumi-lang-python=\"`EssentialsDatabase`\" pulumi-lang-yaml=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-java=\"`rediscloud.EssentialsDatabase`\" pulumi-lang-hcl=\"`rediscloud_essentials_database`\"\u003e`rediscloud.EssentialsDatabase`\u003c/span\u003e.\n\n## Example Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nexport = async () =\u003e {\n    const card = await rediscloud.getPaymentMethod({\n        cardType: \"Visa\",\n    });\n    const subscription_resource = new rediscloud.ActiveActiveSubscription(\"subscription-resource\", {\n        creationPlan: {\n            regions: [\n                {\n                    region: \"us-east-1\",\n                    networkingDeploymentCidr: \"192.168.0.0/24\",\n                    writeOperationsPerSecond: 1000,\n                    readOperationsPerSecond: 1000,\n                },\n                {\n                    region: \"us-east-2\",\n                    networkingDeploymentCidr: \"10.0.1.0/24\",\n                    writeOperationsPerSecond: 1000,\n                    readOperationsPerSecond: 2000,\n                },\n            ],\n            datasetSizeInGb: 1,\n            quantity: 1,\n        },\n        name: \"subscription-name\",\n        paymentMethodId: card.id,\n        cloudProvider: \"AWS\",\n    });\n    const database_resource = new rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\", {\n        globalAlerts: [{\n            name: \"dataset-size\",\n            value: 1,\n        }],\n        overrideRegions: [\n            {\n                name: \"us-east-2\",\n                overrideGlobalSourceIps: [\"192.10.0.0/16\"],\n            },\n            {\n                overrideGlobalAlerts: [{\n                    name: \"dataset-size\",\n                    value: 60,\n                }],\n                name: \"us-east-1\",\n                overrideGlobalDataPersistence: \"none\",\n                overrideGlobalPassword: \"region-specific-password\",\n                localReadOperationsPerSecond: 2000,\n                localWriteOperationsPerSecond: 1000,\n            },\n        ],\n        subscriptionId: subscription_resource.id,\n        name: \"database-name\",\n        datasetSizeInGb: 1,\n        globalDataPersistence: \"aof-every-1-second\",\n        globalPassword: \"some-random-pass-2\",\n        globalSourceIps: [\"192.168.0.0/16\"],\n        tags: {\n            environment: \"production\",\n            cost_center: \"0700\",\n        },\n    });\n    return {\n        \"us-east-1-public-endpoints\": database_resource.publicEndpoint[\"us-east-1\"],\n        \"us-east-2-private-endpoints\": database_resource.privateEndpoint[\"us-east-2\"],\n    };\n}\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\ncard = rediscloud.get_payment_method(card_type=\"Visa\")\nsubscription_resource = rediscloud.ActiveActiveSubscription(\"subscription-resource\",\n    creation_plan={\n        \"regions\": [\n            {\n                \"region\": \"us-east-1\",\n                \"networking_deployment_cidr\": \"192.168.0.0/24\",\n                \"write_operations_per_second\": 1000,\n                \"read_operations_per_second\": 1000,\n            },\n            {\n                \"region\": \"us-east-2\",\n                \"networking_deployment_cidr\": \"10.0.1.0/24\",\n                \"write_operations_per_second\": 1000,\n                \"read_operations_per_second\": 2000,\n            },\n        ],\n        \"dataset_size_in_gb\": float(1),\n        \"quantity\": 1,\n    },\n    name=\"subscription-name\",\n    payment_method_id=card.id,\n    cloud_provider=\"AWS\")\ndatabase_resource = rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\",\n    global_alerts=[{\n        \"name\": \"dataset-size\",\n        \"value\": 1,\n    }],\n    override_regions=[\n        {\n            \"name\": \"us-east-2\",\n            \"override_global_source_ips\": [\"192.10.0.0/16\"],\n        },\n        {\n            \"override_global_alerts\": [{\n                \"name\": \"dataset-size\",\n                \"value\": 60,\n            }],\n            \"name\": \"us-east-1\",\n            \"override_global_data_persistence\": \"none\",\n            \"override_global_password\": \"region-specific-password\",\n            \"local_read_operations_per_second\": 2000,\n            \"local_write_operations_per_second\": 1000,\n        },\n    ],\n    subscription_id=subscription_resource.id,\n    name=\"database-name\",\n    dataset_size_in_gb=float(1),\n    global_data_persistence=\"aof-every-1-second\",\n    global_password=\"some-random-pass-2\",\n    global_source_ips=[\"192.168.0.0/16\"],\n    tags={\n        \"environment\": \"production\",\n        \"cost_center\": \"0700\",\n    })\npulumi.export(\"us-east-1-public-endpoints\", database_resource.public_endpoint[\"us-east-1\"])\npulumi.export(\"us-east-2-private-endpoints\", database_resource.private_endpoint[\"us-east-2\"])\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var card = Rediscloud.GetPaymentMethod.Invoke(new()\n    {\n        CardType = \"Visa\",\n    });\n\n    var subscription_resource = new Rediscloud.ActiveActiveSubscription(\"subscription-resource\", new()\n    {\n        CreationPlan = new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanArgs\n        {\n            Regions = new[]\n            {\n                new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanRegionArgs\n                {\n                    Region = \"us-east-1\",\n                    NetworkingDeploymentCidr = \"192.168.0.0/24\",\n                    WriteOperationsPerSecond = 1000,\n                    ReadOperationsPerSecond = 1000,\n                },\n                new Rediscloud.Inputs.ActiveActiveSubscriptionCreationPlanRegionArgs\n                {\n                    Region = \"us-east-2\",\n                    NetworkingDeploymentCidr = \"10.0.1.0/24\",\n                    WriteOperationsPerSecond = 1000,\n                    ReadOperationsPerSecond = 2000,\n                },\n            },\n            DatasetSizeInGb = 1.0,\n            Quantity = 1,\n        },\n        Name = \"subscription-name\",\n        PaymentMethodId = card.Apply(getPaymentMethodResult =\u003e getPaymentMethodResult.Id),\n        CloudProvider = \"AWS\",\n    });\n\n    var database_resource = new Rediscloud.ActiveActiveSubscriptionDatabase(\"database-resource\", new()\n    {\n        GlobalAlerts = new[]\n        {\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseGlobalAlertArgs\n            {\n                Name = \"dataset-size\",\n                Value = 1,\n            },\n        },\n        OverrideRegions = new[]\n        {\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs\n            {\n                Name = \"us-east-2\",\n                OverrideGlobalSourceIps = new[]\n                {\n                    \"192.10.0.0/16\",\n                },\n            },\n            new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs\n            {\n                OverrideGlobalAlerts = new[]\n                {\n                    new Rediscloud.Inputs.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs\n                    {\n                        Name = \"dataset-size\",\n                        Value = 60,\n                    },\n                },\n                Name = \"us-east-1\",\n                OverrideGlobalDataPersistence = \"none\",\n                OverrideGlobalPassword = \"region-specific-password\",\n                LocalReadOperationsPerSecond = 2000,\n                LocalWriteOperationsPerSecond = 1000,\n            },\n        },\n        SubscriptionId = subscription_resource.Id,\n        Name = \"database-name\",\n        DatasetSizeInGb = 1.0,\n        GlobalDataPersistence = \"aof-every-1-second\",\n        GlobalPassword = \"some-random-pass-2\",\n        GlobalSourceIps = new[]\n        {\n            \"192.168.0.0/16\",\n        },\n        Tags = \n        {\n            { \"environment\", \"production\" },\n            { \"cost_center\", \"0700\" },\n        },\n    });\n\n    return new Dictionary\u003cstring, object?\u003e\n    {\n        [\"us-east-1-public-endpoints\"] = database_resource.PublicEndpoint.Apply(publicEndpoint =\u003e publicEndpoint.Us_east_1),\n        [\"us-east-2-private-endpoints\"] = database_resource.PrivateEndpoint.Apply(privateEndpoint =\u003e privateEndpoint.Us_east_2),\n    };\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\tcard, err := rediscloud.GetPaymentMethod(ctx, \u0026rediscloud.GetPaymentMethodArgs{\n\t\t\tCardType: pulumi.StringRef(\"Visa\"),\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tsubscription_resource, err := rediscloud.NewActiveActiveSubscription(ctx, \"subscription-resource\", \u0026rediscloud.ActiveActiveSubscriptionArgs{\n\t\t\tCreationPlan: \u0026rediscloud.ActiveActiveSubscriptionCreationPlanArgs{\n\t\t\t\tRegions: rediscloud.ActiveActiveSubscriptionCreationPlanRegionArray{\n\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{\n\t\t\t\t\t\tRegion:                   pulumi.String(\"us-east-1\"),\n\t\t\t\t\t\tNetworkingDeploymentCidr: pulumi.String(\"192.168.0.0/24\"),\n\t\t\t\t\t\tWriteOperationsPerSecond: pulumi.Int(1000),\n\t\t\t\t\t\tReadOperationsPerSecond:  pulumi.Int(1000),\n\t\t\t\t\t},\n\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionCreationPlanRegionArgs{\n\t\t\t\t\t\tRegion:                   pulumi.String(\"us-east-2\"),\n\t\t\t\t\t\tNetworkingDeploymentCidr: pulumi.String(\"10.0.1.0/24\"),\n\t\t\t\t\t\tWriteOperationsPerSecond: pulumi.Int(1000),\n\t\t\t\t\t\tReadOperationsPerSecond:  pulumi.Int(2000),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\tDatasetSizeInGb: pulumi.Float64(1),\n\t\t\t\tQuantity:        pulumi.Int(1),\n\t\t\t},\n\t\t\tName:            pulumi.String(\"subscription-name\"),\n\t\t\tPaymentMethodId: pulumi.String(card.Id),\n\t\t\tCloudProvider:   pulumi.String(\"AWS\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tdatabase_resource, err := rediscloud.NewActiveActiveSubscriptionDatabase(ctx, \"database-resource\", \u0026rediscloud.ActiveActiveSubscriptionDatabaseArgs{\n\t\t\tGlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArray{\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseGlobalAlertArgs{\n\t\t\t\t\tName:  pulumi.String(\"dataset-size\"),\n\t\t\t\t\tValue: pulumi.Int(1),\n\t\t\t\t},\n\t\t\t},\n\t\t\tOverrideRegions: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArray{\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{\n\t\t\t\t\tName: pulumi.String(\"us-east-2\"),\n\t\t\t\t\tOverrideGlobalSourceIps: pulumi.StringArray{\n\t\t\t\t\t\tpulumi.String(\"192.10.0.0/16\"),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionArgs{\n\t\t\t\t\tOverrideGlobalAlerts: rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArray{\n\t\t\t\t\t\t\u0026rediscloud.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs{\n\t\t\t\t\t\t\tName:  pulumi.String(\"dataset-size\"),\n\t\t\t\t\t\t\tValue: pulumi.Int(60),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tName:                          pulumi.String(\"us-east-1\"),\n\t\t\t\t\tOverrideGlobalDataPersistence: pulumi.String(\"none\"),\n\t\t\t\t\tOverrideGlobalPassword:        pulumi.String(\"region-specific-password\"),\n\t\t\t\t\tLocalReadOperationsPerSecond:  pulumi.Int(2000),\n\t\t\t\t\tLocalWriteOperationsPerSecond: pulumi.Int(1000),\n\t\t\t\t},\n\t\t\t},\n\t\t\tSubscriptionId:        subscription_resource.ID(),\n\t\t\tName:                  pulumi.String(\"database-name\"),\n\t\t\tDatasetSizeInGb:       pulumi.Float64(1),\n\t\t\tGlobalDataPersistence: pulumi.String(\"aof-every-1-second\"),\n\t\t\tGlobalPassword:        pulumi.String(\"some-random-pass-2\"),\n\t\t\tGlobalSourceIps: pulumi.StringArray{\n\t\t\t\tpulumi.String(\"192.168.0.0/16\"),\n\t\t\t},\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"environment\": pulumi.String(\"production\"),\n\t\t\t\t\"cost_center\": pulumi.String(\"0700\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tctx.Export(\"us-east-1-public-endpoints\", database_resource.PublicEndpoint.ApplyT(func(publicEndpoint map[string]string) (string, error) {\n\t\t\treturn publicEndpoint[\"us-east-1\"], nil\n\t\t}).(pulumi.StringOutput))\n\t\tctx.Export(\"us-east-2-private-endpoints\", database_resource.PrivateEndpoint.ApplyT(func(privateEndpoint map[string]string) (string, error) {\n\t\t\treturn privateEndpoint[\"us-east-2\"], nil\n\t\t}).(pulumi.StringOutput))\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\ndata \"rediscloud_payment_method\" \"card\" {\n  card_type = \"Visa\"\n}\n\nresource \"rediscloud_active_active_subscription\" \"subscription-resource\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  creation_plan {\n    region {\n      region                      = \"us-east-1\"\n      networking_deployment_cidr  = \"192.168.0.0/24\"\n      write_operations_per_second = 1000\n      read_operations_per_second  = 1000\n    }\n    region {\n      region                      = \"us-east-2\"\n      networking_deployment_cidr  = \"10.0.1.0/24\"\n      write_operations_per_second = 1000\n      read_operations_per_second  = 2000\n    }\n    dataset_size_in_gb = 1\n    quantity           = 1\n  }\n  name              = \"subscription-name\"\n  payment_method_id = data.rediscloud_payment_method.card.id\n  cloud_provider    = \"AWS\"\n}\nresource \"rediscloud_active_active_subscription_database\" \"database-resource\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  global_alert {\n    name  = \"dataset-size\"\n    value = 1\n  }\n  override_region {\n    name                       = \"us-east-2\"\n    override_global_source_ips = [\"192.10.0.0/16\"]\n  }\n  override_region {\n    override_global_alert {\n      name  = \"dataset-size\"\n      value = 60\n    }\n    name                              = \"us-east-1\"\n    override_global_data_persistence  = \"none\"\n    override_global_password          = \"region-specific-password\"\n    local_read_operations_per_second  = 2000\n    local_write_operations_per_second = 1000\n  }\n  subscription_id         = rediscloud_active_active_subscription.subscription-resource.id\n  name                    = \"database-name\"\n  dataset_size_in_gb      = 1\n  global_data_persistence = \"aof-every-1-second\"\n  global_password         = \"some-random-pass-2\"\n  global_source_ips       = [\"192.168.0.0/16\"]\n  tags = {\n    \"environment\" = \"production\"\n    \"cost_center\" = \"0700\"\n  }\n}\noutput \"us-east-1-public-endpoints\" {\n  value = rediscloud_active_active_subscription_database.database-resource.public_endpoint.us-east-1\n}\noutput \"us-east-2-private-endpoints\" {\n  value = rediscloud_active_active_subscription_database.database-resource.private_endpoint.us-east-2\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.rediscloud.RediscloudFunctions;\nimport com.pulumi.rediscloud.inputs.GetPaymentMethodArgs;\nimport com.redislabs.rediscloud.ActiveActiveSubscription;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionCreationPlanArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionCreationPlanRegionArgs;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionDatabase;\nimport com.redislabs.rediscloud.ActiveActiveSubscriptionDatabaseArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseGlobalAlertArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseOverrideRegionArgs;\nimport com.pulumi.rediscloud.inputs.ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var card = RediscloudFunctions.getPaymentMethod(GetPaymentMethodArgs.builder()\n            .cardType(\"Visa\")\n            .build());\n\n        var subscription_resource = new ActiveActiveSubscription(\"subscription-resource\", ActiveActiveSubscriptionArgs.builder()\n            .creationPlan(ActiveActiveSubscriptionCreationPlanArgs.builder()\n                .regions(                \n                    ActiveActiveSubscriptionCreationPlanRegionArgs.builder()\n                        .region(\"us-east-1\")\n                        .networkingDeploymentCidr(\"192.168.0.0/24\")\n                        .writeOperationsPerSecond(1000)\n                        .readOperationsPerSecond(1000)\n                        .build(),\n                    ActiveActiveSubscriptionCreationPlanRegionArgs.builder()\n                        .region(\"us-east-2\")\n                        .networkingDeploymentCidr(\"10.0.1.0/24\")\n                        .writeOperationsPerSecond(1000)\n                        .readOperationsPerSecond(2000)\n                        .build())\n                .datasetSizeInGb(1.0)\n                .quantity(1)\n                .build())\n            .name(\"subscription-name\")\n            .paymentMethodId(card.id())\n            .cloudProvider(\"AWS\")\n            .build());\n\n        var database_resource = new ActiveActiveSubscriptionDatabase(\"database-resource\", ActiveActiveSubscriptionDatabaseArgs.builder()\n            .globalAlerts(ActiveActiveSubscriptionDatabaseGlobalAlertArgs.builder()\n                .name(\"dataset-size\")\n                .value(1)\n                .build())\n            .overrideRegions(            \n                ActiveActiveSubscriptionDatabaseOverrideRegionArgs.builder()\n                    .name(\"us-east-2\")\n                    .overrideGlobalSourceIps(\"192.10.0.0/16\")\n                    .build(),\n                ActiveActiveSubscriptionDatabaseOverrideRegionArgs.builder()\n                    .overrideGlobalAlerts(ActiveActiveSubscriptionDatabaseOverrideRegionOverrideGlobalAlertArgs.builder()\n                        .name(\"dataset-size\")\n                        .value(60)\n                        .build())\n                    .name(\"us-east-1\")\n                    .overrideGlobalDataPersistence(\"none\")\n                    .overrideGlobalPassword(\"region-specific-password\")\n                    .localReadOperationsPerSecond(2000)\n                    .localWriteOperationsPerSecond(1000)\n                    .build())\n            .subscriptionId(subscription_resource.id())\n            .name(\"database-name\")\n            .datasetSizeInGb(1.0)\n            .globalDataPersistence(\"aof-every-1-second\")\n            .globalPassword(\"some-random-pass-2\")\n            .globalSourceIps(\"192.168.0.0/16\")\n            .tags(Map.ofEntries(\n                Map.entry(\"environment\", \"production\"),\n                Map.entry(\"cost_center\", \"0700\")\n            ))\n            .build());\n\n        ctx.export(\"us-east-1-public-endpoints\", database_resource.publicEndpoint().applyValue(_publicEndpoint -\u003e _publicEndpoint.get(\"us-east-1\")));\n        ctx.export(\"us-east-2-private-endpoints\", database_resource.privateEndpoint().applyValue(_privateEndpoint -\u003e _privateEndpoint.get(\"us-east-2\")));\n    }\n}\n```\n```yaml\nresources:\n  subscription-resource:\n    type: rediscloud:ActiveActiveSubscription\n    properties:\n      creationPlan:\n        regions:\n          - region: us-east-1\n            networkingDeploymentCidr: 192.168.0.0/24\n            writeOperationsPerSecond: 1000\n            readOperationsPerSecond: 1000\n          - region: us-east-2\n            networkingDeploymentCidr: 10.0.1.0/24\n            writeOperationsPerSecond: 1000\n            readOperationsPerSecond: 2000\n        datasetSizeInGb: 1\n        quantity: 1\n      name: subscription-name\n      paymentMethodId: ${card.id}\n      cloudProvider: AWS\n  database-resource:\n    type: rediscloud:ActiveActiveSubscriptionDatabase\n    properties:\n      globalAlerts:\n        - name: dataset-size\n          value: 1\n      overrideRegions:\n        - name: us-east-2\n          overrideGlobalSourceIps:\n            - 192.10.0.0/16\n        - overrideGlobalAlerts:\n            - name: dataset-size\n              value: 60\n          name: us-east-1\n          overrideGlobalDataPersistence: none\n          overrideGlobalPassword: region-specific-password\n          localReadOperationsPerSecond: 2000\n          localWriteOperationsPerSecond: 1000\n      subscriptionId: ${[\"subscription-resource\"].id}\n      name: database-name\n      datasetSizeInGb: 1\n      globalDataPersistence: aof-every-1-second\n      globalPassword: some-random-pass-2\n      globalSourceIps:\n        - 192.168.0.0/16\n      tags:\n        environment: production\n        cost_center: '0700'\nvariables:\n  card:\n    fn::invoke:\n      function: rediscloud:getPaymentMethod\n      arguments:\n        cardType: Visa\noutputs:\n  us-east-1-public-endpoints: ${[\"database-resource\"].publicEndpoint[\"us-east-1\"]}\n  us-east-2-private-endpoints: ${[\"database-resource\"].privateEndpoint[\"us-east-2\"]}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\n\u003cspan pulumi-lang-nodejs=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-dotnet=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-go=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-python=\"`ActiveActiveSubscriptionDatabase`\" pulumi-lang-yaml=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-java=\"`rediscloud.ActiveActiveSubscriptionDatabase`\" pulumi-lang-hcl=\"`rediscloud_active_active_subscription_database`\"\u003e`rediscloud.ActiveActiveSubscriptionDatabase`\u003c/span\u003e can be imported using the ID of the Active-Active subscription and the ID of the database in the format {subscription ID}/{database ID}, e.g.\n\n```sh\n$ pulumi import rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase database-resource 123456/12345678\n```\n\nNote: Due to constraints in the Redis Cloud API, the import process will not import global attributes or override region attributes. If you wish to use these attributes in your Terraform configuration, you will need to manually add them to your Terraform configuration and run `pulumi up` to update the database.\n\nAdditionally, the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e cannot be set during imports as it is deprecated. If you need to set the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e attribute, you will need to create a new database resource. It is recommended to use the \u003cspan pulumi-lang-nodejs=\"`datasetSizeInGb`\" pulumi-lang-dotnet=\"`DatasetSizeInGb`\" pulumi-lang-go=\"`datasetSizeInGb`\" pulumi-lang-python=\"`dataset_size_in_gb`\" pulumi-lang-yaml=\"`datasetSizeInGb`\" pulumi-lang-java=\"`datasetSizeInGb`\" pulumi-lang-hcl=\"`dataset_size_in_gb`\"\u003e`datasetSizeInGb`\u003c/span\u003e attribute instead since imports are supported.\n\nTo update an existing configuration for a database which uses the \u003cspan pulumi-lang-nodejs=\"`memoryLimitInGb`\" pulumi-lang-dotnet=\"`MemoryLimitInGb`\" pulumi-lang-go=\"`memoryLimitInGb`\" pulumi-lang-python=\"`memory_limit_in_gb`\" pulumi-lang-yaml=\"`memoryLimitInGb`\" pulumi-lang-java=\"`memoryLimitInGb`\" pulumi-lang-hcl=\"`memory_limit_in_gb`\"\u003e`memoryLimitInGb`\u003c/span\u003e field to use \u003cspan pulumi-lang-nodejs=\"`datasetSizeInGb`\" pulumi-lang-dotnet=\"`DatasetSizeInGb`\" pulumi-lang-go=\"`datasetSizeInGb`\" pulumi-lang-python=\"`dataset_size_in_gb`\" pulumi-lang-yaml=\"`datasetSizeInGb`\" pulumi-lang-java=\"`datasetSizeInGb`\" pulumi-lang-hcl=\"`dataset_size_in_gb`\"\u003e`datasetSizeInGb`\u003c/span\u003e, you need to remove it from the state and import the resource again. e.g.\n\n```sh\n$ terraform state rm rediscloud_active_active_subscription_database.database-resource\n(Update the configuration to use `dataset_size_in_gb` instead of `memory_limit_in_gb`)\n$ pulumi import rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase database-resource 123456/12345678\n```\n\n",
             "properties": {
                 "autoMinorVersionUpgrade": {
                     "type": "boolean",
@@ -4912,6 +5381,304 @@
                         "type": "integer",
                         "description": "The ID of the Transit Gateway\n",
                         "willReplaceOnChanges": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/agentMemory:AgentMemory": {
+            "description": "Creates a Redis Agent Memory service backed by an existing Redis Cloud database.\nThe resource manages the Agent Memory service configuration, not the memory\nentries stored through the Agent Memory data-plane API.\n\n## Prerequisites\n\nThe backing database must meet the current\n[Agent Memory service prerequisites](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#prerequisites-and-limitations).\nDuring public preview, its \u003cspan pulumi-lang-nodejs=\"`default`\" pulumi-lang-dotnet=\"`Default`\" pulumi-lang-go=\"`default`\" pulumi-lang-python=\"`default`\" pulumi-lang-yaml=\"`default`\" pulumi-lang-java=\"`default`\" pulumi-lang-hcl=\"`default`\"\u003e`default`\u003c/span\u003e user must be enabled. Redis Flex databases,\ndatabases using AWS PrivateLink, and Active-Active databases are not supported.\nCheck the linked service documentation for changes to these limitations before\nselecting a backing database.\n\n## Example Usage\n\n### Minimal service\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nconst example = new rediscloud.AgentMemory(\"example\", {\n    name: \"example-memory\",\n    databaseId: exampleRediscloudSubscriptionDatabase.dbId,\n});\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\nexample = rediscloud.AgentMemory(\"example\",\n    name=\"example-memory\",\n    database_id=example_rediscloud_subscription_database[\"dbId\"])\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = new Rediscloud.AgentMemory(\"example\", new()\n    {\n        Name = \"example-memory\",\n        DatabaseId = exampleRediscloudSubscriptionDatabase.DbId,\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := rediscloud.NewAgentMemory(ctx, \"example\", \u0026rediscloud.AgentMemoryArgs{\n\t\t\tName:       pulumi.String(\"example-memory\"),\n\t\t\tDatabaseId: pulumi.Any(exampleRediscloudSubscriptionDatabase.DbId),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\nresource \"rediscloud_agent_memory\" \"example\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  name        = \"example-memory\"\n  database_id = exampleRediscloudSubscriptionDatabase.dbId\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.redislabs.rediscloud.AgentMemory;\nimport com.redislabs.rediscloud.AgentMemoryArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var example = new AgentMemory(\"example\", AgentMemoryArgs.builder()\n            .name(\"example-memory\")\n            .databaseId(exampleRediscloudSubscriptionDatabase.get(\"dbId\"))\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  example:\n    type: rediscloud:AgentMemory\n    properties:\n      name: example-memory\n      databaseId: ${exampleRediscloudSubscriptionDatabase.dbId}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\nWhen optional time-based memory settings are omitted, Redis Cloud applies the\nservice defaults and the provider stores the values returned by the API.\n\nExplicit empty strings in custom memory types and fields, detector names/actions,\nmatcher kinds/patterns, summarization strategies, and extraction prompts are sent\nto the API for validation and preserved when returned. They are distinct from\nomitted values. Required attributes must still be provided.\n\n### Service with memory settings\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nconst example = new rediscloud.AgentMemory(\"example\", {\n    name: \"example-memory\",\n    databaseId: exampleRediscloudSubscriptionDatabase.dbId,\n    shortTermTtlSeconds: 86400,\n    longTermTtlSeconds: 31536000,\n    extractionStrategy: \"INSTRUCT\",\n    extractionCadenceSeconds: 300,\n});\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\nexample = rediscloud.AgentMemory(\"example\",\n    name=\"example-memory\",\n    database_id=example_rediscloud_subscription_database[\"dbId\"],\n    short_term_ttl_seconds=86400,\n    long_term_ttl_seconds=31536000,\n    extraction_strategy=\"INSTRUCT\",\n    extraction_cadence_seconds=300)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = new Rediscloud.AgentMemory(\"example\", new()\n    {\n        Name = \"example-memory\",\n        DatabaseId = exampleRediscloudSubscriptionDatabase.DbId,\n        ShortTermTtlSeconds = 86400,\n        LongTermTtlSeconds = 31536000,\n        ExtractionStrategy = \"INSTRUCT\",\n        ExtractionCadenceSeconds = 300,\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := rediscloud.NewAgentMemory(ctx, \"example\", \u0026rediscloud.AgentMemoryArgs{\n\t\t\tName:                     pulumi.String(\"example-memory\"),\n\t\t\tDatabaseId:               pulumi.Any(exampleRediscloudSubscriptionDatabase.DbId),\n\t\t\tShortTermTtlSeconds:      pulumi.Int(86400),\n\t\t\tLongTermTtlSeconds:       pulumi.Int(31536000),\n\t\t\tExtractionStrategy:       pulumi.String(\"INSTRUCT\"),\n\t\t\tExtractionCadenceSeconds: pulumi.Int(300),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\nresource \"rediscloud_agent_memory\" \"example\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  name                       = \"example-memory\"\n  database_id                = exampleRediscloudSubscriptionDatabase.dbId\n  short_term_ttl_seconds     = 86400\n  long_term_ttl_seconds      = 31536000\n  extraction_strategy        = \"INSTRUCT\"\n  extraction_cadence_seconds = 300\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.redislabs.rediscloud.AgentMemory;\nimport com.redislabs.rediscloud.AgentMemoryArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var example = new AgentMemory(\"example\", AgentMemoryArgs.builder()\n            .name(\"example-memory\")\n            .databaseId(exampleRediscloudSubscriptionDatabase.get(\"dbId\"))\n            .shortTermTtlSeconds(86400)\n            .longTermTtlSeconds(31536000)\n            .extractionStrategy(\"INSTRUCT\")\n            .extractionCadenceSeconds(300)\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  example:\n    type: rediscloud:AgentMemory\n    properties:\n      name: example-memory\n      databaseId: ${exampleRediscloudSubscriptionDatabase.dbId}\n      shortTermTtlSeconds: 86400\n      longTermTtlSeconds: 3.1536e+07\n      extractionStrategy: INSTRUCT\n      extractionCadenceSeconds: 300\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n### Service with customer-managed models\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nconst example = new rediscloud.AgentMemory(\"example\", {\n    llm: {\n        credentials: {\n            type: \"apiKey\",\n            apiKey: agentMemoryLlmApiKey,\n            apiKeyVersion: 1,\n        },\n        provider: \"openai\",\n        model: \"gpt-4o-mini\",\n    },\n    embedding: {\n        credentials: {\n            type: \"apiKey\",\n            apiKey: agentMemoryEmbeddingApiKey,\n            apiKeyVersion: 1,\n        },\n        provider: \"openai\",\n        model: \"text-embedding-3-small\",\n    },\n    name: \"example-memory\",\n    databaseId: exampleRediscloudSubscriptionDatabase.dbId,\n    shortTermTtlSeconds: 86400,\n    longTermTtlSeconds: 31536000,\n    extractionStrategy: \"INSTRUCT\",\n    extractionCadenceSeconds: 300,\n});\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\nexample = rediscloud.AgentMemory(\"example\",\n    llm={\n        \"credentials\": {\n            \"type\": \"apiKey\",\n            \"api_key\": agent_memory_llm_api_key,\n            \"api_key_version\": 1,\n        },\n        \"provider\": \"openai\",\n        \"model\": \"gpt-4o-mini\",\n    },\n    embedding={\n        \"credentials\": {\n            \"type\": \"apiKey\",\n            \"api_key\": agent_memory_embedding_api_key,\n            \"api_key_version\": 1,\n        },\n        \"provider\": \"openai\",\n        \"model\": \"text-embedding-3-small\",\n    },\n    name=\"example-memory\",\n    database_id=example_rediscloud_subscription_database[\"dbId\"],\n    short_term_ttl_seconds=86400,\n    long_term_ttl_seconds=31536000,\n    extraction_strategy=\"INSTRUCT\",\n    extraction_cadence_seconds=300)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = new Rediscloud.AgentMemory(\"example\", new()\n    {\n        Llm = new Rediscloud.Inputs.AgentMemoryLlmArgs\n        {\n            Credentials = new Rediscloud.Inputs.AgentMemoryLlmCredentialsArgs\n            {\n                Type = \"apiKey\",\n                ApiKey = agentMemoryLlmApiKey,\n                ApiKeyVersion = 1,\n            },\n            Provider = \"openai\",\n            Model = \"gpt-4o-mini\",\n        },\n        Embedding = new Rediscloud.Inputs.AgentMemoryEmbeddingArgs\n        {\n            Credentials = new Rediscloud.Inputs.AgentMemoryEmbeddingCredentialsArgs\n            {\n                Type = \"apiKey\",\n                ApiKey = agentMemoryEmbeddingApiKey,\n                ApiKeyVersion = 1,\n            },\n            Provider = \"openai\",\n            Model = \"text-embedding-3-small\",\n        },\n        Name = \"example-memory\",\n        DatabaseId = exampleRediscloudSubscriptionDatabase.DbId,\n        ShortTermTtlSeconds = 86400,\n        LongTermTtlSeconds = 31536000,\n        ExtractionStrategy = \"INSTRUCT\",\n        ExtractionCadenceSeconds = 300,\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := rediscloud.NewAgentMemory(ctx, \"example\", \u0026rediscloud.AgentMemoryArgs{\n\t\t\tLlm: \u0026rediscloud.AgentMemoryLlmArgs{\n\t\t\t\tCredentials: \u0026rediscloud.AgentMemoryLlmCredentialsArgs{\n\t\t\t\t\tType:          pulumi.String(\"apiKey\"),\n\t\t\t\t\tApiKey:        pulumi.Any(agentMemoryLlmApiKey),\n\t\t\t\t\tApiKeyVersion: pulumi.Int(1),\n\t\t\t\t},\n\t\t\t\tProvider: pulumi.String(\"openai\"),\n\t\t\t\tModel:    pulumi.String(\"gpt-4o-mini\"),\n\t\t\t},\n\t\t\tEmbedding: \u0026rediscloud.AgentMemoryEmbeddingArgs{\n\t\t\t\tCredentials: \u0026rediscloud.AgentMemoryEmbeddingCredentialsArgs{\n\t\t\t\t\tType:          pulumi.String(\"apiKey\"),\n\t\t\t\t\tApiKey:        pulumi.Any(agentMemoryEmbeddingApiKey),\n\t\t\t\t\tApiKeyVersion: pulumi.Int(1),\n\t\t\t\t},\n\t\t\t\tProvider: pulumi.String(\"openai\"),\n\t\t\t\tModel:    pulumi.String(\"text-embedding-3-small\"),\n\t\t\t},\n\t\t\tName:                     pulumi.String(\"example-memory\"),\n\t\t\tDatabaseId:               pulumi.Any(exampleRediscloudSubscriptionDatabase.DbId),\n\t\t\tShortTermTtlSeconds:      pulumi.Int(86400),\n\t\t\tLongTermTtlSeconds:       pulumi.Int(31536000),\n\t\t\tExtractionStrategy:       pulumi.String(\"INSTRUCT\"),\n\t\t\tExtractionCadenceSeconds: pulumi.Int(300),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\nresource \"rediscloud_agent_memory\" \"example\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  llm {\n    credentials {\n      type            = \"apiKey\"\n      api_key         = agentMemoryLlmApiKey\n      api_key_version = 1\n    }\n    provider = \"openai\"\n    model    = \"gpt-4o-mini\"\n  }\n  embedding {\n    credentials {\n      type            = \"apiKey\"\n      api_key         = agentMemoryEmbeddingApiKey\n      api_key_version = 1\n    }\n    provider = \"openai\"\n    model    = \"text-embedding-3-small\"\n  }\n  name                       = \"example-memory\"\n  database_id                = exampleRediscloudSubscriptionDatabase.dbId\n  short_term_ttl_seconds     = 86400\n  long_term_ttl_seconds      = 31536000\n  extraction_strategy        = \"INSTRUCT\"\n  extraction_cadence_seconds = 300\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.redislabs.rediscloud.AgentMemory;\nimport com.redislabs.rediscloud.AgentMemoryArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLlmArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLlmCredentialsArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryEmbeddingArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryEmbeddingCredentialsArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var example = new AgentMemory(\"example\", AgentMemoryArgs.builder()\n            .llm(AgentMemoryLlmArgs.builder()\n                .credentials(AgentMemoryLlmCredentialsArgs.builder()\n                    .type(\"apiKey\")\n                    .apiKey(agentMemoryLlmApiKey)\n                    .apiKeyVersion(1)\n                    .build())\n                .provider(\"openai\")\n                .model(\"gpt-4o-mini\")\n                .build())\n            .embedding(AgentMemoryEmbeddingArgs.builder()\n                .credentials(AgentMemoryEmbeddingCredentialsArgs.builder()\n                    .type(\"apiKey\")\n                    .apiKey(agentMemoryEmbeddingApiKey)\n                    .apiKeyVersion(1)\n                    .build())\n                .provider(\"openai\")\n                .model(\"text-embedding-3-small\")\n                .build())\n            .name(\"example-memory\")\n            .databaseId(exampleRediscloudSubscriptionDatabase.get(\"dbId\"))\n            .shortTermTtlSeconds(86400)\n            .longTermTtlSeconds(31536000)\n            .extractionStrategy(\"INSTRUCT\")\n            .extractionCadenceSeconds(300)\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  example:\n    type: rediscloud:AgentMemory\n    properties:\n      llm:\n        credentials:\n          type: apiKey\n          apiKey: ${agentMemoryLlmApiKey}\n          apiKeyVersion: 1\n        provider: openai\n        model: gpt-4o-mini\n      embedding:\n        credentials:\n          type: apiKey\n          apiKey: ${agentMemoryEmbeddingApiKey}\n          apiKeyVersion: 1\n        provider: openai\n        model: text-embedding-3-small\n      name: example-memory\n      databaseId: ${exampleRediscloudSubscriptionDatabase.dbId}\n      shortTermTtlSeconds: 86400\n      longTermTtlSeconds: 3.1536e+07\n      extractionStrategy: INSTRUCT\n      extractionCadenceSeconds: 300\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\nOptional configuration blocks accept at most one item. Their HCL declaration\nstays `llm { ... }`; references use an index, such as\n`rediscloud_agent_memory.example.llm[0].provider`. Dynamic blocks may depend on\nvalues that become known only during apply.\n\n### Service with advanced memory configuration\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nconst example = new rediscloud.AgentMemory(\"example\", {\n    summarization: {\n        eventCount: {\n            threshold: 20,\n            retainCount: 10,\n        },\n        enabled: true,\n        triggerStrategy: \"event_count\",\n    },\n    longTermMemoryExclusions: {\n        builtInDetectors: {\n            detectors: [{\n                id: \"email\",\n                enabled: true,\n                action: \"redact\",\n            }],\n            enabled: true,\n        },\n        customDetectors: {\n            detectors: [{\n                matcher: {\n                    regex: {\n                        pattern: \"ACCT-[0-9]+\",\n                    },\n                    kind: \"regex\",\n                },\n                name: \"account_number\",\n                enabled: true,\n                action: \"redact\",\n            }],\n            enabled: true,\n        },\n        semantic: {\n            enabled: true,\n            prompt: \"Do not remember secrets, recovery codes, or payment credentials.\",\n        },\n        enabled: true,\n    },\n    customMemoryTypes: [{\n        extractionStrategy: {\n            enabled: true,\n            prompt: \"Extract durable user preferences.\",\n        },\n        fields: [{\n            name: \"topic\",\n            type: \"str\",\n            description: \"Preference topic\",\n        }],\n        name: \"preference\",\n        description: \"User preferences captured from conversations\",\n    }],\n    name: \"example-memory\",\n    databaseId: exampleRediscloudSubscriptionDatabase.dbId,\n    shortTermTtlSeconds: 86400,\n    longTermTtlSeconds: 31536000,\n    extractionStrategy: \"INSTRUCT\",\n    extractionCadenceSeconds: 300,\n});\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\nexample = rediscloud.AgentMemory(\"example\",\n    summarization={\n        \"event_count\": {\n            \"threshold\": 20,\n            \"retain_count\": 10,\n        },\n        \"enabled\": True,\n        \"trigger_strategy\": \"event_count\",\n    },\n    long_term_memory_exclusions={\n        \"built_in_detectors\": {\n            \"detectors\": [{\n                \"id\": \"email\",\n                \"enabled\": True,\n                \"action\": \"redact\",\n            }],\n            \"enabled\": True,\n        },\n        \"custom_detectors\": {\n            \"detectors\": [{\n                \"matcher\": {\n                    \"regex\": {\n                        \"pattern\": \"ACCT-[0-9]+\",\n                    },\n                    \"kind\": \"regex\",\n                },\n                \"name\": \"account_number\",\n                \"enabled\": True,\n                \"action\": \"redact\",\n            }],\n            \"enabled\": True,\n        },\n        \"semantic\": {\n            \"enabled\": True,\n            \"prompt\": \"Do not remember secrets, recovery codes, or payment credentials.\",\n        },\n        \"enabled\": True,\n    },\n    custom_memory_types=[{\n        \"extraction_strategy\": {\n            \"enabled\": True,\n            \"prompt\": \"Extract durable user preferences.\",\n        },\n        \"fields\": [{\n            \"name\": \"topic\",\n            \"type\": \"str\",\n            \"description\": \"Preference topic\",\n        }],\n        \"name\": \"preference\",\n        \"description\": \"User preferences captured from conversations\",\n    }],\n    name=\"example-memory\",\n    database_id=example_rediscloud_subscription_database[\"dbId\"],\n    short_term_ttl_seconds=86400,\n    long_term_ttl_seconds=31536000,\n    extraction_strategy=\"INSTRUCT\",\n    extraction_cadence_seconds=300)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = new Rediscloud.AgentMemory(\"example\", new()\n    {\n        Summarization = new Rediscloud.Inputs.AgentMemorySummarizationArgs\n        {\n            EventCount = new Rediscloud.Inputs.AgentMemorySummarizationEventCountArgs\n            {\n                Threshold = 20,\n                RetainCount = 10,\n            },\n            Enabled = true,\n            TriggerStrategy = \"event_count\",\n        },\n        LongTermMemoryExclusions = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsArgs\n        {\n            BuiltInDetectors = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs\n            {\n                Detectors = new[]\n                {\n                    new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs\n                    {\n                        Id = \"email\",\n                        Enabled = true,\n                        Action = \"redact\",\n                    },\n                },\n                Enabled = true,\n            },\n            CustomDetectors = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs\n            {\n                Detectors = new[]\n                {\n                    new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs\n                    {\n                        Matcher = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs\n                        {\n                            Regex = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs\n                            {\n                                Pattern = \"ACCT-[0-9]+\",\n                            },\n                            Kind = \"regex\",\n                        },\n                        Name = \"account_number\",\n                        Enabled = true,\n                        Action = \"redact\",\n                    },\n                },\n                Enabled = true,\n            },\n            Semantic = new Rediscloud.Inputs.AgentMemoryLongTermMemoryExclusionsSemanticArgs\n            {\n                Enabled = true,\n                Prompt = \"Do not remember secrets, recovery codes, or payment credentials.\",\n            },\n            Enabled = true,\n        },\n        CustomMemoryTypes = new[]\n        {\n            new Rediscloud.Inputs.AgentMemoryCustomMemoryTypeArgs\n            {\n                ExtractionStrategy = new Rediscloud.Inputs.AgentMemoryCustomMemoryTypeExtractionStrategyArgs\n                {\n                    Enabled = true,\n                    Prompt = \"Extract durable user preferences.\",\n                },\n                Fields = new[]\n                {\n                    new Rediscloud.Inputs.AgentMemoryCustomMemoryTypeFieldArgs\n                    {\n                        Name = \"topic\",\n                        Type = \"str\",\n                        Description = \"Preference topic\",\n                    },\n                },\n                Name = \"preference\",\n                Description = \"User preferences captured from conversations\",\n            },\n        },\n        Name = \"example-memory\",\n        DatabaseId = exampleRediscloudSubscriptionDatabase.DbId,\n        ShortTermTtlSeconds = 86400,\n        LongTermTtlSeconds = 31536000,\n        ExtractionStrategy = \"INSTRUCT\",\n        ExtractionCadenceSeconds = 300,\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := rediscloud.NewAgentMemory(ctx, \"example\", \u0026rediscloud.AgentMemoryArgs{\n\t\t\tSummarization: \u0026rediscloud.AgentMemorySummarizationArgs{\n\t\t\t\tEventCount: \u0026rediscloud.AgentMemorySummarizationEventCountArgs{\n\t\t\t\t\tThreshold:   pulumi.Int(20),\n\t\t\t\t\tRetainCount: pulumi.Int(10),\n\t\t\t\t},\n\t\t\t\tEnabled:         pulumi.Bool(true),\n\t\t\t\tTriggerStrategy: pulumi.String(\"event_count\"),\n\t\t\t},\n\t\t\tLongTermMemoryExclusions: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsArgs{\n\t\t\t\tBuiltInDetectors: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs{\n\t\t\t\t\tDetectors: rediscloud.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray{\n\t\t\t\t\t\t\u0026rediscloud.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs{\n\t\t\t\t\t\t\tId:      pulumi.String(\"email\"),\n\t\t\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t\t\t\tAction:  pulumi.String(\"redact\"),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t},\n\t\t\t\tCustomDetectors: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs{\n\t\t\t\t\tDetectors: rediscloud.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray{\n\t\t\t\t\t\t\u0026rediscloud.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs{\n\t\t\t\t\t\t\tMatcher: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs{\n\t\t\t\t\t\t\t\tRegex: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs{\n\t\t\t\t\t\t\t\t\tPattern: pulumi.String(\"ACCT-[0-9]+\"),\n\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\tKind: pulumi.String(\"regex\"),\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\tName:    pulumi.String(\"account_number\"),\n\t\t\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t\t\t\tAction:  pulumi.String(\"redact\"),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t},\n\t\t\t\tSemantic: \u0026rediscloud.AgentMemoryLongTermMemoryExclusionsSemanticArgs{\n\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t\tPrompt:  pulumi.String(\"Do not remember secrets, recovery codes, or payment credentials.\"),\n\t\t\t\t},\n\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t},\n\t\t\tCustomMemoryTypes: rediscloud.AgentMemoryCustomMemoryTypeArray{\n\t\t\t\t\u0026rediscloud.AgentMemoryCustomMemoryTypeArgs{\n\t\t\t\t\tExtractionStrategy: \u0026rediscloud.AgentMemoryCustomMemoryTypeExtractionStrategyArgs{\n\t\t\t\t\t\tEnabled: pulumi.Bool(true),\n\t\t\t\t\t\tPrompt:  pulumi.String(\"Extract durable user preferences.\"),\n\t\t\t\t\t},\n\t\t\t\t\tFields: rediscloud.AgentMemoryCustomMemoryTypeFieldArray{\n\t\t\t\t\t\t\u0026rediscloud.AgentMemoryCustomMemoryTypeFieldArgs{\n\t\t\t\t\t\t\tName:        pulumi.String(\"topic\"),\n\t\t\t\t\t\t\tType:        pulumi.String(\"str\"),\n\t\t\t\t\t\t\tDescription: pulumi.String(\"Preference topic\"),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tName:        pulumi.String(\"preference\"),\n\t\t\t\t\tDescription: pulumi.String(\"User preferences captured from conversations\"),\n\t\t\t\t},\n\t\t\t},\n\t\t\tName:                     pulumi.String(\"example-memory\"),\n\t\t\tDatabaseId:               pulumi.Any(exampleRediscloudSubscriptionDatabase.DbId),\n\t\t\tShortTermTtlSeconds:      pulumi.Int(86400),\n\t\t\tLongTermTtlSeconds:       pulumi.Int(31536000),\n\t\t\tExtractionStrategy:       pulumi.String(\"INSTRUCT\"),\n\t\t\tExtractionCadenceSeconds: pulumi.Int(300),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\nresource \"rediscloud_agent_memory\" \"example\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  summarization {\n    event_count {\n      threshold    = 20\n      retain_count = 10\n    }\n    enabled          = true\n    trigger_strategy = \"event_count\"\n  }\n  long_term_memory_exclusions {\n    built_in_detectors {\n      detectors {\n        id      = \"email\"\n        enabled = true\n        action  = \"redact\"\n      }\n      enabled = true\n    }\n    custom_detectors {\n      detectors {\n        matcher {\n          regex {\n            pattern = \"ACCT-[0-9]+\"\n          }\n          kind = \"regex\"\n        }\n        name    = \"account_number\"\n        enabled = true\n        action  = \"redact\"\n      }\n      enabled = true\n    }\n    semantic {\n      enabled = true\n      prompt  = \"Do not remember secrets, recovery codes, or payment credentials.\"\n    }\n    enabled = true\n  }\n  custom_memory_types {\n    extraction_strategy {\n      enabled = true\n      prompt  = \"Extract durable user preferences.\"\n    }\n    fields {\n      name        = \"topic\"\n      type        = \"str\"\n      description = \"Preference topic\"\n    }\n    name        = \"preference\"\n    description = \"User preferences captured from conversations\"\n  }\n  name                       = \"example-memory\"\n  database_id                = exampleRediscloudSubscriptionDatabase.dbId\n  short_term_ttl_seconds     = 86400\n  long_term_ttl_seconds      = 31536000\n  extraction_strategy        = \"INSTRUCT\"\n  extraction_cadence_seconds = 300\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.redislabs.rediscloud.AgentMemory;\nimport com.redislabs.rediscloud.AgentMemoryArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemorySummarizationArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemorySummarizationEventCountArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryLongTermMemoryExclusionsSemanticArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryCustomMemoryTypeArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryCustomMemoryTypeExtractionStrategyArgs;\nimport com.pulumi.rediscloud.inputs.AgentMemoryCustomMemoryTypeFieldArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var example = new AgentMemory(\"example\", AgentMemoryArgs.builder()\n            .summarization(AgentMemorySummarizationArgs.builder()\n                .eventCount(AgentMemorySummarizationEventCountArgs.builder()\n                    .threshold(20)\n                    .retainCount(10)\n                    .build())\n                .enabled(true)\n                .triggerStrategy(\"event_count\")\n                .build())\n            .longTermMemoryExclusions(AgentMemoryLongTermMemoryExclusionsArgs.builder()\n                .builtInDetectors(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs.builder()\n                    .detectors(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs.builder()\n                        .id(\"email\")\n                        .enabled(true)\n                        .action(\"redact\")\n                        .build())\n                    .enabled(true)\n                    .build())\n                .customDetectors(AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs.builder()\n                    .detectors(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs.builder()\n                        .matcher(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs.builder()\n                            .regex(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs.builder()\n                                .pattern(\"ACCT-[0-9]+\")\n                                .build())\n                            .kind(\"regex\")\n                            .build())\n                        .name(\"account_number\")\n                        .enabled(true)\n                        .action(\"redact\")\n                        .build())\n                    .enabled(true)\n                    .build())\n                .semantic(AgentMemoryLongTermMemoryExclusionsSemanticArgs.builder()\n                    .enabled(true)\n                    .prompt(\"Do not remember secrets, recovery codes, or payment credentials.\")\n                    .build())\n                .enabled(true)\n                .build())\n            .customMemoryTypes(AgentMemoryCustomMemoryTypeArgs.builder()\n                .extractionStrategy(AgentMemoryCustomMemoryTypeExtractionStrategyArgs.builder()\n                    .enabled(true)\n                    .prompt(\"Extract durable user preferences.\")\n                    .build())\n                .fields(AgentMemoryCustomMemoryTypeFieldArgs.builder()\n                    .name(\"topic\")\n                    .type(\"str\")\n                    .description(\"Preference topic\")\n                    .build())\n                .name(\"preference\")\n                .description(\"User preferences captured from conversations\")\n                .build())\n            .name(\"example-memory\")\n            .databaseId(exampleRediscloudSubscriptionDatabase.get(\"dbId\"))\n            .shortTermTtlSeconds(86400)\n            .longTermTtlSeconds(31536000)\n            .extractionStrategy(\"INSTRUCT\")\n            .extractionCadenceSeconds(300)\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  example:\n    type: rediscloud:AgentMemory\n    properties:\n      summarization:\n        eventCount:\n          threshold: 20\n          retainCount: 10\n        enabled: true\n        triggerStrategy: event_count\n      longTermMemoryExclusions:\n        builtInDetectors:\n          detectors:\n            - id: email\n              enabled: true\n              action: redact\n          enabled: true\n        customDetectors:\n          detectors:\n            - matcher:\n                regex:\n                  pattern: ACCT-[0-9]+\n                kind: regex\n              name: account_number\n              enabled: true\n              action: redact\n          enabled: true\n        semantic:\n          enabled: true\n          prompt: Do not remember secrets, recovery codes, or payment credentials.\n        enabled: true\n      customMemoryTypes:\n        - extractionStrategy:\n            enabled: true\n            prompt: Extract durable user preferences.\n          fields:\n            - name: topic\n              type: str\n              description: Preference topic\n          name: preference\n          description: User preferences captured from conversations\n      name: example-memory\n      databaseId: ${exampleRediscloudSubscriptionDatabase.dbId}\n      shortTermTtlSeconds: 86400\n      longTermTtlSeconds: 3.1536e+07\n      extractionStrategy: INSTRUCT\n      extractionCadenceSeconds: 300\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\n\u003cspan pulumi-lang-nodejs=\"`rediscloud.AgentMemory`\" pulumi-lang-dotnet=\"`rediscloud.AgentMemory`\" pulumi-lang-go=\"`AgentMemory`\" pulumi-lang-python=\"`AgentMemory`\" pulumi-lang-yaml=\"`rediscloud.AgentMemory`\" pulumi-lang-java=\"`rediscloud.AgentMemory`\" pulumi-lang-hcl=\"`rediscloud_agent_memory`\"\u003e`rediscloud.AgentMemory`\u003c/span\u003e can be imported using its store ID:\n\n```sh\n$ pulumi import rediscloud:index/agentMemory:AgentMemory example store-id\n```\n\nFor imported services with customer-managed models, the provider imports the\nmodel metadata returned by Redis Cloud, such as `llm[0].provider`, `llm[0].model`,\n`embedding[0].provider`, and `embedding[0].model`. Model provider credentials are not\nreturned by the Agent Memory API, so they are not populated during import.\nIf the Terraform configuration includes \u003cspan pulumi-lang-nodejs=\"`credentials`\" pulumi-lang-dotnet=\"`Credentials`\" pulumi-lang-go=\"`credentials`\" pulumi-lang-python=\"`credentials`\" pulumi-lang-yaml=\"`credentials`\" pulumi-lang-java=\"`credentials`\" pulumi-lang-hcl=\"`credentials`\"\u003e`credentials`\u003c/span\u003e blocks after import, the\nfirst plan can show an in-place update to send those write-only credentials\nback to Redis Cloud. This is expected and does not replace the Agent Memory\nservice. To rotate credentials after import, update the relevant\n`credentials[0].api_key` values and change their `credentials[0].api_key_version`\nvalues, then run `pulumi up`.\n\n",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "description": "The Agent Memory service creation timestamp.\n"
+                },
+                "customMemoryTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryCustomMemoryType:AgentMemoryCustomMemoryType"
+                    },
+                    "description": "Custom long-term memory types. Quantity limits are validated by the Agent Memory API.\n"
+                },
+                "databaseId": {
+                    "type": "integer",
+                    "description": "The ID of the Redis Cloud database that backs the Agent Memory service. Changing it requires replacement.\nMust be an integer. Validity and access to the database are checked by the Agent Memory API.\n\nThe following arguments are optional:\n"
+                },
+                "embedding": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryEmbedding:AgentMemoryEmbedding",
+                    "description": "Customer-managed embedding model configuration for long-term memory. If configured, \u003cspan pulumi-lang-nodejs=\"`llm`\" pulumi-lang-dotnet=\"`Llm`\" pulumi-lang-go=\"`llm`\" pulumi-lang-python=\"`llm`\" pulumi-lang-yaml=\"`llm`\" pulumi-lang-java=\"`llm`\" pulumi-lang-hcl=\"`llm`\"\u003e`llm`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                },
+                "endpoint": {
+                    "type": "string",
+                    "description": "The primary data-plane API endpoint for the Agent Memory service.\n"
+                },
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryEndpoint:AgentMemoryEndpoint"
+                    },
+                    "description": "Regional data-plane API endpoints for the Agent Memory service.\n"
+                },
+                "extractionCadenceSeconds": {
+                    "type": "integer",
+                    "description": "How often the extraction pipeline runs while a session is active, in seconds. Accepted values are validated by the Agent Memory API.\n"
+                },
+                "extractionStrategy": {
+                    "type": "string",
+                    "description": "How long-term memories are extracted from sessions.\nAccepted values are validated by the Agent Memory API. Changing an explicitly configured strategy requires replacement because the API does not support updating it in place.\n"
+                },
+                "llm": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLlm:AgentMemoryLlm",
+                    "description": "Customer-managed LLM configuration. If configured, \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                },
+                "longTermMemoryExclusions": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusions:AgentMemoryLongTermMemoryExclusions",
+                    "description": "Exclusion policy applied to newly extracted long-term memories.\n"
+                },
+                "longTermTtlSeconds": {
+                    "type": "integer",
+                    "description": "Long-term memory TTL in seconds.\nThe API accepts 1 second to 1 year. This must be configured explicitly when \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e is configured.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the Agent Memory service.\nMust contain at least one non-whitespace character. Maximum length is validated by the Agent Memory API.\n"
+                },
+                "shortTermTtlSeconds": {
+                    "type": "integer",
+                    "description": "Short-term memory TTL in seconds.\nThe API accepts 1 second to 1 year.\n"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The current provisioning status.\n"
+                },
+                "summarization": {
+                    "$ref": "#/types/rediscloud:index/AgentMemorySummarization:AgentMemorySummarization",
+                    "description": "Automatic session summarization configuration.\n"
+                },
+                "timeouts": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryTimeouts:AgentMemoryTimeouts"
+                }
+            },
+            "required": [
+                "createdAt",
+                "databaseId",
+                "endpoint",
+                "endpoints",
+                "extractionCadenceSeconds",
+                "extractionStrategy",
+                "longTermTtlSeconds",
+                "name",
+                "shortTermTtlSeconds",
+                "status"
+            ],
+            "inputProperties": {
+                "customMemoryTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryCustomMemoryType:AgentMemoryCustomMemoryType"
+                    },
+                    "description": "Custom long-term memory types. Quantity limits are validated by the Agent Memory API.\n"
+                },
+                "databaseId": {
+                    "type": "integer",
+                    "description": "The ID of the Redis Cloud database that backs the Agent Memory service. Changing it requires replacement.\nMust be an integer. Validity and access to the database are checked by the Agent Memory API.\n\nThe following arguments are optional:\n"
+                },
+                "embedding": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryEmbedding:AgentMemoryEmbedding",
+                    "description": "Customer-managed embedding model configuration for long-term memory. If configured, \u003cspan pulumi-lang-nodejs=\"`llm`\" pulumi-lang-dotnet=\"`Llm`\" pulumi-lang-go=\"`llm`\" pulumi-lang-python=\"`llm`\" pulumi-lang-yaml=\"`llm`\" pulumi-lang-java=\"`llm`\" pulumi-lang-hcl=\"`llm`\"\u003e`llm`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                },
+                "extractionCadenceSeconds": {
+                    "type": "integer",
+                    "description": "How often the extraction pipeline runs while a session is active, in seconds. Accepted values are validated by the Agent Memory API.\n"
+                },
+                "extractionStrategy": {
+                    "type": "string",
+                    "description": "How long-term memories are extracted from sessions.\nAccepted values are validated by the Agent Memory API. Changing an explicitly configured strategy requires replacement because the API does not support updating it in place.\n"
+                },
+                "llm": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLlm:AgentMemoryLlm",
+                    "description": "Customer-managed LLM configuration. If configured, \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                },
+                "longTermMemoryExclusions": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusions:AgentMemoryLongTermMemoryExclusions",
+                    "description": "Exclusion policy applied to newly extracted long-term memories.\n"
+                },
+                "longTermTtlSeconds": {
+                    "type": "integer",
+                    "description": "Long-term memory TTL in seconds.\nThe API accepts 1 second to 1 year. This must be configured explicitly when \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e is configured.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the Agent Memory service.\nMust contain at least one non-whitespace character. Maximum length is validated by the Agent Memory API.\n"
+                },
+                "shortTermTtlSeconds": {
+                    "type": "integer",
+                    "description": "Short-term memory TTL in seconds.\nThe API accepts 1 second to 1 year.\n"
+                },
+                "summarization": {
+                    "$ref": "#/types/rediscloud:index/AgentMemorySummarization:AgentMemorySummarization",
+                    "description": "Automatic session summarization configuration.\n"
+                },
+                "timeouts": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryTimeouts:AgentMemoryTimeouts"
+                }
+            },
+            "requiredInputs": [
+                "databaseId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering AgentMemory resources.\n",
+                "properties": {
+                    "createdAt": {
+                        "type": "string",
+                        "description": "The Agent Memory service creation timestamp.\n"
+                    },
+                    "customMemoryTypes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/AgentMemoryCustomMemoryType:AgentMemoryCustomMemoryType"
+                        },
+                        "description": "Custom long-term memory types. Quantity limits are validated by the Agent Memory API.\n"
+                    },
+                    "databaseId": {
+                        "type": "integer",
+                        "description": "The ID of the Redis Cloud database that backs the Agent Memory service. Changing it requires replacement.\nMust be an integer. Validity and access to the database are checked by the Agent Memory API.\n\nThe following arguments are optional:\n"
+                    },
+                    "embedding": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryEmbedding:AgentMemoryEmbedding",
+                        "description": "Customer-managed embedding model configuration for long-term memory. If configured, \u003cspan pulumi-lang-nodejs=\"`llm`\" pulumi-lang-dotnet=\"`Llm`\" pulumi-lang-go=\"`llm`\" pulumi-lang-python=\"`llm`\" pulumi-lang-yaml=\"`llm`\" pulumi-lang-java=\"`llm`\" pulumi-lang-hcl=\"`llm`\"\u003e`llm`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                    },
+                    "endpoint": {
+                        "type": "string",
+                        "description": "The primary data-plane API endpoint for the Agent Memory service.\n"
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/rediscloud:index/AgentMemoryEndpoint:AgentMemoryEndpoint"
+                        },
+                        "description": "Regional data-plane API endpoints for the Agent Memory service.\n"
+                    },
+                    "extractionCadenceSeconds": {
+                        "type": "integer",
+                        "description": "How often the extraction pipeline runs while a session is active, in seconds. Accepted values are validated by the Agent Memory API.\n"
+                    },
+                    "extractionStrategy": {
+                        "type": "string",
+                        "description": "How long-term memories are extracted from sessions.\nAccepted values are validated by the Agent Memory API. Changing an explicitly configured strategy requires replacement because the API does not support updating it in place.\n"
+                    },
+                    "llm": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryLlm:AgentMemoryLlm",
+                        "description": "Customer-managed LLM configuration. If configured, \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e must also be configured. Both \u003cspan pulumi-lang-nodejs=\"`provider`\" pulumi-lang-dotnet=\"`Provider`\" pulumi-lang-go=\"`provider`\" pulumi-lang-python=\"`provider`\" pulumi-lang-yaml=\"`provider`\" pulumi-lang-java=\"`provider`\" pulumi-lang-hcl=\"`provider`\"\u003e`provider`\u003c/span\u003e and \u003cspan pulumi-lang-nodejs=\"`model`\" pulumi-lang-dotnet=\"`Model`\" pulumi-lang-go=\"`model`\" pulumi-lang-python=\"`model`\" pulumi-lang-yaml=\"`model`\" pulumi-lang-java=\"`model`\" pulumi-lang-hcl=\"`model`\"\u003e`model`\u003c/span\u003e must be explicitly configured.\n"
+                    },
+                    "longTermMemoryExclusions": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryLongTermMemoryExclusions:AgentMemoryLongTermMemoryExclusions",
+                        "description": "Exclusion policy applied to newly extracted long-term memories.\n"
+                    },
+                    "longTermTtlSeconds": {
+                        "type": "integer",
+                        "description": "Long-term memory TTL in seconds.\nThe API accepts 1 second to 1 year. This must be configured explicitly when \u003cspan pulumi-lang-nodejs=\"`embedding`\" pulumi-lang-dotnet=\"`Embedding`\" pulumi-lang-go=\"`embedding`\" pulumi-lang-python=\"`embedding`\" pulumi-lang-yaml=\"`embedding`\" pulumi-lang-java=\"`embedding`\" pulumi-lang-hcl=\"`embedding`\"\u003e`embedding`\u003c/span\u003e is configured.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the Agent Memory service.\nMust contain at least one non-whitespace character. Maximum length is validated by the Agent Memory API.\n"
+                    },
+                    "shortTermTtlSeconds": {
+                        "type": "integer",
+                        "description": "Short-term memory TTL in seconds.\nThe API accepts 1 second to 1 year.\n"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "The current provisioning status.\n"
+                    },
+                    "summarization": {
+                        "$ref": "#/types/rediscloud:index/AgentMemorySummarization:AgentMemorySummarization",
+                        "description": "Automatic session summarization configuration.\n"
+                    },
+                    "timeouts": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryTimeouts:AgentMemoryTimeouts"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey": {
+            "description": "Creates a named data-plane API key for a Redis Agent Memory service.\n\nThe generated secret is returned only during creation and is stored in Terraform\nstate as a sensitive value. Sensitive values are hidden from normal Terraform\nCLI output, but they are still stored in state and should be protected with an\nappropriate Terraform backend.\n\n## Example Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as rediscloud from \"@rediscloud/pulumi-rediscloud\";\n\nconst example = new rediscloud.AgentMemory(\"example\", {\n    name: \"example-memory\",\n    databaseId: exampleRediscloudSubscriptionDatabase.dbId,\n});\nconst application = new rediscloud.AgentMemoryApiKey(\"application\", {\n    storeId: example.id,\n    name: \"application\",\n});\nexport const agentMemoryApiKey = application.apiKey;\n```\n```python\nimport pulumi\nimport pulumi_rediscloud as rediscloud\n\nexample = rediscloud.AgentMemory(\"example\",\n    name=\"example-memory\",\n    database_id=example_rediscloud_subscription_database[\"dbId\"])\napplication = rediscloud.AgentMemoryApiKey(\"application\",\n    store_id=example.id,\n    name=\"application\")\npulumi.export(\"agentMemoryApiKey\", application.api_key)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Rediscloud = RedisLabs.Rediscloud;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = new Rediscloud.AgentMemory(\"example\", new()\n    {\n        Name = \"example-memory\",\n        DatabaseId = exampleRediscloudSubscriptionDatabase.DbId,\n    });\n\n    var application = new Rediscloud.AgentMemoryApiKey(\"application\", new()\n    {\n        StoreId = example.Id,\n        Name = \"application\",\n    });\n\n    return new Dictionary\u003cstring, object?\u003e\n    {\n        [\"agentMemoryApiKey\"] = application.ApiKey,\n    };\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RedisLabs/pulumi-rediscloud/sdk/go/rediscloud\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\texample, err := rediscloud.NewAgentMemory(ctx, \"example\", \u0026rediscloud.AgentMemoryArgs{\n\t\t\tName:       pulumi.String(\"example-memory\"),\n\t\t\tDatabaseId: pulumi.Any(exampleRediscloudSubscriptionDatabase.DbId),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tapplication, err := rediscloud.NewAgentMemoryApiKey(ctx, \"application\", \u0026rediscloud.AgentMemoryApiKeyArgs{\n\t\t\tStoreId: example.ID(),\n\t\t\tName:    pulumi.String(\"application\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tctx.Export(\"agentMemoryApiKey\", application.ApiKey)\n\t\treturn nil\n\t})\n}\n```\n```hcl\nterraform {\n  required_providers {\n    rediscloud = {\n      source = \"pulumi/rediscloud\"\n    }\n  }\n}\n\nresource \"rediscloud_agent_memory\" \"example\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  name        = \"example-memory\"\n  database_id = exampleRediscloudSubscriptionDatabase.dbId\n}\nresource \"rediscloud_agent_memory_api_key\" \"application\" {\n  lifecycle {\n    create_before_destroy = true\n  }\n  store_id = rediscloud_agent_memory.example.id\n  name     = \"application\"\n}\noutput \"agentMemoryApiKey\" {\n  value = rediscloud_agent_memory_api_key.application.api_key\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.redislabs.rediscloud.AgentMemory;\nimport com.redislabs.rediscloud.AgentMemoryArgs;\nimport com.redislabs.rediscloud.AgentMemoryApiKey;\nimport com.redislabs.rediscloud.AgentMemoryApiKeyArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var example = new AgentMemory(\"example\", AgentMemoryArgs.builder()\n            .name(\"example-memory\")\n            .databaseId(exampleRediscloudSubscriptionDatabase.get(\"dbId\"))\n            .build());\n\n        var application = new AgentMemoryApiKey(\"application\", AgentMemoryApiKeyArgs.builder()\n            .storeId(example.id())\n            .name(\"application\")\n            .build());\n\n        ctx.export(\"agentMemoryApiKey\", application.apiKey());\n    }\n}\n```\n```yaml\nresources:\n  example:\n    type: rediscloud:AgentMemory\n    properties:\n      name: example-memory\n      databaseId: ${exampleRediscloudSubscriptionDatabase.dbId}\n  application:\n    type: rediscloud:AgentMemoryApiKey\n    properties:\n      storeId: ${example.id}\n      name: application\noutputs:\n  agentMemoryApiKey: ${application.apiKey}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\nImport using the Agent Memory store ID and API key ID separated by `/`. The secret \u003cspan pulumi-lang-nodejs=\"`apiKey`\" pulumi-lang-dotnet=\"`ApiKey`\" pulumi-lang-go=\"`apiKey`\" pulumi-lang-python=\"`api_key`\" pulumi-lang-yaml=\"`apiKey`\" pulumi-lang-java=\"`apiKey`\" pulumi-lang-hcl=\"`api_key`\"\u003e`apiKey`\u003c/span\u003e value cannot be recovered during import.\n\n```sh\n$ pulumi import rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey application store-id/api-key-id\n```\n\n",
+            "properties": {
+                "apiKey": {
+                    "type": "string",
+                    "description": "The generated data-plane API key. This value is sensitive and is returned only during creation.\n",
+                    "secret": true
+                },
+                "createdAt": {
+                    "type": "integer",
+                    "description": "The API key creation timestamp.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the API key. Must be non-empty and must not contain whitespace. Maximum length is validated by the Agent Memory API.\n\nChanging either argument replaces the API key.\n"
+                },
+                "obfuscatedToken": {
+                    "type": "string",
+                    "description": "The obfuscated API key returned by the Admin API.\n"
+                },
+                "storeId": {
+                    "type": "string",
+                    "description": "The Agent Memory store ID. Must contain only letters, numbers, and hyphens. The Agent Memory API validates the referenced store.\n"
+                },
+                "timeouts": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryApiKeyTimeouts:AgentMemoryApiKeyTimeouts"
+                }
+            },
+            "required": [
+                "apiKey",
+                "createdAt",
+                "name",
+                "obfuscatedToken",
+                "storeId"
+            ],
+            "inputProperties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the API key. Must be non-empty and must not contain whitespace. Maximum length is validated by the Agent Memory API.\n\nChanging either argument replaces the API key.\n"
+                },
+                "storeId": {
+                    "type": "string",
+                    "description": "The Agent Memory store ID. Must contain only letters, numbers, and hyphens. The Agent Memory API validates the referenced store.\n"
+                },
+                "timeouts": {
+                    "$ref": "#/types/rediscloud:index/AgentMemoryApiKeyTimeouts:AgentMemoryApiKeyTimeouts"
+                }
+            },
+            "requiredInputs": [
+                "storeId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering AgentMemoryApiKey resources.\n",
+                "properties": {
+                    "apiKey": {
+                        "type": "string",
+                        "description": "The generated data-plane API key. This value is sensitive and is returned only during creation.\n",
+                        "secret": true
+                    },
+                    "createdAt": {
+                        "type": "integer",
+                        "description": "The API key creation timestamp.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the API key. Must be non-empty and must not contain whitespace. Maximum length is validated by the Agent Memory API.\n\nChanging either argument replaces the API key.\n"
+                    },
+                    "obfuscatedToken": {
+                        "type": "string",
+                        "description": "The obfuscated API key returned by the Admin API.\n"
+                    },
+                    "storeId": {
+                        "type": "string",
+                        "description": "The Agent Memory store ID. Must contain only letters, numbers, and hyphens. The Agent Memory API validates the referenced store.\n"
+                    },
+                    "timeouts": {
+                        "$ref": "#/types/rediscloud:index/AgentMemoryApiKeyTimeouts:AgentMemoryApiKeyTimeouts"
                     }
                 },
                 "type": "object"

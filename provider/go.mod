@@ -3,9 +3,9 @@ module github.com/RedisLabs/pulumi-rediscloud/provider
 go 1.26.10
 
 require (
-	// v2.19.3 is commit ca1e97245378dc8e4be6413cf1745ef6805dc66d.
-	// Go rejects the v2.19.3 tag because that module path has no /v2 suffix.
-	github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261028130956-ca1e97245378
+	// v2.20.0 is commit 89239cdf9846fee2909be9b171c3a13a1dd172a0.
+	// Go rejects the v2.20.0 tag because that module path has no /v2 suffix.
+	github.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261104071649-89239cdf9846
 	github.com/pulumi/pulumi-terraform-bridge/v3 v3.142.0
 	github.com/pulumi/pulumi/pkg/v3 v3.273.0 // indirect
 	github.com/pulumi/pulumi/sdk/v3 v3.273.0
@@ -30,7 +30,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.5.2 // indirect
-	github.com/RedisLabs/rediscloud-go-api v0.52.1 // indirect
+	github.com/RedisLabs/rediscloud-go-api v0.53.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
@@ -193,7 +193,6 @@ require (
 	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.8.1 // indirect
-	github.com/stretchr/objx v0.5.3 // indirect
 	github.com/teekennedy/goldmark-markdown v0.3.0 // indirect
 	github.com/texttheater/golang-levenshtein v1.0.1 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect

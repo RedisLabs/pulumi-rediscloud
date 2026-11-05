@@ -233,6 +233,12 @@ func (ActiveActivePrivateLinkState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActivePrivateLinkState)(nil)).Elem()
 }
 
+// ActiveActivePrivateLinkExists checks whether an existing ActiveActivePrivateLink resource with the given ID exists.
+func ActiveActivePrivateLinkExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActivePrivateLinkState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActivePrivateLink:ActiveActivePrivateLink", id, state, "", opts...)
+}
+
 type activeActivePrivateLinkArgs struct {
 	// The principal(s) attached to the PrivateLink.
 	Principals []ActiveActivePrivateLinkPrincipal `pulumi:"principals"`

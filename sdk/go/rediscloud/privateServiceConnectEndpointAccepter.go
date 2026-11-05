@@ -97,6 +97,12 @@ func (PrivateServiceConnectEndpointAccepterState) ElementType() reflect.Type {
 	return reflect.TypeOf((*privateServiceConnectEndpointAccepterState)(nil)).Elem()
 }
 
+// PrivateServiceConnectEndpointAccepterExists checks whether an existing PrivateServiceConnectEndpointAccepter resource with the given ID exists.
+func PrivateServiceConnectEndpointAccepterExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *PrivateServiceConnectEndpointAccepterState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/privateServiceConnectEndpointAccepter:PrivateServiceConnectEndpointAccepter", id, state, "", opts...)
+}
+
 type privateServiceConnectEndpointAccepterArgs struct {
 	// Accept or reject the endpoint (accepted values are `accept` and `reject`)
 	Action string `pulumi:"action"`

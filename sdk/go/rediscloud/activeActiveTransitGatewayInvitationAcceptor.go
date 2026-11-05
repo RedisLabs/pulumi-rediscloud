@@ -169,6 +169,12 @@ func (ActiveActiveTransitGatewayInvitationAcceptorState) ElementType() reflect.T
 	return reflect.TypeOf((*activeActiveTransitGatewayInvitationAcceptorState)(nil)).Elem()
 }
 
+// ActiveActiveTransitGatewayInvitationAcceptorExists checks whether an existing ActiveActiveTransitGatewayInvitationAcceptor resource with the given ID exists.
+func ActiveActiveTransitGatewayInvitationAcceptorExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveTransitGatewayInvitationAcceptorState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveTransitGatewayInvitationAcceptor:ActiveActiveTransitGatewayInvitationAcceptor", id, state, "", opts...)
+}
+
 type activeActiveTransitGatewayInvitationAcceptorArgs struct {
 	// Accept or reject the invitation. Accepted values are `accept` and `reject`.
 	Action string `pulumi:"action"`

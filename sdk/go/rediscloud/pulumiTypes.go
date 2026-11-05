@@ -1283,6 +1283,10 @@ func (o ActiveActiveSubscriptionDatabaseGlobalAlertArrayOutput) Index(i pulumi.I
 type ActiveActiveSubscriptionDatabaseOverrideRegion struct {
 	// Whether the default user should be enabled for this specific region. If not set, inherits from `globalEnableDefaultUser`. Only set this if you need a different value for this region than the global setting
 	EnableDefaultUser *bool `pulumi:"enableDefaultUser"`
+	// Local read operations per second for this region, the same value as **Local read ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localWriteOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+	LocalReadOperationsPerSecond *int `pulumi:"localReadOperationsPerSecond"`
+	// Local write operations per second for this region, the same value as **Local write ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localReadOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+	LocalWriteOperationsPerSecond *int `pulumi:"localWriteOperationsPerSecond"`
 	// Region name.
 	Name string `pulumi:"name"`
 	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
@@ -1313,6 +1317,10 @@ type ActiveActiveSubscriptionDatabaseOverrideRegionInput interface {
 type ActiveActiveSubscriptionDatabaseOverrideRegionArgs struct {
 	// Whether the default user should be enabled for this specific region. If not set, inherits from `globalEnableDefaultUser`. Only set this if you need a different value for this region than the global setting
 	EnableDefaultUser pulumi.BoolPtrInput `pulumi:"enableDefaultUser"`
+	// Local read operations per second for this region, the same value as **Local read ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localWriteOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+	LocalReadOperationsPerSecond pulumi.IntPtrInput `pulumi:"localReadOperationsPerSecond"`
+	// Local write operations per second for this region, the same value as **Local write ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localReadOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+	LocalWriteOperationsPerSecond pulumi.IntPtrInput `pulumi:"localWriteOperationsPerSecond"`
 	// Region name.
 	Name pulumi.StringInput `pulumi:"name"`
 	// A block defining Redis regional instance of an Active-Active database alert, documented below, can be specified multiple times
@@ -1383,6 +1391,16 @@ func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) ToActiveActiveSubs
 // Whether the default user should be enabled for this specific region. If not set, inherits from `globalEnableDefaultUser`. Only set this if you need a different value for this region than the global setting
 func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) EnableDefaultUser() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *bool { return v.EnableDefaultUser }).(pulumi.BoolPtrOutput)
+}
+
+// Local read operations per second for this region, the same value as **Local read ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localWriteOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) LocalReadOperationsPerSecond() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *int { return v.LocalReadOperationsPerSecond }).(pulumi.IntPtrOutput)
+}
+
+// Local write operations per second for this region, the same value as **Local write ops/sec** in the Redis Cloud console. When unset, the region is created at 1000. Must be set together with `localReadOperationsPerSecond`. Do not also set throughput for this database on `ActiveActiveSubscriptionRegions`
+func (o ActiveActiveSubscriptionDatabaseOverrideRegionOutput) LocalWriteOperationsPerSecond() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ActiveActiveSubscriptionDatabaseOverrideRegion) *int { return v.LocalWriteOperationsPerSecond }).(pulumi.IntPtrOutput)
 }
 
 // Region name.
@@ -2486,6 +2504,8 @@ type ActiveActiveSubscriptionRegionsRegionDatabase struct {
 	// Database name belonging to the subscription
 	DatabaseName string `pulumi:"databaseName"`
 	// Local read operations per second for this active-active region
+	//
+	// Set a database's local throughput here or on `overrideRegion` of `ActiveActiveSubscriptionDatabase`, not on both. The last apply wins.
 	LocalReadOperationsPerSecond int `pulumi:"localReadOperationsPerSecond"`
 	// Local write operations per second for this active-active region
 	LocalWriteOperationsPerSecond int `pulumi:"localWriteOperationsPerSecond"`
@@ -2508,6 +2528,8 @@ type ActiveActiveSubscriptionRegionsRegionDatabaseArgs struct {
 	// Database name belonging to the subscription
 	DatabaseName pulumi.StringInput `pulumi:"databaseName"`
 	// Local read operations per second for this active-active region
+	//
+	// Set a database's local throughput here or on `overrideRegion` of `ActiveActiveSubscriptionDatabase`, not on both. The last apply wins.
 	LocalReadOperationsPerSecond pulumi.IntInput `pulumi:"localReadOperationsPerSecond"`
 	// Local write operations per second for this active-active region
 	LocalWriteOperationsPerSecond pulumi.IntInput `pulumi:"localWriteOperationsPerSecond"`
@@ -2575,6 +2597,8 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) DatabaseName() pulu
 }
 
 // Local read operations per second for this active-active region
+//
+// Set a database's local throughput here or on `overrideRegion` of `ActiveActiveSubscriptionDatabase`, not on both. The last apply wins.
 func (o ActiveActiveSubscriptionRegionsRegionDatabaseOutput) LocalReadOperationsPerSecond() pulumi.IntOutput {
 	return o.ApplyT(func(v ActiveActiveSubscriptionRegionsRegionDatabase) int { return v.LocalReadOperationsPerSecond }).(pulumi.IntOutput)
 }
@@ -2602,6 +2626,3350 @@ func (o ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput) Index(i pulumi
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ActiveActiveSubscriptionRegionsRegionDatabase {
 		return vs[0].([]ActiveActiveSubscriptionRegionsRegionDatabase)[vs[1].(int)]
 	}).(ActiveActiveSubscriptionRegionsRegionDatabaseOutput)
+}
+
+type AgentMemoryApiKeyTimeouts struct {
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Create *string `pulumi:"create"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+	Delete *string `pulumi:"delete"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+	Read *string `pulumi:"read"`
+}
+
+// AgentMemoryApiKeyTimeoutsInput is an input type that accepts AgentMemoryApiKeyTimeoutsArgs and AgentMemoryApiKeyTimeoutsOutput values.
+// You can construct a concrete instance of `AgentMemoryApiKeyTimeoutsInput` via:
+//
+//	AgentMemoryApiKeyTimeoutsArgs{...}
+type AgentMemoryApiKeyTimeoutsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryApiKeyTimeoutsOutput() AgentMemoryApiKeyTimeoutsOutput
+	ToAgentMemoryApiKeyTimeoutsOutputWithContext(context.Context) AgentMemoryApiKeyTimeoutsOutput
+}
+
+type AgentMemoryApiKeyTimeoutsArgs struct {
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Create pulumi.StringPtrInput `pulumi:"create"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+	Delete pulumi.StringPtrInput `pulumi:"delete"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+	Read pulumi.StringPtrInput `pulumi:"read"`
+}
+
+func (AgentMemoryApiKeyTimeoutsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryApiKeyTimeouts)(nil)).Elem()
+}
+
+func (i AgentMemoryApiKeyTimeoutsArgs) ToAgentMemoryApiKeyTimeoutsOutput() AgentMemoryApiKeyTimeoutsOutput {
+	return i.ToAgentMemoryApiKeyTimeoutsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryApiKeyTimeoutsArgs) ToAgentMemoryApiKeyTimeoutsOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryApiKeyTimeoutsOutput)
+}
+
+func (i AgentMemoryApiKeyTimeoutsArgs) ToAgentMemoryApiKeyTimeoutsPtrOutput() AgentMemoryApiKeyTimeoutsPtrOutput {
+	return i.ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryApiKeyTimeoutsArgs) ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryApiKeyTimeoutsOutput).ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryApiKeyTimeoutsPtrInput is an input type that accepts AgentMemoryApiKeyTimeoutsArgs, AgentMemoryApiKeyTimeoutsPtr and AgentMemoryApiKeyTimeoutsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryApiKeyTimeoutsPtrInput` via:
+//
+//	        AgentMemoryApiKeyTimeoutsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryApiKeyTimeoutsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryApiKeyTimeoutsPtrOutput() AgentMemoryApiKeyTimeoutsPtrOutput
+	ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(context.Context) AgentMemoryApiKeyTimeoutsPtrOutput
+}
+
+type agentMemoryApiKeyTimeoutsPtrType AgentMemoryApiKeyTimeoutsArgs
+
+func AgentMemoryApiKeyTimeoutsPtr(v *AgentMemoryApiKeyTimeoutsArgs) AgentMemoryApiKeyTimeoutsPtrInput {
+	return (*agentMemoryApiKeyTimeoutsPtrType)(v)
+}
+
+func (*agentMemoryApiKeyTimeoutsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryApiKeyTimeouts)(nil)).Elem()
+}
+
+func (i *agentMemoryApiKeyTimeoutsPtrType) ToAgentMemoryApiKeyTimeoutsPtrOutput() AgentMemoryApiKeyTimeoutsPtrOutput {
+	return i.ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryApiKeyTimeoutsPtrType) ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryApiKeyTimeoutsPtrOutput)
+}
+
+type AgentMemoryApiKeyTimeoutsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryApiKeyTimeoutsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryApiKeyTimeouts)(nil)).Elem()
+}
+
+func (o AgentMemoryApiKeyTimeoutsOutput) ToAgentMemoryApiKeyTimeoutsOutput() AgentMemoryApiKeyTimeoutsOutput {
+	return o
+}
+
+func (o AgentMemoryApiKeyTimeoutsOutput) ToAgentMemoryApiKeyTimeoutsOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsOutput {
+	return o
+}
+
+func (o AgentMemoryApiKeyTimeoutsOutput) ToAgentMemoryApiKeyTimeoutsPtrOutput() AgentMemoryApiKeyTimeoutsPtrOutput {
+	return o.ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryApiKeyTimeoutsOutput) ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryApiKeyTimeouts) *AgentMemoryApiKeyTimeouts {
+		return &v
+	}).(AgentMemoryApiKeyTimeoutsPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryApiKeyTimeoutsOutput) Create() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryApiKeyTimeouts) *string { return v.Create }).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+func (o AgentMemoryApiKeyTimeoutsOutput) Delete() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryApiKeyTimeouts) *string { return v.Delete }).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+func (o AgentMemoryApiKeyTimeoutsOutput) Read() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryApiKeyTimeouts) *string { return v.Read }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryApiKeyTimeoutsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryApiKeyTimeoutsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryApiKeyTimeouts)(nil)).Elem()
+}
+
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) ToAgentMemoryApiKeyTimeoutsPtrOutput() AgentMemoryApiKeyTimeoutsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) ToAgentMemoryApiKeyTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryApiKeyTimeoutsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) Elem() AgentMemoryApiKeyTimeoutsOutput {
+	return o.ApplyT(func(v *AgentMemoryApiKeyTimeouts) AgentMemoryApiKeyTimeouts {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryApiKeyTimeouts
+		return ret
+	}).(AgentMemoryApiKeyTimeoutsOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) Create() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryApiKeyTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Create
+	}).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) Delete() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryApiKeyTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Delete
+	}).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+func (o AgentMemoryApiKeyTimeoutsPtrOutput) Read() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryApiKeyTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Read
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryCustomMemoryType struct {
+	// Custom type description. Maximum length is validated by the Agent Memory API.
+	Description string `pulumi:"description"`
+	// Optional extraction strategy for this custom memory type.
+	ExtractionStrategy *AgentMemoryCustomMemoryTypeExtractionStrategy `pulumi:"extractionStrategy"`
+	// Structured fields for this custom memory type.
+	Fields []AgentMemoryCustomMemoryTypeField `pulumi:"fields"`
+	// Custom type name. Format and maximum length are validated by the Agent Memory API.
+	Name string `pulumi:"name"`
+}
+
+// AgentMemoryCustomMemoryTypeInput is an input type that accepts AgentMemoryCustomMemoryTypeArgs and AgentMemoryCustomMemoryTypeOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeInput` via:
+//
+//	AgentMemoryCustomMemoryTypeArgs{...}
+type AgentMemoryCustomMemoryTypeInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeOutput() AgentMemoryCustomMemoryTypeOutput
+	ToAgentMemoryCustomMemoryTypeOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeOutput
+}
+
+type AgentMemoryCustomMemoryTypeArgs struct {
+	// Custom type description. Maximum length is validated by the Agent Memory API.
+	Description pulumi.StringInput `pulumi:"description"`
+	// Optional extraction strategy for this custom memory type.
+	ExtractionStrategy AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput `pulumi:"extractionStrategy"`
+	// Structured fields for this custom memory type.
+	Fields AgentMemoryCustomMemoryTypeFieldArrayInput `pulumi:"fields"`
+	// Custom type name. Format and maximum length are validated by the Agent Memory API.
+	Name pulumi.StringInput `pulumi:"name"`
+}
+
+func (AgentMemoryCustomMemoryTypeArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryType)(nil)).Elem()
+}
+
+func (i AgentMemoryCustomMemoryTypeArgs) ToAgentMemoryCustomMemoryTypeOutput() AgentMemoryCustomMemoryTypeOutput {
+	return i.ToAgentMemoryCustomMemoryTypeOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeArgs) ToAgentMemoryCustomMemoryTypeOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeOutput)
+}
+
+// AgentMemoryCustomMemoryTypeArrayInput is an input type that accepts AgentMemoryCustomMemoryTypeArray and AgentMemoryCustomMemoryTypeArrayOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeArrayInput` via:
+//
+//	AgentMemoryCustomMemoryTypeArray{ AgentMemoryCustomMemoryTypeArgs{...} }
+type AgentMemoryCustomMemoryTypeArrayInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeArrayOutput() AgentMemoryCustomMemoryTypeArrayOutput
+	ToAgentMemoryCustomMemoryTypeArrayOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeArrayOutput
+}
+
+type AgentMemoryCustomMemoryTypeArray []AgentMemoryCustomMemoryTypeInput
+
+func (AgentMemoryCustomMemoryTypeArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryCustomMemoryType)(nil)).Elem()
+}
+
+func (i AgentMemoryCustomMemoryTypeArray) ToAgentMemoryCustomMemoryTypeArrayOutput() AgentMemoryCustomMemoryTypeArrayOutput {
+	return i.ToAgentMemoryCustomMemoryTypeArrayOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeArray) ToAgentMemoryCustomMemoryTypeArrayOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeArrayOutput)
+}
+
+type AgentMemoryCustomMemoryTypeOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryType)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeOutput) ToAgentMemoryCustomMemoryTypeOutput() AgentMemoryCustomMemoryTypeOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeOutput) ToAgentMemoryCustomMemoryTypeOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeOutput {
+	return o
+}
+
+// Custom type description. Maximum length is validated by the Agent Memory API.
+func (o AgentMemoryCustomMemoryTypeOutput) Description() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryType) string { return v.Description }).(pulumi.StringOutput)
+}
+
+// Optional extraction strategy for this custom memory type.
+func (o AgentMemoryCustomMemoryTypeOutput) ExtractionStrategy() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryType) *AgentMemoryCustomMemoryTypeExtractionStrategy {
+		return v.ExtractionStrategy
+	}).(AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput)
+}
+
+// Structured fields for this custom memory type.
+func (o AgentMemoryCustomMemoryTypeOutput) Fields() AgentMemoryCustomMemoryTypeFieldArrayOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryType) []AgentMemoryCustomMemoryTypeField { return v.Fields }).(AgentMemoryCustomMemoryTypeFieldArrayOutput)
+}
+
+// Custom type name. Format and maximum length are validated by the Agent Memory API.
+func (o AgentMemoryCustomMemoryTypeOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryType) string { return v.Name }).(pulumi.StringOutput)
+}
+
+type AgentMemoryCustomMemoryTypeArrayOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryCustomMemoryType)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeArrayOutput) ToAgentMemoryCustomMemoryTypeArrayOutput() AgentMemoryCustomMemoryTypeArrayOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeArrayOutput) ToAgentMemoryCustomMemoryTypeArrayOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeArrayOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeArrayOutput) Index(i pulumi.IntInput) AgentMemoryCustomMemoryTypeOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AgentMemoryCustomMemoryType {
+		return vs[0].([]AgentMemoryCustomMemoryType)[vs[1].(int)]
+	}).(AgentMemoryCustomMemoryTypeOutput)
+}
+
+type AgentMemoryCustomMemoryTypeExtractionStrategy struct {
+	// Whether extraction is enabled for this custom type.
+	Enabled *bool `pulumi:"enabled"`
+	// Prompt used to extract memories of this custom type. Required when this extraction strategy block is present. Additional limits are determined by the Agent Memory service.
+	Prompt *string `pulumi:"prompt"`
+}
+
+// AgentMemoryCustomMemoryTypeExtractionStrategyInput is an input type that accepts AgentMemoryCustomMemoryTypeExtractionStrategyArgs and AgentMemoryCustomMemoryTypeExtractionStrategyOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeExtractionStrategyInput` via:
+//
+//	AgentMemoryCustomMemoryTypeExtractionStrategyArgs{...}
+type AgentMemoryCustomMemoryTypeExtractionStrategyInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeExtractionStrategyOutput() AgentMemoryCustomMemoryTypeExtractionStrategyOutput
+	ToAgentMemoryCustomMemoryTypeExtractionStrategyOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyOutput
+}
+
+type AgentMemoryCustomMemoryTypeExtractionStrategyArgs struct {
+	// Whether extraction is enabled for this custom type.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+	// Prompt used to extract memories of this custom type. Required when this extraction strategy block is present. Additional limits are determined by the Agent Memory service.
+	Prompt pulumi.StringPtrInput `pulumi:"prompt"`
+}
+
+func (AgentMemoryCustomMemoryTypeExtractionStrategyArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryTypeExtractionStrategy)(nil)).Elem()
+}
+
+func (i AgentMemoryCustomMemoryTypeExtractionStrategyArgs) ToAgentMemoryCustomMemoryTypeExtractionStrategyOutput() AgentMemoryCustomMemoryTypeExtractionStrategyOutput {
+	return i.ToAgentMemoryCustomMemoryTypeExtractionStrategyOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeExtractionStrategyArgs) ToAgentMemoryCustomMemoryTypeExtractionStrategyOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeExtractionStrategyOutput)
+}
+
+func (i AgentMemoryCustomMemoryTypeExtractionStrategyArgs) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return i.ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeExtractionStrategyArgs) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeExtractionStrategyOutput).ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput is an input type that accepts AgentMemoryCustomMemoryTypeExtractionStrategyArgs, AgentMemoryCustomMemoryTypeExtractionStrategyPtr and AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput` via:
+//
+//	        AgentMemoryCustomMemoryTypeExtractionStrategyArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput
+	ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput
+}
+
+type agentMemoryCustomMemoryTypeExtractionStrategyPtrType AgentMemoryCustomMemoryTypeExtractionStrategyArgs
+
+func AgentMemoryCustomMemoryTypeExtractionStrategyPtr(v *AgentMemoryCustomMemoryTypeExtractionStrategyArgs) AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput {
+	return (*agentMemoryCustomMemoryTypeExtractionStrategyPtrType)(v)
+}
+
+func (*agentMemoryCustomMemoryTypeExtractionStrategyPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryCustomMemoryTypeExtractionStrategy)(nil)).Elem()
+}
+
+func (i *agentMemoryCustomMemoryTypeExtractionStrategyPtrType) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return i.ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryCustomMemoryTypeExtractionStrategyPtrType) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput)
+}
+
+type AgentMemoryCustomMemoryTypeExtractionStrategyOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeExtractionStrategyOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryTypeExtractionStrategy)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyOutput() AgentMemoryCustomMemoryTypeExtractionStrategyOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return o.ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryCustomMemoryTypeExtractionStrategy) *AgentMemoryCustomMemoryTypeExtractionStrategy {
+		return &v
+	}).(AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput)
+}
+
+// Whether extraction is enabled for this custom type.
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryTypeExtractionStrategy) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// Prompt used to extract memories of this custom type. Required when this extraction strategy block is present. Additional limits are determined by the Agent Memory service.
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyOutput) Prompt() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryTypeExtractionStrategy) *string { return v.Prompt }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryCustomMemoryTypeExtractionStrategy)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput() AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) ToAgentMemoryCustomMemoryTypeExtractionStrategyPtrOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) Elem() AgentMemoryCustomMemoryTypeExtractionStrategyOutput {
+	return o.ApplyT(func(v *AgentMemoryCustomMemoryTypeExtractionStrategy) AgentMemoryCustomMemoryTypeExtractionStrategy {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryCustomMemoryTypeExtractionStrategy
+		return ret
+	}).(AgentMemoryCustomMemoryTypeExtractionStrategyOutput)
+}
+
+// Whether extraction is enabled for this custom type.
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryCustomMemoryTypeExtractionStrategy) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Prompt used to extract memories of this custom type. Required when this extraction strategy block is present. Additional limits are determined by the Agent Memory service.
+func (o AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput) Prompt() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryCustomMemoryTypeExtractionStrategy) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Prompt
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryCustomMemoryTypeField struct {
+	// Field description. Maximum length is validated by the Agent Memory API.
+	Description string `pulumi:"description"`
+	// Field name. Format and maximum length are validated by the Agent Memory API.
+	Name string `pulumi:"name"`
+	// Field type validated by the Agent Memory API. Examples include `str`, `int`, `float`, `bool`, `list[str]`, `list[float]`, and `object`.
+	Type string `pulumi:"type"`
+}
+
+// AgentMemoryCustomMemoryTypeFieldInput is an input type that accepts AgentMemoryCustomMemoryTypeFieldArgs and AgentMemoryCustomMemoryTypeFieldOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeFieldInput` via:
+//
+//	AgentMemoryCustomMemoryTypeFieldArgs{...}
+type AgentMemoryCustomMemoryTypeFieldInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeFieldOutput() AgentMemoryCustomMemoryTypeFieldOutput
+	ToAgentMemoryCustomMemoryTypeFieldOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeFieldOutput
+}
+
+type AgentMemoryCustomMemoryTypeFieldArgs struct {
+	// Field description. Maximum length is validated by the Agent Memory API.
+	Description pulumi.StringInput `pulumi:"description"`
+	// Field name. Format and maximum length are validated by the Agent Memory API.
+	Name pulumi.StringInput `pulumi:"name"`
+	// Field type validated by the Agent Memory API. Examples include `str`, `int`, `float`, `bool`, `list[str]`, `list[float]`, and `object`.
+	Type pulumi.StringInput `pulumi:"type"`
+}
+
+func (AgentMemoryCustomMemoryTypeFieldArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryTypeField)(nil)).Elem()
+}
+
+func (i AgentMemoryCustomMemoryTypeFieldArgs) ToAgentMemoryCustomMemoryTypeFieldOutput() AgentMemoryCustomMemoryTypeFieldOutput {
+	return i.ToAgentMemoryCustomMemoryTypeFieldOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeFieldArgs) ToAgentMemoryCustomMemoryTypeFieldOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeFieldOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeFieldOutput)
+}
+
+// AgentMemoryCustomMemoryTypeFieldArrayInput is an input type that accepts AgentMemoryCustomMemoryTypeFieldArray and AgentMemoryCustomMemoryTypeFieldArrayOutput values.
+// You can construct a concrete instance of `AgentMemoryCustomMemoryTypeFieldArrayInput` via:
+//
+//	AgentMemoryCustomMemoryTypeFieldArray{ AgentMemoryCustomMemoryTypeFieldArgs{...} }
+type AgentMemoryCustomMemoryTypeFieldArrayInput interface {
+	pulumi.Input
+
+	ToAgentMemoryCustomMemoryTypeFieldArrayOutput() AgentMemoryCustomMemoryTypeFieldArrayOutput
+	ToAgentMemoryCustomMemoryTypeFieldArrayOutputWithContext(context.Context) AgentMemoryCustomMemoryTypeFieldArrayOutput
+}
+
+type AgentMemoryCustomMemoryTypeFieldArray []AgentMemoryCustomMemoryTypeFieldInput
+
+func (AgentMemoryCustomMemoryTypeFieldArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryCustomMemoryTypeField)(nil)).Elem()
+}
+
+func (i AgentMemoryCustomMemoryTypeFieldArray) ToAgentMemoryCustomMemoryTypeFieldArrayOutput() AgentMemoryCustomMemoryTypeFieldArrayOutput {
+	return i.ToAgentMemoryCustomMemoryTypeFieldArrayOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryCustomMemoryTypeFieldArray) ToAgentMemoryCustomMemoryTypeFieldArrayOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeFieldArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryCustomMemoryTypeFieldArrayOutput)
+}
+
+type AgentMemoryCustomMemoryTypeFieldOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeFieldOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryCustomMemoryTypeField)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeFieldOutput) ToAgentMemoryCustomMemoryTypeFieldOutput() AgentMemoryCustomMemoryTypeFieldOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeFieldOutput) ToAgentMemoryCustomMemoryTypeFieldOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeFieldOutput {
+	return o
+}
+
+// Field description. Maximum length is validated by the Agent Memory API.
+func (o AgentMemoryCustomMemoryTypeFieldOutput) Description() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryTypeField) string { return v.Description }).(pulumi.StringOutput)
+}
+
+// Field name. Format and maximum length are validated by the Agent Memory API.
+func (o AgentMemoryCustomMemoryTypeFieldOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryTypeField) string { return v.Name }).(pulumi.StringOutput)
+}
+
+// Field type validated by the Agent Memory API. Examples include `str`, `int`, `float`, `bool`, `list[str]`, `list[float]`, and `object`.
+func (o AgentMemoryCustomMemoryTypeFieldOutput) Type() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryCustomMemoryTypeField) string { return v.Type }).(pulumi.StringOutput)
+}
+
+type AgentMemoryCustomMemoryTypeFieldArrayOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryCustomMemoryTypeFieldArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryCustomMemoryTypeField)(nil)).Elem()
+}
+
+func (o AgentMemoryCustomMemoryTypeFieldArrayOutput) ToAgentMemoryCustomMemoryTypeFieldArrayOutput() AgentMemoryCustomMemoryTypeFieldArrayOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeFieldArrayOutput) ToAgentMemoryCustomMemoryTypeFieldArrayOutputWithContext(ctx context.Context) AgentMemoryCustomMemoryTypeFieldArrayOutput {
+	return o
+}
+
+func (o AgentMemoryCustomMemoryTypeFieldArrayOutput) Index(i pulumi.IntInput) AgentMemoryCustomMemoryTypeFieldOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AgentMemoryCustomMemoryTypeField {
+		return vs[0].([]AgentMemoryCustomMemoryTypeField)[vs[1].(int)]
+	}).(AgentMemoryCustomMemoryTypeFieldOutput)
+}
+
+type AgentMemoryEmbedding struct {
+	// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+	Credentials *AgentMemoryEmbeddingCredentials `pulumi:"credentials"`
+	// Model name advertised by the provider. Changing an explicitly configured model requires replacement.
+	Model *string `pulumi:"model"`
+	// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+	Provider *string `pulumi:"provider"`
+}
+
+// AgentMemoryEmbeddingInput is an input type that accepts AgentMemoryEmbeddingArgs and AgentMemoryEmbeddingOutput values.
+// You can construct a concrete instance of `AgentMemoryEmbeddingInput` via:
+//
+//	AgentMemoryEmbeddingArgs{...}
+type AgentMemoryEmbeddingInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEmbeddingOutput() AgentMemoryEmbeddingOutput
+	ToAgentMemoryEmbeddingOutputWithContext(context.Context) AgentMemoryEmbeddingOutput
+}
+
+type AgentMemoryEmbeddingArgs struct {
+	// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+	Credentials AgentMemoryEmbeddingCredentialsPtrInput `pulumi:"credentials"`
+	// Model name advertised by the provider. Changing an explicitly configured model requires replacement.
+	Model pulumi.StringPtrInput `pulumi:"model"`
+	// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+	Provider pulumi.StringPtrInput `pulumi:"provider"`
+}
+
+func (AgentMemoryEmbeddingArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEmbedding)(nil)).Elem()
+}
+
+func (i AgentMemoryEmbeddingArgs) ToAgentMemoryEmbeddingOutput() AgentMemoryEmbeddingOutput {
+	return i.ToAgentMemoryEmbeddingOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEmbeddingArgs) ToAgentMemoryEmbeddingOutputWithContext(ctx context.Context) AgentMemoryEmbeddingOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingOutput)
+}
+
+func (i AgentMemoryEmbeddingArgs) ToAgentMemoryEmbeddingPtrOutput() AgentMemoryEmbeddingPtrOutput {
+	return i.ToAgentMemoryEmbeddingPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEmbeddingArgs) ToAgentMemoryEmbeddingPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingOutput).ToAgentMemoryEmbeddingPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryEmbeddingPtrInput is an input type that accepts AgentMemoryEmbeddingArgs, AgentMemoryEmbeddingPtr and AgentMemoryEmbeddingPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryEmbeddingPtrInput` via:
+//
+//	        AgentMemoryEmbeddingArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryEmbeddingPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEmbeddingPtrOutput() AgentMemoryEmbeddingPtrOutput
+	ToAgentMemoryEmbeddingPtrOutputWithContext(context.Context) AgentMemoryEmbeddingPtrOutput
+}
+
+type agentMemoryEmbeddingPtrType AgentMemoryEmbeddingArgs
+
+func AgentMemoryEmbeddingPtr(v *AgentMemoryEmbeddingArgs) AgentMemoryEmbeddingPtrInput {
+	return (*agentMemoryEmbeddingPtrType)(v)
+}
+
+func (*agentMemoryEmbeddingPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryEmbedding)(nil)).Elem()
+}
+
+func (i *agentMemoryEmbeddingPtrType) ToAgentMemoryEmbeddingPtrOutput() AgentMemoryEmbeddingPtrOutput {
+	return i.ToAgentMemoryEmbeddingPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryEmbeddingPtrType) ToAgentMemoryEmbeddingPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingPtrOutput)
+}
+
+type AgentMemoryEmbeddingOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEmbeddingOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEmbedding)(nil)).Elem()
+}
+
+func (o AgentMemoryEmbeddingOutput) ToAgentMemoryEmbeddingOutput() AgentMemoryEmbeddingOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingOutput) ToAgentMemoryEmbeddingOutputWithContext(ctx context.Context) AgentMemoryEmbeddingOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingOutput) ToAgentMemoryEmbeddingPtrOutput() AgentMemoryEmbeddingPtrOutput {
+	return o.ToAgentMemoryEmbeddingPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryEmbeddingOutput) ToAgentMemoryEmbeddingPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryEmbedding) *AgentMemoryEmbedding {
+		return &v
+	}).(AgentMemoryEmbeddingPtrOutput)
+}
+
+// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+func (o AgentMemoryEmbeddingOutput) Credentials() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbedding) *AgentMemoryEmbeddingCredentials { return v.Credentials }).(AgentMemoryEmbeddingCredentialsPtrOutput)
+}
+
+// Model name advertised by the provider. Changing an explicitly configured model requires replacement.
+func (o AgentMemoryEmbeddingOutput) Model() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbedding) *string { return v.Model }).(pulumi.StringPtrOutput)
+}
+
+// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+func (o AgentMemoryEmbeddingOutput) Provider() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbedding) *string { return v.Provider }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryEmbeddingPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEmbeddingPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryEmbedding)(nil)).Elem()
+}
+
+func (o AgentMemoryEmbeddingPtrOutput) ToAgentMemoryEmbeddingPtrOutput() AgentMemoryEmbeddingPtrOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingPtrOutput) ToAgentMemoryEmbeddingPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingPtrOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingPtrOutput) Elem() AgentMemoryEmbeddingOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbedding) AgentMemoryEmbedding {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryEmbedding
+		return ret
+	}).(AgentMemoryEmbeddingOutput)
+}
+
+// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+func (o AgentMemoryEmbeddingPtrOutput) Credentials() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbedding) *AgentMemoryEmbeddingCredentials {
+		if v == nil {
+			return nil
+		}
+		return v.Credentials
+	}).(AgentMemoryEmbeddingCredentialsPtrOutput)
+}
+
+// Model name advertised by the provider. Changing an explicitly configured model requires replacement.
+func (o AgentMemoryEmbeddingPtrOutput) Model() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbedding) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Model
+	}).(pulumi.StringPtrOutput)
+}
+
+// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+func (o AgentMemoryEmbeddingPtrOutput) Provider() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbedding) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Provider
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryEmbeddingCredentials struct {
+	// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+	// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+	ApiKey *string `pulumi:"apiKey"`
+	// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+	ApiKeyVersion *int `pulumi:"apiKeyVersion"`
+	// Credential type validated by the Agent Memory API.
+	Type *string `pulumi:"type"`
+}
+
+// AgentMemoryEmbeddingCredentialsInput is an input type that accepts AgentMemoryEmbeddingCredentialsArgs and AgentMemoryEmbeddingCredentialsOutput values.
+// You can construct a concrete instance of `AgentMemoryEmbeddingCredentialsInput` via:
+//
+//	AgentMemoryEmbeddingCredentialsArgs{...}
+type AgentMemoryEmbeddingCredentialsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEmbeddingCredentialsOutput() AgentMemoryEmbeddingCredentialsOutput
+	ToAgentMemoryEmbeddingCredentialsOutputWithContext(context.Context) AgentMemoryEmbeddingCredentialsOutput
+}
+
+type AgentMemoryEmbeddingCredentialsArgs struct {
+	// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+	// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+	ApiKey pulumi.StringPtrInput `pulumi:"apiKey"`
+	// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+	ApiKeyVersion pulumi.IntPtrInput `pulumi:"apiKeyVersion"`
+	// Credential type validated by the Agent Memory API.
+	Type pulumi.StringPtrInput `pulumi:"type"`
+}
+
+func (AgentMemoryEmbeddingCredentialsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEmbeddingCredentials)(nil)).Elem()
+}
+
+func (i AgentMemoryEmbeddingCredentialsArgs) ToAgentMemoryEmbeddingCredentialsOutput() AgentMemoryEmbeddingCredentialsOutput {
+	return i.ToAgentMemoryEmbeddingCredentialsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEmbeddingCredentialsArgs) ToAgentMemoryEmbeddingCredentialsOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingCredentialsOutput)
+}
+
+func (i AgentMemoryEmbeddingCredentialsArgs) ToAgentMemoryEmbeddingCredentialsPtrOutput() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return i.ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEmbeddingCredentialsArgs) ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingCredentialsOutput).ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryEmbeddingCredentialsPtrInput is an input type that accepts AgentMemoryEmbeddingCredentialsArgs, AgentMemoryEmbeddingCredentialsPtr and AgentMemoryEmbeddingCredentialsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryEmbeddingCredentialsPtrInput` via:
+//
+//	        AgentMemoryEmbeddingCredentialsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryEmbeddingCredentialsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEmbeddingCredentialsPtrOutput() AgentMemoryEmbeddingCredentialsPtrOutput
+	ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(context.Context) AgentMemoryEmbeddingCredentialsPtrOutput
+}
+
+type agentMemoryEmbeddingCredentialsPtrType AgentMemoryEmbeddingCredentialsArgs
+
+func AgentMemoryEmbeddingCredentialsPtr(v *AgentMemoryEmbeddingCredentialsArgs) AgentMemoryEmbeddingCredentialsPtrInput {
+	return (*agentMemoryEmbeddingCredentialsPtrType)(v)
+}
+
+func (*agentMemoryEmbeddingCredentialsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryEmbeddingCredentials)(nil)).Elem()
+}
+
+func (i *agentMemoryEmbeddingCredentialsPtrType) ToAgentMemoryEmbeddingCredentialsPtrOutput() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return i.ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryEmbeddingCredentialsPtrType) ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEmbeddingCredentialsPtrOutput)
+}
+
+type AgentMemoryEmbeddingCredentialsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEmbeddingCredentialsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEmbeddingCredentials)(nil)).Elem()
+}
+
+func (o AgentMemoryEmbeddingCredentialsOutput) ToAgentMemoryEmbeddingCredentialsOutput() AgentMemoryEmbeddingCredentialsOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingCredentialsOutput) ToAgentMemoryEmbeddingCredentialsOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingCredentialsOutput) ToAgentMemoryEmbeddingCredentialsPtrOutput() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o.ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryEmbeddingCredentialsOutput) ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryEmbeddingCredentials) *AgentMemoryEmbeddingCredentials {
+		return &v
+	}).(AgentMemoryEmbeddingCredentialsPtrOutput)
+}
+
+// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+func (o AgentMemoryEmbeddingCredentialsOutput) ApiKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbeddingCredentials) *string { return v.ApiKey }).(pulumi.StringPtrOutput)
+}
+
+// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+func (o AgentMemoryEmbeddingCredentialsOutput) ApiKeyVersion() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbeddingCredentials) *int { return v.ApiKeyVersion }).(pulumi.IntPtrOutput)
+}
+
+// Credential type validated by the Agent Memory API.
+func (o AgentMemoryEmbeddingCredentialsOutput) Type() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryEmbeddingCredentials) *string { return v.Type }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryEmbeddingCredentialsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEmbeddingCredentialsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryEmbeddingCredentials)(nil)).Elem()
+}
+
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) ToAgentMemoryEmbeddingCredentialsPtrOutput() AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) ToAgentMemoryEmbeddingCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryEmbeddingCredentialsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) Elem() AgentMemoryEmbeddingCredentialsOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbeddingCredentials) AgentMemoryEmbeddingCredentials {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryEmbeddingCredentials
+		return ret
+	}).(AgentMemoryEmbeddingCredentialsOutput)
+}
+
+// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) ApiKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbeddingCredentials) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ApiKey
+	}).(pulumi.StringPtrOutput)
+}
+
+// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) ApiKeyVersion() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbeddingCredentials) *int {
+		if v == nil {
+			return nil
+		}
+		return v.ApiKeyVersion
+	}).(pulumi.IntPtrOutput)
+}
+
+// Credential type validated by the Agent Memory API.
+func (o AgentMemoryEmbeddingCredentialsPtrOutput) Type() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryEmbeddingCredentials) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Type
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryEndpoint struct {
+	// Egress IP addresses used by the endpoint.
+	EgressIps []string `pulumi:"egressIps"`
+	// Whether the endpoint is reachable from the store's database network.
+	IsAccessible bool `pulumi:"isAccessible"`
+	// Cloud provider hosting the endpoint.
+	Provider string `pulumi:"provider"`
+	// Cloud region of the endpoint.
+	Region string `pulumi:"region"`
+	// Endpoint URL.
+	Url string `pulumi:"url"`
+}
+
+// AgentMemoryEndpointInput is an input type that accepts AgentMemoryEndpointArgs and AgentMemoryEndpointOutput values.
+// You can construct a concrete instance of `AgentMemoryEndpointInput` via:
+//
+//	AgentMemoryEndpointArgs{...}
+type AgentMemoryEndpointInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEndpointOutput() AgentMemoryEndpointOutput
+	ToAgentMemoryEndpointOutputWithContext(context.Context) AgentMemoryEndpointOutput
+}
+
+type AgentMemoryEndpointArgs struct {
+	// Egress IP addresses used by the endpoint.
+	EgressIps pulumi.StringArrayInput `pulumi:"egressIps"`
+	// Whether the endpoint is reachable from the store's database network.
+	IsAccessible pulumi.BoolInput `pulumi:"isAccessible"`
+	// Cloud provider hosting the endpoint.
+	Provider pulumi.StringInput `pulumi:"provider"`
+	// Cloud region of the endpoint.
+	Region pulumi.StringInput `pulumi:"region"`
+	// Endpoint URL.
+	Url pulumi.StringInput `pulumi:"url"`
+}
+
+func (AgentMemoryEndpointArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEndpoint)(nil)).Elem()
+}
+
+func (i AgentMemoryEndpointArgs) ToAgentMemoryEndpointOutput() AgentMemoryEndpointOutput {
+	return i.ToAgentMemoryEndpointOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEndpointArgs) ToAgentMemoryEndpointOutputWithContext(ctx context.Context) AgentMemoryEndpointOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEndpointOutput)
+}
+
+// AgentMemoryEndpointArrayInput is an input type that accepts AgentMemoryEndpointArray and AgentMemoryEndpointArrayOutput values.
+// You can construct a concrete instance of `AgentMemoryEndpointArrayInput` via:
+//
+//	AgentMemoryEndpointArray{ AgentMemoryEndpointArgs{...} }
+type AgentMemoryEndpointArrayInput interface {
+	pulumi.Input
+
+	ToAgentMemoryEndpointArrayOutput() AgentMemoryEndpointArrayOutput
+	ToAgentMemoryEndpointArrayOutputWithContext(context.Context) AgentMemoryEndpointArrayOutput
+}
+
+type AgentMemoryEndpointArray []AgentMemoryEndpointInput
+
+func (AgentMemoryEndpointArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryEndpoint)(nil)).Elem()
+}
+
+func (i AgentMemoryEndpointArray) ToAgentMemoryEndpointArrayOutput() AgentMemoryEndpointArrayOutput {
+	return i.ToAgentMemoryEndpointArrayOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryEndpointArray) ToAgentMemoryEndpointArrayOutputWithContext(ctx context.Context) AgentMemoryEndpointArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryEndpointArrayOutput)
+}
+
+type AgentMemoryEndpointOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEndpointOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryEndpoint)(nil)).Elem()
+}
+
+func (o AgentMemoryEndpointOutput) ToAgentMemoryEndpointOutput() AgentMemoryEndpointOutput {
+	return o
+}
+
+func (o AgentMemoryEndpointOutput) ToAgentMemoryEndpointOutputWithContext(ctx context.Context) AgentMemoryEndpointOutput {
+	return o
+}
+
+// Egress IP addresses used by the endpoint.
+func (o AgentMemoryEndpointOutput) EgressIps() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v AgentMemoryEndpoint) []string { return v.EgressIps }).(pulumi.StringArrayOutput)
+}
+
+// Whether the endpoint is reachable from the store's database network.
+func (o AgentMemoryEndpointOutput) IsAccessible() pulumi.BoolOutput {
+	return o.ApplyT(func(v AgentMemoryEndpoint) bool { return v.IsAccessible }).(pulumi.BoolOutput)
+}
+
+// Cloud provider hosting the endpoint.
+func (o AgentMemoryEndpointOutput) Provider() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryEndpoint) string { return v.Provider }).(pulumi.StringOutput)
+}
+
+// Cloud region of the endpoint.
+func (o AgentMemoryEndpointOutput) Region() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryEndpoint) string { return v.Region }).(pulumi.StringOutput)
+}
+
+// Endpoint URL.
+func (o AgentMemoryEndpointOutput) Url() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryEndpoint) string { return v.Url }).(pulumi.StringOutput)
+}
+
+type AgentMemoryEndpointArrayOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryEndpointArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryEndpoint)(nil)).Elem()
+}
+
+func (o AgentMemoryEndpointArrayOutput) ToAgentMemoryEndpointArrayOutput() AgentMemoryEndpointArrayOutput {
+	return o
+}
+
+func (o AgentMemoryEndpointArrayOutput) ToAgentMemoryEndpointArrayOutputWithContext(ctx context.Context) AgentMemoryEndpointArrayOutput {
+	return o
+}
+
+func (o AgentMemoryEndpointArrayOutput) Index(i pulumi.IntInput) AgentMemoryEndpointOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AgentMemoryEndpoint {
+		return vs[0].([]AgentMemoryEndpoint)[vs[1].(int)]
+	}).(AgentMemoryEndpointOutput)
+}
+
+type AgentMemoryLlm struct {
+	// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+	Credentials *AgentMemoryLlmCredentials `pulumi:"credentials"`
+	// Model name advertised by the provider.
+	Model *string `pulumi:"model"`
+	// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+	Provider *string `pulumi:"provider"`
+}
+
+// AgentMemoryLlmInput is an input type that accepts AgentMemoryLlmArgs and AgentMemoryLlmOutput values.
+// You can construct a concrete instance of `AgentMemoryLlmInput` via:
+//
+//	AgentMemoryLlmArgs{...}
+type AgentMemoryLlmInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLlmOutput() AgentMemoryLlmOutput
+	ToAgentMemoryLlmOutputWithContext(context.Context) AgentMemoryLlmOutput
+}
+
+type AgentMemoryLlmArgs struct {
+	// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+	Credentials AgentMemoryLlmCredentialsPtrInput `pulumi:"credentials"`
+	// Model name advertised by the provider.
+	Model pulumi.StringPtrInput `pulumi:"model"`
+	// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+	Provider pulumi.StringPtrInput `pulumi:"provider"`
+}
+
+func (AgentMemoryLlmArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLlm)(nil)).Elem()
+}
+
+func (i AgentMemoryLlmArgs) ToAgentMemoryLlmOutput() AgentMemoryLlmOutput {
+	return i.ToAgentMemoryLlmOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLlmArgs) ToAgentMemoryLlmOutputWithContext(ctx context.Context) AgentMemoryLlmOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmOutput)
+}
+
+func (i AgentMemoryLlmArgs) ToAgentMemoryLlmPtrOutput() AgentMemoryLlmPtrOutput {
+	return i.ToAgentMemoryLlmPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLlmArgs) ToAgentMemoryLlmPtrOutputWithContext(ctx context.Context) AgentMemoryLlmPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmOutput).ToAgentMemoryLlmPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLlmPtrInput is an input type that accepts AgentMemoryLlmArgs, AgentMemoryLlmPtr and AgentMemoryLlmPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLlmPtrInput` via:
+//
+//	        AgentMemoryLlmArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLlmPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLlmPtrOutput() AgentMemoryLlmPtrOutput
+	ToAgentMemoryLlmPtrOutputWithContext(context.Context) AgentMemoryLlmPtrOutput
+}
+
+type agentMemoryLlmPtrType AgentMemoryLlmArgs
+
+func AgentMemoryLlmPtr(v *AgentMemoryLlmArgs) AgentMemoryLlmPtrInput {
+	return (*agentMemoryLlmPtrType)(v)
+}
+
+func (*agentMemoryLlmPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLlm)(nil)).Elem()
+}
+
+func (i *agentMemoryLlmPtrType) ToAgentMemoryLlmPtrOutput() AgentMemoryLlmPtrOutput {
+	return i.ToAgentMemoryLlmPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLlmPtrType) ToAgentMemoryLlmPtrOutputWithContext(ctx context.Context) AgentMemoryLlmPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmPtrOutput)
+}
+
+type AgentMemoryLlmOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLlmOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLlm)(nil)).Elem()
+}
+
+func (o AgentMemoryLlmOutput) ToAgentMemoryLlmOutput() AgentMemoryLlmOutput {
+	return o
+}
+
+func (o AgentMemoryLlmOutput) ToAgentMemoryLlmOutputWithContext(ctx context.Context) AgentMemoryLlmOutput {
+	return o
+}
+
+func (o AgentMemoryLlmOutput) ToAgentMemoryLlmPtrOutput() AgentMemoryLlmPtrOutput {
+	return o.ToAgentMemoryLlmPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLlmOutput) ToAgentMemoryLlmPtrOutputWithContext(ctx context.Context) AgentMemoryLlmPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLlm) *AgentMemoryLlm {
+		return &v
+	}).(AgentMemoryLlmPtrOutput)
+}
+
+// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+func (o AgentMemoryLlmOutput) Credentials() AgentMemoryLlmCredentialsPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlm) *AgentMemoryLlmCredentials { return v.Credentials }).(AgentMemoryLlmCredentialsPtrOutput)
+}
+
+// Model name advertised by the provider.
+func (o AgentMemoryLlmOutput) Model() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlm) *string { return v.Model }).(pulumi.StringPtrOutput)
+}
+
+// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+func (o AgentMemoryLlmOutput) Provider() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlm) *string { return v.Provider }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLlmPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLlmPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLlm)(nil)).Elem()
+}
+
+func (o AgentMemoryLlmPtrOutput) ToAgentMemoryLlmPtrOutput() AgentMemoryLlmPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLlmPtrOutput) ToAgentMemoryLlmPtrOutputWithContext(ctx context.Context) AgentMemoryLlmPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLlmPtrOutput) Elem() AgentMemoryLlmOutput {
+	return o.ApplyT(func(v *AgentMemoryLlm) AgentMemoryLlm {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLlm
+		return ret
+	}).(AgentMemoryLlmOutput)
+}
+
+// Required when creating a store with customer-managed models; optional on existing/imported stores. When present, `type`, `apiKey`, and `apiKeyVersion` must be configured.
+func (o AgentMemoryLlmPtrOutput) Credentials() AgentMemoryLlmCredentialsPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlm) *AgentMemoryLlmCredentials {
+		if v == nil {
+			return nil
+		}
+		return v.Credentials
+	}).(AgentMemoryLlmCredentialsPtrOutput)
+}
+
+// Model name advertised by the provider.
+func (o AgentMemoryLlmPtrOutput) Model() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlm) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Model
+	}).(pulumi.StringPtrOutput)
+}
+
+// Model provider. The Agent Memory API validates this against the providers supported by the service. Changing an explicitly configured provider requires replacement.
+func (o AgentMemoryLlmPtrOutput) Provider() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlm) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Provider
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLlmCredentials struct {
+	// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+	// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+	ApiKey *string `pulumi:"apiKey"`
+	// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+	ApiKeyVersion *int `pulumi:"apiKeyVersion"`
+	// Credential type validated by the Agent Memory API.
+	Type *string `pulumi:"type"`
+}
+
+// AgentMemoryLlmCredentialsInput is an input type that accepts AgentMemoryLlmCredentialsArgs and AgentMemoryLlmCredentialsOutput values.
+// You can construct a concrete instance of `AgentMemoryLlmCredentialsInput` via:
+//
+//	AgentMemoryLlmCredentialsArgs{...}
+type AgentMemoryLlmCredentialsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLlmCredentialsOutput() AgentMemoryLlmCredentialsOutput
+	ToAgentMemoryLlmCredentialsOutputWithContext(context.Context) AgentMemoryLlmCredentialsOutput
+}
+
+type AgentMemoryLlmCredentialsArgs struct {
+	// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+	// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+	ApiKey pulumi.StringPtrInput `pulumi:"apiKey"`
+	// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+	ApiKeyVersion pulumi.IntPtrInput `pulumi:"apiKeyVersion"`
+	// Credential type validated by the Agent Memory API.
+	Type pulumi.StringPtrInput `pulumi:"type"`
+}
+
+func (AgentMemoryLlmCredentialsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLlmCredentials)(nil)).Elem()
+}
+
+func (i AgentMemoryLlmCredentialsArgs) ToAgentMemoryLlmCredentialsOutput() AgentMemoryLlmCredentialsOutput {
+	return i.ToAgentMemoryLlmCredentialsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLlmCredentialsArgs) ToAgentMemoryLlmCredentialsOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmCredentialsOutput)
+}
+
+func (i AgentMemoryLlmCredentialsArgs) ToAgentMemoryLlmCredentialsPtrOutput() AgentMemoryLlmCredentialsPtrOutput {
+	return i.ToAgentMemoryLlmCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLlmCredentialsArgs) ToAgentMemoryLlmCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmCredentialsOutput).ToAgentMemoryLlmCredentialsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLlmCredentialsPtrInput is an input type that accepts AgentMemoryLlmCredentialsArgs, AgentMemoryLlmCredentialsPtr and AgentMemoryLlmCredentialsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLlmCredentialsPtrInput` via:
+//
+//	        AgentMemoryLlmCredentialsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLlmCredentialsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLlmCredentialsPtrOutput() AgentMemoryLlmCredentialsPtrOutput
+	ToAgentMemoryLlmCredentialsPtrOutputWithContext(context.Context) AgentMemoryLlmCredentialsPtrOutput
+}
+
+type agentMemoryLlmCredentialsPtrType AgentMemoryLlmCredentialsArgs
+
+func AgentMemoryLlmCredentialsPtr(v *AgentMemoryLlmCredentialsArgs) AgentMemoryLlmCredentialsPtrInput {
+	return (*agentMemoryLlmCredentialsPtrType)(v)
+}
+
+func (*agentMemoryLlmCredentialsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLlmCredentials)(nil)).Elem()
+}
+
+func (i *agentMemoryLlmCredentialsPtrType) ToAgentMemoryLlmCredentialsPtrOutput() AgentMemoryLlmCredentialsPtrOutput {
+	return i.ToAgentMemoryLlmCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLlmCredentialsPtrType) ToAgentMemoryLlmCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLlmCredentialsPtrOutput)
+}
+
+type AgentMemoryLlmCredentialsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLlmCredentialsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLlmCredentials)(nil)).Elem()
+}
+
+func (o AgentMemoryLlmCredentialsOutput) ToAgentMemoryLlmCredentialsOutput() AgentMemoryLlmCredentialsOutput {
+	return o
+}
+
+func (o AgentMemoryLlmCredentialsOutput) ToAgentMemoryLlmCredentialsOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsOutput {
+	return o
+}
+
+func (o AgentMemoryLlmCredentialsOutput) ToAgentMemoryLlmCredentialsPtrOutput() AgentMemoryLlmCredentialsPtrOutput {
+	return o.ToAgentMemoryLlmCredentialsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLlmCredentialsOutput) ToAgentMemoryLlmCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLlmCredentials) *AgentMemoryLlmCredentials {
+		return &v
+	}).(AgentMemoryLlmCredentialsPtrOutput)
+}
+
+// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+func (o AgentMemoryLlmCredentialsOutput) ApiKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlmCredentials) *string { return v.ApiKey }).(pulumi.StringPtrOutput)
+}
+
+// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+func (o AgentMemoryLlmCredentialsOutput) ApiKeyVersion() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlmCredentials) *int { return v.ApiKeyVersion }).(pulumi.IntPtrOutput)
+}
+
+// Credential type validated by the Agent Memory API.
+func (o AgentMemoryLlmCredentialsOutput) Type() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLlmCredentials) *string { return v.Type }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLlmCredentialsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLlmCredentialsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLlmCredentials)(nil)).Elem()
+}
+
+func (o AgentMemoryLlmCredentialsPtrOutput) ToAgentMemoryLlmCredentialsPtrOutput() AgentMemoryLlmCredentialsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLlmCredentialsPtrOutput) ToAgentMemoryLlmCredentialsPtrOutputWithContext(ctx context.Context) AgentMemoryLlmCredentialsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLlmCredentialsPtrOutput) Elem() AgentMemoryLlmCredentialsOutput {
+	return o.ApplyT(func(v *AgentMemoryLlmCredentials) AgentMemoryLlmCredentials {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLlmCredentials
+		return ret
+	}).(AgentMemoryLlmCredentialsOutput)
+}
+
+// **NOTE:** This field is write-only and its value will not be updated in state as part of read operations.
+// Provider API key omitted from plan/state values. Requires `apiKeyVersion`.
+func (o AgentMemoryLlmCredentialsPtrOutput) ApiKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlmCredentials) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ApiKey
+	}).(pulumi.StringPtrOutput)
+}
+
+// Positive version for in-place credential rotation. Change it whenever the write-only key changes.
+func (o AgentMemoryLlmCredentialsPtrOutput) ApiKeyVersion() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlmCredentials) *int {
+		if v == nil {
+			return nil
+		}
+		return v.ApiKeyVersion
+	}).(pulumi.IntPtrOutput)
+}
+
+// Credential type validated by the Agent Memory API.
+func (o AgentMemoryLlmCredentialsPtrOutput) Type() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLlmCredentials) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Type
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusions struct {
+	// Built-in sensitive-data detector configuration.
+	BuiltInDetectors *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors `pulumi:"builtInDetectors"`
+	// Custom regex detector configuration.
+	CustomDetectors *AgentMemoryLongTermMemoryExclusionsCustomDetectors `pulumi:"customDetectors"`
+	// Master toggle for long-term memory exclusions.
+	Enabled *bool `pulumi:"enabled"`
+	// Semantic exclusion configuration.
+	Semantic *AgentMemoryLongTermMemoryExclusionsSemantic `pulumi:"semantic"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsArgs and AgentMemoryLongTermMemoryExclusionsOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsArgs{...}
+type AgentMemoryLongTermMemoryExclusionsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsOutput() AgentMemoryLongTermMemoryExclusionsOutput
+	ToAgentMemoryLongTermMemoryExclusionsOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsArgs struct {
+	// Built-in sensitive-data detector configuration.
+	BuiltInDetectors AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput `pulumi:"builtInDetectors"`
+	// Custom regex detector configuration.
+	CustomDetectors AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput `pulumi:"customDetectors"`
+	// Master toggle for long-term memory exclusions.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+	// Semantic exclusion configuration.
+	Semantic AgentMemoryLongTermMemoryExclusionsSemanticPtrInput `pulumi:"semantic"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusions)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsArgs) ToAgentMemoryLongTermMemoryExclusionsOutput() AgentMemoryLongTermMemoryExclusionsOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsArgs) ToAgentMemoryLongTermMemoryExclusionsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsOutput)
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsArgs) ToAgentMemoryLongTermMemoryExclusionsPtrOutput() AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsArgs) ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsOutput).ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLongTermMemoryExclusionsPtrInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsArgs, AgentMemoryLongTermMemoryExclusionsPtr and AgentMemoryLongTermMemoryExclusionsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsPtrInput` via:
+//
+//	        AgentMemoryLongTermMemoryExclusionsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLongTermMemoryExclusionsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsPtrOutput() AgentMemoryLongTermMemoryExclusionsPtrOutput
+	ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsPtrOutput
+}
+
+type agentMemoryLongTermMemoryExclusionsPtrType AgentMemoryLongTermMemoryExclusionsArgs
+
+func AgentMemoryLongTermMemoryExclusionsPtr(v *AgentMemoryLongTermMemoryExclusionsArgs) AgentMemoryLongTermMemoryExclusionsPtrInput {
+	return (*agentMemoryLongTermMemoryExclusionsPtrType)(v)
+}
+
+func (*agentMemoryLongTermMemoryExclusionsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusions)(nil)).Elem()
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsPtrType) ToAgentMemoryLongTermMemoryExclusionsPtrOutput() AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsPtrType) ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusions)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsOutput) ToAgentMemoryLongTermMemoryExclusionsOutput() AgentMemoryLongTermMemoryExclusionsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsOutput) ToAgentMemoryLongTermMemoryExclusionsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsOutput) ToAgentMemoryLongTermMemoryExclusionsPtrOutput() AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return o.ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsOutput) ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusions {
+		return &v
+	}).(AgentMemoryLongTermMemoryExclusionsPtrOutput)
+}
+
+// Built-in sensitive-data detector configuration.
+func (o AgentMemoryLongTermMemoryExclusionsOutput) BuiltInDetectors() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors {
+		return v.BuiltInDetectors
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput)
+}
+
+// Custom regex detector configuration.
+func (o AgentMemoryLongTermMemoryExclusionsOutput) CustomDetectors() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsCustomDetectors {
+		return v.CustomDetectors
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput)
+}
+
+// Master toggle for long-term memory exclusions.
+func (o AgentMemoryLongTermMemoryExclusionsOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// Semantic exclusion configuration.
+func (o AgentMemoryLongTermMemoryExclusionsOutput) Semantic() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsSemantic {
+		return v.Semantic
+	}).(AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusions)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsPtrOutput() AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) Elem() AgentMemoryLongTermMemoryExclusionsOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusions) AgentMemoryLongTermMemoryExclusions {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLongTermMemoryExclusions
+		return ret
+	}).(AgentMemoryLongTermMemoryExclusionsOutput)
+}
+
+// Built-in sensitive-data detector configuration.
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) BuiltInDetectors() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors {
+		if v == nil {
+			return nil
+		}
+		return v.BuiltInDetectors
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput)
+}
+
+// Custom regex detector configuration.
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) CustomDetectors() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsCustomDetectors {
+		if v == nil {
+			return nil
+		}
+		return v.CustomDetectors
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput)
+}
+
+// Master toggle for long-term memory exclusions.
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Semantic exclusion configuration.
+func (o AgentMemoryLongTermMemoryExclusionsPtrOutput) Semantic() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusions) *AgentMemoryLongTermMemoryExclusionsSemantic {
+		if v == nil {
+			return nil
+		}
+		return v.Semantic
+	}).(AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectors struct {
+	// Built-in detector selections.
+	Detectors []AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector `pulumi:"detectors"`
+	// Whether built-in detectors are enabled.
+	Enabled *bool `pulumi:"enabled"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs and AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs{...}
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs struct {
+	// Built-in detector selections.
+	Detectors AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayInput `pulumi:"detectors"`
+	// Whether built-in detectors are enabled.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectors)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput)
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput).ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs, AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtr and AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput` via:
+//
+//	        AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput
+}
+
+type agentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrType AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs
+
+func AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtr(v *AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput {
+	return (*agentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrType)(v)
+}
+
+func (*agentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsBuiltInDetectors)(nil)).Elem()
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrType) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrType) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectors)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors {
+		return &v
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput)
+}
+
+// Built-in detector selections.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) Detectors() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) []AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector {
+		return v.Detectors
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput)
+}
+
+// Whether built-in detectors are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsBuiltInDetectors)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) Elem() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) AgentMemoryLongTermMemoryExclusionsBuiltInDetectors {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLongTermMemoryExclusionsBuiltInDetectors
+		return ret
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput)
+}
+
+// Built-in detector selections.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) Detectors() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) []AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector {
+		if v == nil {
+			return nil
+		}
+		return v.Detectors
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput)
+}
+
+// Whether built-in detectors are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsBuiltInDetectors) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector struct {
+	// Action when the detector matches. Examples include `redact` and `drop`; accepted values are validated by the Agent Memory API. When omitted, the provider records the value returned by the API.
+	Action *string `pulumi:"action"`
+	// Whether this detector is enabled.
+	Enabled bool `pulumi:"enabled"`
+	// Non-blank built-in detector ID validated by the Agent Memory API. Examples include `credit-card`, `email`, `ip-address`, `phone`, and `us-ssn`; the available catalogue is managed by the service.
+	Id string `pulumi:"id"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs and AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs{...}
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs struct {
+	// Action when the detector matches. Examples include `redact` and `drop`; accepted values are validated by the Agent Memory API. When omitted, the provider records the value returned by the API.
+	Action pulumi.StringPtrInput `pulumi:"action"`
+	// Whether this detector is enabled.
+	Enabled pulumi.BoolInput `pulumi:"enabled"`
+	// Non-blank built-in detector ID validated by the Agent Memory API. Examples include `credit-card`, `email`, `ip-address`, `phone`, and `us-ssn`; the available catalogue is managed by the service.
+	Id pulumi.StringInput `pulumi:"id"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput)
+}
+
+// AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray and AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray{ AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs{...} }
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput
+	ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray []AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorInput
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput {
+	return o
+}
+
+// Action when the detector matches. Examples include `redact` and `drop`; accepted values are validated by the Agent Memory API. When omitted, the provider records the value returned by the API.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) Action() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector) *string { return v.Action }).(pulumi.StringPtrOutput)
+}
+
+// Whether this detector is enabled.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) Enabled() pulumi.BoolOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector) bool { return v.Enabled }).(pulumi.BoolOutput)
+}
+
+// Non-blank built-in detector ID validated by the Agent Memory API. Examples include `credit-card`, `email`, `ip-address`, `phone`, and `us-ssn`; the available catalogue is managed by the service.
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput) Id() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector) string { return v.Id }).(pulumi.StringOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput) ToAgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput) Index(i pulumi.IntInput) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector {
+		return vs[0].([]AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetector)[vs[1].(int)]
+	}).(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectors struct {
+	// Custom detector definitions.
+	Detectors []AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector `pulumi:"detectors"`
+	// Whether custom detectors are enabled.
+	Enabled *bool `pulumi:"enabled"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs and AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs{...}
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs struct {
+	// Custom detector definitions.
+	Detectors AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayInput `pulumi:"detectors"`
+	// Whether custom detectors are enabled.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectors)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput)
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput).ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs, AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtr and AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput` via:
+//
+//	        AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput
+}
+
+type agentMemoryLongTermMemoryExclusionsCustomDetectorsPtrType AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs
+
+func AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtr(v *AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput {
+	return (*agentMemoryLongTermMemoryExclusionsCustomDetectorsPtrType)(v)
+}
+
+func (*agentMemoryLongTermMemoryExclusionsCustomDetectorsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsCustomDetectors)(nil)).Elem()
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsCustomDetectorsPtrType) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsCustomDetectorsPtrType) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectors)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLongTermMemoryExclusionsCustomDetectors) *AgentMemoryLongTermMemoryExclusionsCustomDetectors {
+		return &v
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput)
+}
+
+// Custom detector definitions.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) Detectors() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectors) []AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector {
+		return v.Detectors
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput)
+}
+
+// Whether custom detectors are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectors) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsCustomDetectors)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) Elem() AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsCustomDetectors) AgentMemoryLongTermMemoryExclusionsCustomDetectors {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLongTermMemoryExclusionsCustomDetectors
+		return ret
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput)
+}
+
+// Custom detector definitions.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) Detectors() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsCustomDetectors) []AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector {
+		if v == nil {
+			return nil
+		}
+		return v.Detectors
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput)
+}
+
+// Whether custom detectors are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsCustomDetectors) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector struct {
+	// Action when the detector matches. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+	Action *string `pulumi:"action"`
+	// Whether this detector is enabled.
+	Enabled bool `pulumi:"enabled"`
+	// Detector matcher configuration.
+	Matcher AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher `pulumi:"matcher"`
+	// Custom detector name. Format, maximum length and conflicts with built-in detector names are validated by the Agent Memory API.
+	Name string `pulumi:"name"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs and AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs{...}
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs struct {
+	// Action when the detector matches. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+	Action pulumi.StringPtrInput `pulumi:"action"`
+	// Whether this detector is enabled.
+	Enabled pulumi.BoolInput `pulumi:"enabled"`
+	// Detector matcher configuration.
+	Matcher AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherInput `pulumi:"matcher"`
+	// Custom detector name. Format, maximum length and conflicts with built-in detector names are validated by the Agent Memory API.
+	Name pulumi.StringInput `pulumi:"name"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput)
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray and AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray{ AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs{...} }
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray []AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorInput
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput {
+	return o
+}
+
+// Action when the detector matches. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) Action() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector) *string { return v.Action }).(pulumi.StringPtrOutput)
+}
+
+// Whether this detector is enabled.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) Enabled() pulumi.BoolOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector) bool { return v.Enabled }).(pulumi.BoolOutput)
+}
+
+// Detector matcher configuration.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) Matcher() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher {
+		return v.Matcher
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput)
+}
+
+// Custom detector name. Format, maximum length and conflicts with built-in detector names are validated by the Agent Memory API.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector) string { return v.Name }).(pulumi.StringOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput) Index(i pulumi.IntInput) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector {
+		return vs[0].([]AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetector)[vs[1].(int)]
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher struct {
+	// Matcher kind validated by the Agent Memory API. When `kind` is `regex`, the `regex` block is required. The published API currently documents `regex`; other kinds needing additional fields require SDK/schema support.
+	// * `regex.pattern` - Regex pattern used by the matcher. Maximum length and syntax are validated by the Agent Memory API. Non-empty patterns known to match empty text are rejected locally.
+	Kind string `pulumi:"kind"`
+	// Regex matcher configuration.
+	Regex *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex `pulumi:"regex"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs and AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs{...}
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs struct {
+	// Matcher kind validated by the Agent Memory API. When `kind` is `regex`, the `regex` block is required. The published API currently documents `regex`; other kinds needing additional fields require SDK/schema support.
+	// * `regex.pattern` - Regex pattern used by the matcher. Maximum length and syntax are validated by the Agent Memory API. Non-empty patterns known to match empty text are rejected locally.
+	Kind pulumi.StringInput `pulumi:"kind"`
+	// Regex matcher configuration.
+	Regex AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput `pulumi:"regex"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput {
+	return o
+}
+
+// Matcher kind validated by the Agent Memory API. When `kind` is `regex`, the `regex` block is required. The published API currently documents `regex`; other kinds needing additional fields require SDK/schema support.
+// * `regex.pattern` - Regex pattern used by the matcher. Maximum length and syntax are validated by the Agent Memory API. Non-empty patterns known to match empty text are rejected locally.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput) Kind() pulumi.StringOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher) string { return v.Kind }).(pulumi.StringOutput)
+}
+
+// Regex matcher configuration.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput) Regex() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcher) *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex {
+		return v.Regex
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex struct {
+	// Regex pattern used by the matcher.
+	Pattern *string `pulumi:"pattern"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs and AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs{...}
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs struct {
+	// Regex pattern used by the matcher.
+	Pattern pulumi.StringPtrInput `pulumi:"pattern"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput)
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput).ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs, AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtr and AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput` via:
+//
+//	        AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput
+	ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput
+}
+
+type agentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrType AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs
+
+func AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtr(v *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput {
+	return (*agentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrType)(v)
+}
+
+func (*agentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex)(nil)).Elem()
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrType) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrType) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return o.ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex) *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex {
+		return &v
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput)
+}
+
+// Regex pattern used by the matcher.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput) Pattern() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex) *string {
+		return v.Pattern
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput) ToAgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput) Elem() AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex) AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex
+		return ret
+	}).(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput)
+}
+
+// Regex pattern used by the matcher.
+func (o AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput) Pattern() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegex) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Pattern
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsSemantic struct {
+	// Whether semantic exclusions are enabled.
+	Enabled *bool `pulumi:"enabled"`
+	// Prompt describing concepts that should not be kept in long-term memory.
+	//
+	// Exclusions apply when the service extracts new long-term memories from sessions.
+	// They do not filter session events or summaries, or long-term memories written
+	// directly by the application. Changes do not re-evaluate existing memories.
+	// Semantic exclusions guide the extraction model but do not guarantee exclusion.
+	// See the [service exclusion documentation](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#sensitive-data-exclusions)
+	// for scope and limitations.
+	//
+	// Removing every `detectors` block from a configured detector group sends an empty
+	// list to clear its selections. Disabling a group preserves explicitly configured
+	// definitions so it can be enabled again later. Removing the optional group itself
+	// does not send a deletion request for its stored definitions.
+	//
+	// All time-based arguments are expressed in seconds.
+	//
+	// Most configuration can be updated in place. Changes to `databaseId` or an
+	// explicitly configured `extractionStrategy` require store replacement because the
+	// API only accepts these settings on create. Omitting `extractionStrategy` keeps
+	// the existing strategy; it does not reset it to the service default. A configured
+	// value that remains unknown during planning can conservatively require replacement,
+	// even if it later resolves to the previous value.
+	//
+	// For customer-managed models, `llm` and `embedding` must be configured together
+	// on create. Adding or removing both blocks requires replacement. Changing
+	// `llm[0].provider`, `embedding[0].provider`, or `embedding[0].model` also requires
+	// replacement. `llm[0].model` can be updated within the existing provider, and model
+	// credentials can be rotated without replacement by updating `credentials[0].api_key`
+	// and changing `credentials[0].api_key_version`.
+	//
+	// If the presence of `llm` or `embedding` is unknown, Terraform conservatively
+	// plans replacement. The same applies when an existing custom memory type's
+	// extraction strategy might be removed. Prefer block counts known during planning
+	// when an unnecessary replacement would be disruptive.
+	//
+	// A replacement destroys and recreates the store with a new store ID. It does not
+	// migrate the existing agent context to that new identity. Use
+	// `lifecycle.prevent_destroy` when destruction must be blocked.
+	//
+	// Deleting a store, including during replacement, is destructive. The
+	// [Agent Memory service documentation](https://redis.io/docs/latest/operate/iris/agent-memory/view-service/#delete-service)
+	// states that deletion permanently removes the associated memory data, service
+	// configuration, search index, and stored model provider key, and revokes the
+	// service API keys. The replacement creates a new store from the Terraform
+	// configuration; it does not migrate existing memories or preserve the old
+	// service API keys.
+	//
+	// If an immutable selector depends on a value that is unknown during planning,
+	// Terraform may conservatively plan replacement even when that value later
+	// resolves to the previous value. Model blocks must explicitly configure their provider and model selectors.
+	// Explicitly unknown expressions remain unknown.
+	//
+	// A replacement plan is not a validation dry run. If replacement inputs resolve to
+	// invalid values only during apply, the old store may already have been destroyed
+	// before the error is reported. Use values known during planning or
+	// `lifecycle.prevent_destroy` instead of relying on late validation to preserve it.
+	//
+	// The control-plane API stores model credentials, while data-plane operations
+	// such as long-term memory create/search validate them when the model provider is
+	// called. If a credential is missing or invalid, those data-plane operations can
+	// return an `Invalid Model Credentials` error.
+	//
+	// For `customMemoryTypes`, the provider follows the Agent Memory API behavior:
+	// new custom memory types can be added in place, and `extraction_strategy[0].prompt`
+	// or `extraction_strategy[0].enabled` can be updated for existing custom memory
+	// types. Removing an existing custom memory type, changing its description, or
+	// changing its fields, or removing its extraction strategy requires replacement of
+	// the entire Agent Memory service because the API cannot apply those changes in place.
+	// To disable extraction without replacement, keep the strategy and set `enabled = false`.
+	// Reordering types or fields does not require replacement. Unknown existing names or
+	// immutable definitions can conservatively require replacement, even if they later
+	// resolve to their previous values; unknown values belonging only to new types do
+	// not make existing definitions immutable changes.
+	Prompt *string `pulumi:"prompt"`
+}
+
+// AgentMemoryLongTermMemoryExclusionsSemanticInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsSemanticArgs and AgentMemoryLongTermMemoryExclusionsSemanticOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsSemanticInput` via:
+//
+//	AgentMemoryLongTermMemoryExclusionsSemanticArgs{...}
+type AgentMemoryLongTermMemoryExclusionsSemanticInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsSemanticOutput() AgentMemoryLongTermMemoryExclusionsSemanticOutput
+	ToAgentMemoryLongTermMemoryExclusionsSemanticOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsSemanticOutput
+}
+
+type AgentMemoryLongTermMemoryExclusionsSemanticArgs struct {
+	// Whether semantic exclusions are enabled.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+	// Prompt describing concepts that should not be kept in long-term memory.
+	//
+	// Exclusions apply when the service extracts new long-term memories from sessions.
+	// They do not filter session events or summaries, or long-term memories written
+	// directly by the application. Changes do not re-evaluate existing memories.
+	// Semantic exclusions guide the extraction model but do not guarantee exclusion.
+	// See the [service exclusion documentation](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#sensitive-data-exclusions)
+	// for scope and limitations.
+	//
+	// Removing every `detectors` block from a configured detector group sends an empty
+	// list to clear its selections. Disabling a group preserves explicitly configured
+	// definitions so it can be enabled again later. Removing the optional group itself
+	// does not send a deletion request for its stored definitions.
+	//
+	// All time-based arguments are expressed in seconds.
+	//
+	// Most configuration can be updated in place. Changes to `databaseId` or an
+	// explicitly configured `extractionStrategy` require store replacement because the
+	// API only accepts these settings on create. Omitting `extractionStrategy` keeps
+	// the existing strategy; it does not reset it to the service default. A configured
+	// value that remains unknown during planning can conservatively require replacement,
+	// even if it later resolves to the previous value.
+	//
+	// For customer-managed models, `llm` and `embedding` must be configured together
+	// on create. Adding or removing both blocks requires replacement. Changing
+	// `llm[0].provider`, `embedding[0].provider`, or `embedding[0].model` also requires
+	// replacement. `llm[0].model` can be updated within the existing provider, and model
+	// credentials can be rotated without replacement by updating `credentials[0].api_key`
+	// and changing `credentials[0].api_key_version`.
+	//
+	// If the presence of `llm` or `embedding` is unknown, Terraform conservatively
+	// plans replacement. The same applies when an existing custom memory type's
+	// extraction strategy might be removed. Prefer block counts known during planning
+	// when an unnecessary replacement would be disruptive.
+	//
+	// A replacement destroys and recreates the store with a new store ID. It does not
+	// migrate the existing agent context to that new identity. Use
+	// `lifecycle.prevent_destroy` when destruction must be blocked.
+	//
+	// Deleting a store, including during replacement, is destructive. The
+	// [Agent Memory service documentation](https://redis.io/docs/latest/operate/iris/agent-memory/view-service/#delete-service)
+	// states that deletion permanently removes the associated memory data, service
+	// configuration, search index, and stored model provider key, and revokes the
+	// service API keys. The replacement creates a new store from the Terraform
+	// configuration; it does not migrate existing memories or preserve the old
+	// service API keys.
+	//
+	// If an immutable selector depends on a value that is unknown during planning,
+	// Terraform may conservatively plan replacement even when that value later
+	// resolves to the previous value. Model blocks must explicitly configure their provider and model selectors.
+	// Explicitly unknown expressions remain unknown.
+	//
+	// A replacement plan is not a validation dry run. If replacement inputs resolve to
+	// invalid values only during apply, the old store may already have been destroyed
+	// before the error is reported. Use values known during planning or
+	// `lifecycle.prevent_destroy` instead of relying on late validation to preserve it.
+	//
+	// The control-plane API stores model credentials, while data-plane operations
+	// such as long-term memory create/search validate them when the model provider is
+	// called. If a credential is missing or invalid, those data-plane operations can
+	// return an `Invalid Model Credentials` error.
+	//
+	// For `customMemoryTypes`, the provider follows the Agent Memory API behavior:
+	// new custom memory types can be added in place, and `extraction_strategy[0].prompt`
+	// or `extraction_strategy[0].enabled` can be updated for existing custom memory
+	// types. Removing an existing custom memory type, changing its description, or
+	// changing its fields, or removing its extraction strategy requires replacement of
+	// the entire Agent Memory service because the API cannot apply those changes in place.
+	// To disable extraction without replacement, keep the strategy and set `enabled = false`.
+	// Reordering types or fields does not require replacement. Unknown existing names or
+	// immutable definitions can conservatively require replacement, even if they later
+	// resolve to their previous values; unknown values belonging only to new types do
+	// not make existing definitions immutable changes.
+	Prompt pulumi.StringPtrInput `pulumi:"prompt"`
+}
+
+func (AgentMemoryLongTermMemoryExclusionsSemanticArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsSemantic)(nil)).Elem()
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsSemanticArgs) ToAgentMemoryLongTermMemoryExclusionsSemanticOutput() AgentMemoryLongTermMemoryExclusionsSemanticOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsSemanticOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsSemanticArgs) ToAgentMemoryLongTermMemoryExclusionsSemanticOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsSemanticOutput)
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsSemanticArgs) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutput() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryLongTermMemoryExclusionsSemanticArgs) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsSemanticOutput).ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryLongTermMemoryExclusionsSemanticPtrInput is an input type that accepts AgentMemoryLongTermMemoryExclusionsSemanticArgs, AgentMemoryLongTermMemoryExclusionsSemanticPtr and AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryLongTermMemoryExclusionsSemanticPtrInput` via:
+//
+//	        AgentMemoryLongTermMemoryExclusionsSemanticArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryLongTermMemoryExclusionsSemanticPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutput() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput
+	ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(context.Context) AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput
+}
+
+type agentMemoryLongTermMemoryExclusionsSemanticPtrType AgentMemoryLongTermMemoryExclusionsSemanticArgs
+
+func AgentMemoryLongTermMemoryExclusionsSemanticPtr(v *AgentMemoryLongTermMemoryExclusionsSemanticArgs) AgentMemoryLongTermMemoryExclusionsSemanticPtrInput {
+	return (*agentMemoryLongTermMemoryExclusionsSemanticPtrType)(v)
+}
+
+func (*agentMemoryLongTermMemoryExclusionsSemanticPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsSemantic)(nil)).Elem()
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsSemanticPtrType) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutput() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return i.ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryLongTermMemoryExclusionsSemanticPtrType) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsSemanticOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsSemanticOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsSemantic)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticOutput() AgentMemoryLongTermMemoryExclusionsSemanticOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutput() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o.ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryLongTermMemoryExclusionsSemantic) *AgentMemoryLongTermMemoryExclusionsSemantic {
+		return &v
+	}).(AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput)
+}
+
+// Whether semantic exclusions are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsSemantic) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// Prompt describing concepts that should not be kept in long-term memory.
+//
+// Exclusions apply when the service extracts new long-term memories from sessions.
+// They do not filter session events or summaries, or long-term memories written
+// directly by the application. Changes do not re-evaluate existing memories.
+// Semantic exclusions guide the extraction model but do not guarantee exclusion.
+// See the [service exclusion documentation](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#sensitive-data-exclusions)
+// for scope and limitations.
+//
+// Removing every `detectors` block from a configured detector group sends an empty
+// list to clear its selections. Disabling a group preserves explicitly configured
+// definitions so it can be enabled again later. Removing the optional group itself
+// does not send a deletion request for its stored definitions.
+//
+// All time-based arguments are expressed in seconds.
+//
+// Most configuration can be updated in place. Changes to `databaseId` or an
+// explicitly configured `extractionStrategy` require store replacement because the
+// API only accepts these settings on create. Omitting `extractionStrategy` keeps
+// the existing strategy; it does not reset it to the service default. A configured
+// value that remains unknown during planning can conservatively require replacement,
+// even if it later resolves to the previous value.
+//
+// For customer-managed models, `llm` and `embedding` must be configured together
+// on create. Adding or removing both blocks requires replacement. Changing
+// `llm[0].provider`, `embedding[0].provider`, or `embedding[0].model` also requires
+// replacement. `llm[0].model` can be updated within the existing provider, and model
+// credentials can be rotated without replacement by updating `credentials[0].api_key`
+// and changing `credentials[0].api_key_version`.
+//
+// If the presence of `llm` or `embedding` is unknown, Terraform conservatively
+// plans replacement. The same applies when an existing custom memory type's
+// extraction strategy might be removed. Prefer block counts known during planning
+// when an unnecessary replacement would be disruptive.
+//
+// A replacement destroys and recreates the store with a new store ID. It does not
+// migrate the existing agent context to that new identity. Use
+// `lifecycle.prevent_destroy` when destruction must be blocked.
+//
+// Deleting a store, including during replacement, is destructive. The
+// [Agent Memory service documentation](https://redis.io/docs/latest/operate/iris/agent-memory/view-service/#delete-service)
+// states that deletion permanently removes the associated memory data, service
+// configuration, search index, and stored model provider key, and revokes the
+// service API keys. The replacement creates a new store from the Terraform
+// configuration; it does not migrate existing memories or preserve the old
+// service API keys.
+//
+// If an immutable selector depends on a value that is unknown during planning,
+// Terraform may conservatively plan replacement even when that value later
+// resolves to the previous value. Model blocks must explicitly configure their provider and model selectors.
+// Explicitly unknown expressions remain unknown.
+//
+// A replacement plan is not a validation dry run. If replacement inputs resolve to
+// invalid values only during apply, the old store may already have been destroyed
+// before the error is reported. Use values known during planning or
+// `lifecycle.prevent_destroy` instead of relying on late validation to preserve it.
+//
+// The control-plane API stores model credentials, while data-plane operations
+// such as long-term memory create/search validate them when the model provider is
+// called. If a credential is missing or invalid, those data-plane operations can
+// return an `Invalid Model Credentials` error.
+//
+// For `customMemoryTypes`, the provider follows the Agent Memory API behavior:
+// new custom memory types can be added in place, and `extraction_strategy[0].prompt`
+// or `extraction_strategy[0].enabled` can be updated for existing custom memory
+// types. Removing an existing custom memory type, changing its description, or
+// changing its fields, or removing its extraction strategy requires replacement of
+// the entire Agent Memory service because the API cannot apply those changes in place.
+// To disable extraction without replacement, keep the strategy and set `enabled = false`.
+// Reordering types or fields does not require replacement. Unknown existing names or
+// immutable definitions can conservatively require replacement, even if they later
+// resolve to their previous values; unknown values belonging only to new types do
+// not make existing definitions immutable changes.
+func (o AgentMemoryLongTermMemoryExclusionsSemanticOutput) Prompt() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryLongTermMemoryExclusionsSemantic) *string { return v.Prompt }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryLongTermMemoryExclusionsSemantic)(nil)).Elem()
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutput() AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) ToAgentMemoryLongTermMemoryExclusionsSemanticPtrOutputWithContext(ctx context.Context) AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput {
+	return o
+}
+
+func (o AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) Elem() AgentMemoryLongTermMemoryExclusionsSemanticOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsSemantic) AgentMemoryLongTermMemoryExclusionsSemantic {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryLongTermMemoryExclusionsSemantic
+		return ret
+	}).(AgentMemoryLongTermMemoryExclusionsSemanticOutput)
+}
+
+// Whether semantic exclusions are enabled.
+func (o AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsSemantic) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Prompt describing concepts that should not be kept in long-term memory.
+//
+// Exclusions apply when the service extracts new long-term memories from sessions.
+// They do not filter session events or summaries, or long-term memories written
+// directly by the application. Changes do not re-evaluate existing memories.
+// Semantic exclusions guide the extraction model but do not guarantee exclusion.
+// See the [service exclusion documentation](https://redis.io/docs/latest/operate/iris/agent-memory/create-service/#sensitive-data-exclusions)
+// for scope and limitations.
+//
+// Removing every `detectors` block from a configured detector group sends an empty
+// list to clear its selections. Disabling a group preserves explicitly configured
+// definitions so it can be enabled again later. Removing the optional group itself
+// does not send a deletion request for its stored definitions.
+//
+// All time-based arguments are expressed in seconds.
+//
+// Most configuration can be updated in place. Changes to `databaseId` or an
+// explicitly configured `extractionStrategy` require store replacement because the
+// API only accepts these settings on create. Omitting `extractionStrategy` keeps
+// the existing strategy; it does not reset it to the service default. A configured
+// value that remains unknown during planning can conservatively require replacement,
+// even if it later resolves to the previous value.
+//
+// For customer-managed models, `llm` and `embedding` must be configured together
+// on create. Adding or removing both blocks requires replacement. Changing
+// `llm[0].provider`, `embedding[0].provider`, or `embedding[0].model` also requires
+// replacement. `llm[0].model` can be updated within the existing provider, and model
+// credentials can be rotated without replacement by updating `credentials[0].api_key`
+// and changing `credentials[0].api_key_version`.
+//
+// If the presence of `llm` or `embedding` is unknown, Terraform conservatively
+// plans replacement. The same applies when an existing custom memory type's
+// extraction strategy might be removed. Prefer block counts known during planning
+// when an unnecessary replacement would be disruptive.
+//
+// A replacement destroys and recreates the store with a new store ID. It does not
+// migrate the existing agent context to that new identity. Use
+// `lifecycle.prevent_destroy` when destruction must be blocked.
+//
+// Deleting a store, including during replacement, is destructive. The
+// [Agent Memory service documentation](https://redis.io/docs/latest/operate/iris/agent-memory/view-service/#delete-service)
+// states that deletion permanently removes the associated memory data, service
+// configuration, search index, and stored model provider key, and revokes the
+// service API keys. The replacement creates a new store from the Terraform
+// configuration; it does not migrate existing memories or preserve the old
+// service API keys.
+//
+// If an immutable selector depends on a value that is unknown during planning,
+// Terraform may conservatively plan replacement even when that value later
+// resolves to the previous value. Model blocks must explicitly configure their provider and model selectors.
+// Explicitly unknown expressions remain unknown.
+//
+// A replacement plan is not a validation dry run. If replacement inputs resolve to
+// invalid values only during apply, the old store may already have been destroyed
+// before the error is reported. Use values known during planning or
+// `lifecycle.prevent_destroy` instead of relying on late validation to preserve it.
+//
+// The control-plane API stores model credentials, while data-plane operations
+// such as long-term memory create/search validate them when the model provider is
+// called. If a credential is missing or invalid, those data-plane operations can
+// return an `Invalid Model Credentials` error.
+//
+// For `customMemoryTypes`, the provider follows the Agent Memory API behavior:
+// new custom memory types can be added in place, and `extraction_strategy[0].prompt`
+// or `extraction_strategy[0].enabled` can be updated for existing custom memory
+// types. Removing an existing custom memory type, changing its description, or
+// changing its fields, or removing its extraction strategy requires replacement of
+// the entire Agent Memory service because the API cannot apply those changes in place.
+// To disable extraction without replacement, keep the strategy and set `enabled = false`.
+// Reordering types or fields does not require replacement. Unknown existing names or
+// immutable definitions can conservatively require replacement, even if they later
+// resolve to their previous values; unknown values belonging only to new types do
+// not make existing definitions immutable changes.
+func (o AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput) Prompt() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryLongTermMemoryExclusionsSemantic) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Prompt
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemorySummarization struct {
+	// Whether automatic summarization is enabled.
+	Enabled *bool `pulumi:"enabled"`
+	// Event-count thresholds. Numeric limits are validated by the Agent Memory API. Both fields must be configured when this block is present.
+	EventCount *AgentMemorySummarizationEventCount `pulumi:"eventCount"`
+	// Summarization trigger strategy. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+	TriggerStrategy *string `pulumi:"triggerStrategy"`
+}
+
+// AgentMemorySummarizationInput is an input type that accepts AgentMemorySummarizationArgs and AgentMemorySummarizationOutput values.
+// You can construct a concrete instance of `AgentMemorySummarizationInput` via:
+//
+//	AgentMemorySummarizationArgs{...}
+type AgentMemorySummarizationInput interface {
+	pulumi.Input
+
+	ToAgentMemorySummarizationOutput() AgentMemorySummarizationOutput
+	ToAgentMemorySummarizationOutputWithContext(context.Context) AgentMemorySummarizationOutput
+}
+
+type AgentMemorySummarizationArgs struct {
+	// Whether automatic summarization is enabled.
+	Enabled pulumi.BoolPtrInput `pulumi:"enabled"`
+	// Event-count thresholds. Numeric limits are validated by the Agent Memory API. Both fields must be configured when this block is present.
+	EventCount AgentMemorySummarizationEventCountPtrInput `pulumi:"eventCount"`
+	// Summarization trigger strategy. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+	TriggerStrategy pulumi.StringPtrInput `pulumi:"triggerStrategy"`
+}
+
+func (AgentMemorySummarizationArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemorySummarization)(nil)).Elem()
+}
+
+func (i AgentMemorySummarizationArgs) ToAgentMemorySummarizationOutput() AgentMemorySummarizationOutput {
+	return i.ToAgentMemorySummarizationOutputWithContext(context.Background())
+}
+
+func (i AgentMemorySummarizationArgs) ToAgentMemorySummarizationOutputWithContext(ctx context.Context) AgentMemorySummarizationOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationOutput)
+}
+
+func (i AgentMemorySummarizationArgs) ToAgentMemorySummarizationPtrOutput() AgentMemorySummarizationPtrOutput {
+	return i.ToAgentMemorySummarizationPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemorySummarizationArgs) ToAgentMemorySummarizationPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationOutput).ToAgentMemorySummarizationPtrOutputWithContext(ctx)
+}
+
+// AgentMemorySummarizationPtrInput is an input type that accepts AgentMemorySummarizationArgs, AgentMemorySummarizationPtr and AgentMemorySummarizationPtrOutput values.
+// You can construct a concrete instance of `AgentMemorySummarizationPtrInput` via:
+//
+//	        AgentMemorySummarizationArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemorySummarizationPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemorySummarizationPtrOutput() AgentMemorySummarizationPtrOutput
+	ToAgentMemorySummarizationPtrOutputWithContext(context.Context) AgentMemorySummarizationPtrOutput
+}
+
+type agentMemorySummarizationPtrType AgentMemorySummarizationArgs
+
+func AgentMemorySummarizationPtr(v *AgentMemorySummarizationArgs) AgentMemorySummarizationPtrInput {
+	return (*agentMemorySummarizationPtrType)(v)
+}
+
+func (*agentMemorySummarizationPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemorySummarization)(nil)).Elem()
+}
+
+func (i *agentMemorySummarizationPtrType) ToAgentMemorySummarizationPtrOutput() AgentMemorySummarizationPtrOutput {
+	return i.ToAgentMemorySummarizationPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemorySummarizationPtrType) ToAgentMemorySummarizationPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationPtrOutput)
+}
+
+type AgentMemorySummarizationOutput struct{ *pulumi.OutputState }
+
+func (AgentMemorySummarizationOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemorySummarization)(nil)).Elem()
+}
+
+func (o AgentMemorySummarizationOutput) ToAgentMemorySummarizationOutput() AgentMemorySummarizationOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationOutput) ToAgentMemorySummarizationOutputWithContext(ctx context.Context) AgentMemorySummarizationOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationOutput) ToAgentMemorySummarizationPtrOutput() AgentMemorySummarizationPtrOutput {
+	return o.ToAgentMemorySummarizationPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemorySummarizationOutput) ToAgentMemorySummarizationPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemorySummarization) *AgentMemorySummarization {
+		return &v
+	}).(AgentMemorySummarizationPtrOutput)
+}
+
+// Whether automatic summarization is enabled.
+func (o AgentMemorySummarizationOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AgentMemorySummarization) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// Event-count thresholds. Numeric limits are validated by the Agent Memory API. Both fields must be configured when this block is present.
+func (o AgentMemorySummarizationOutput) EventCount() AgentMemorySummarizationEventCountPtrOutput {
+	return o.ApplyT(func(v AgentMemorySummarization) *AgentMemorySummarizationEventCount { return v.EventCount }).(AgentMemorySummarizationEventCountPtrOutput)
+}
+
+// Summarization trigger strategy. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+func (o AgentMemorySummarizationOutput) TriggerStrategy() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemorySummarization) *string { return v.TriggerStrategy }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemorySummarizationPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemorySummarizationPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemorySummarization)(nil)).Elem()
+}
+
+func (o AgentMemorySummarizationPtrOutput) ToAgentMemorySummarizationPtrOutput() AgentMemorySummarizationPtrOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationPtrOutput) ToAgentMemorySummarizationPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationPtrOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationPtrOutput) Elem() AgentMemorySummarizationOutput {
+	return o.ApplyT(func(v *AgentMemorySummarization) AgentMemorySummarization {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemorySummarization
+		return ret
+	}).(AgentMemorySummarizationOutput)
+}
+
+// Whether automatic summarization is enabled.
+func (o AgentMemorySummarizationPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AgentMemorySummarization) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Event-count thresholds. Numeric limits are validated by the Agent Memory API. Both fields must be configured when this block is present.
+func (o AgentMemorySummarizationPtrOutput) EventCount() AgentMemorySummarizationEventCountPtrOutput {
+	return o.ApplyT(func(v *AgentMemorySummarization) *AgentMemorySummarizationEventCount {
+		if v == nil {
+			return nil
+		}
+		return v.EventCount
+	}).(AgentMemorySummarizationEventCountPtrOutput)
+}
+
+// Summarization trigger strategy. Accepted values are validated by the Agent Memory API; when omitted, the provider records the value returned by the API.
+func (o AgentMemorySummarizationPtrOutput) TriggerStrategy() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemorySummarization) *string {
+		if v == nil {
+			return nil
+		}
+		return v.TriggerStrategy
+	}).(pulumi.StringPtrOutput)
+}
+
+type AgentMemorySummarizationEventCount struct {
+	// Number of most recent messages retained in full.
+	RetainCount *int `pulumi:"retainCount"`
+	// Number of messages that triggers summarization. Must be greater than `retainCount`.
+	Threshold *int `pulumi:"threshold"`
+}
+
+// AgentMemorySummarizationEventCountInput is an input type that accepts AgentMemorySummarizationEventCountArgs and AgentMemorySummarizationEventCountOutput values.
+// You can construct a concrete instance of `AgentMemorySummarizationEventCountInput` via:
+//
+//	AgentMemorySummarizationEventCountArgs{...}
+type AgentMemorySummarizationEventCountInput interface {
+	pulumi.Input
+
+	ToAgentMemorySummarizationEventCountOutput() AgentMemorySummarizationEventCountOutput
+	ToAgentMemorySummarizationEventCountOutputWithContext(context.Context) AgentMemorySummarizationEventCountOutput
+}
+
+type AgentMemorySummarizationEventCountArgs struct {
+	// Number of most recent messages retained in full.
+	RetainCount pulumi.IntPtrInput `pulumi:"retainCount"`
+	// Number of messages that triggers summarization. Must be greater than `retainCount`.
+	Threshold pulumi.IntPtrInput `pulumi:"threshold"`
+}
+
+func (AgentMemorySummarizationEventCountArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemorySummarizationEventCount)(nil)).Elem()
+}
+
+func (i AgentMemorySummarizationEventCountArgs) ToAgentMemorySummarizationEventCountOutput() AgentMemorySummarizationEventCountOutput {
+	return i.ToAgentMemorySummarizationEventCountOutputWithContext(context.Background())
+}
+
+func (i AgentMemorySummarizationEventCountArgs) ToAgentMemorySummarizationEventCountOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationEventCountOutput)
+}
+
+func (i AgentMemorySummarizationEventCountArgs) ToAgentMemorySummarizationEventCountPtrOutput() AgentMemorySummarizationEventCountPtrOutput {
+	return i.ToAgentMemorySummarizationEventCountPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemorySummarizationEventCountArgs) ToAgentMemorySummarizationEventCountPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationEventCountOutput).ToAgentMemorySummarizationEventCountPtrOutputWithContext(ctx)
+}
+
+// AgentMemorySummarizationEventCountPtrInput is an input type that accepts AgentMemorySummarizationEventCountArgs, AgentMemorySummarizationEventCountPtr and AgentMemorySummarizationEventCountPtrOutput values.
+// You can construct a concrete instance of `AgentMemorySummarizationEventCountPtrInput` via:
+//
+//	        AgentMemorySummarizationEventCountArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemorySummarizationEventCountPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemorySummarizationEventCountPtrOutput() AgentMemorySummarizationEventCountPtrOutput
+	ToAgentMemorySummarizationEventCountPtrOutputWithContext(context.Context) AgentMemorySummarizationEventCountPtrOutput
+}
+
+type agentMemorySummarizationEventCountPtrType AgentMemorySummarizationEventCountArgs
+
+func AgentMemorySummarizationEventCountPtr(v *AgentMemorySummarizationEventCountArgs) AgentMemorySummarizationEventCountPtrInput {
+	return (*agentMemorySummarizationEventCountPtrType)(v)
+}
+
+func (*agentMemorySummarizationEventCountPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemorySummarizationEventCount)(nil)).Elem()
+}
+
+func (i *agentMemorySummarizationEventCountPtrType) ToAgentMemorySummarizationEventCountPtrOutput() AgentMemorySummarizationEventCountPtrOutput {
+	return i.ToAgentMemorySummarizationEventCountPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemorySummarizationEventCountPtrType) ToAgentMemorySummarizationEventCountPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemorySummarizationEventCountPtrOutput)
+}
+
+type AgentMemorySummarizationEventCountOutput struct{ *pulumi.OutputState }
+
+func (AgentMemorySummarizationEventCountOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemorySummarizationEventCount)(nil)).Elem()
+}
+
+func (o AgentMemorySummarizationEventCountOutput) ToAgentMemorySummarizationEventCountOutput() AgentMemorySummarizationEventCountOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationEventCountOutput) ToAgentMemorySummarizationEventCountOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationEventCountOutput) ToAgentMemorySummarizationEventCountPtrOutput() AgentMemorySummarizationEventCountPtrOutput {
+	return o.ToAgentMemorySummarizationEventCountPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemorySummarizationEventCountOutput) ToAgentMemorySummarizationEventCountPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemorySummarizationEventCount) *AgentMemorySummarizationEventCount {
+		return &v
+	}).(AgentMemorySummarizationEventCountPtrOutput)
+}
+
+// Number of most recent messages retained in full.
+func (o AgentMemorySummarizationEventCountOutput) RetainCount() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v AgentMemorySummarizationEventCount) *int { return v.RetainCount }).(pulumi.IntPtrOutput)
+}
+
+// Number of messages that triggers summarization. Must be greater than `retainCount`.
+func (o AgentMemorySummarizationEventCountOutput) Threshold() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v AgentMemorySummarizationEventCount) *int { return v.Threshold }).(pulumi.IntPtrOutput)
+}
+
+type AgentMemorySummarizationEventCountPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemorySummarizationEventCountPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemorySummarizationEventCount)(nil)).Elem()
+}
+
+func (o AgentMemorySummarizationEventCountPtrOutput) ToAgentMemorySummarizationEventCountPtrOutput() AgentMemorySummarizationEventCountPtrOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationEventCountPtrOutput) ToAgentMemorySummarizationEventCountPtrOutputWithContext(ctx context.Context) AgentMemorySummarizationEventCountPtrOutput {
+	return o
+}
+
+func (o AgentMemorySummarizationEventCountPtrOutput) Elem() AgentMemorySummarizationEventCountOutput {
+	return o.ApplyT(func(v *AgentMemorySummarizationEventCount) AgentMemorySummarizationEventCount {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemorySummarizationEventCount
+		return ret
+	}).(AgentMemorySummarizationEventCountOutput)
+}
+
+// Number of most recent messages retained in full.
+func (o AgentMemorySummarizationEventCountPtrOutput) RetainCount() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AgentMemorySummarizationEventCount) *int {
+		if v == nil {
+			return nil
+		}
+		return v.RetainCount
+	}).(pulumi.IntPtrOutput)
+}
+
+// Number of messages that triggers summarization. Must be greater than `retainCount`.
+func (o AgentMemorySummarizationEventCountPtrOutput) Threshold() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AgentMemorySummarizationEventCount) *int {
+		if v == nil {
+			return nil
+		}
+		return v.Threshold
+	}).(pulumi.IntPtrOutput)
+}
+
+type AgentMemoryTimeouts struct {
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Create *string `pulumi:"create"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+	Delete *string `pulumi:"delete"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+	Read *string `pulumi:"read"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Update *string `pulumi:"update"`
+}
+
+// AgentMemoryTimeoutsInput is an input type that accepts AgentMemoryTimeoutsArgs and AgentMemoryTimeoutsOutput values.
+// You can construct a concrete instance of `AgentMemoryTimeoutsInput` via:
+//
+//	AgentMemoryTimeoutsArgs{...}
+type AgentMemoryTimeoutsInput interface {
+	pulumi.Input
+
+	ToAgentMemoryTimeoutsOutput() AgentMemoryTimeoutsOutput
+	ToAgentMemoryTimeoutsOutputWithContext(context.Context) AgentMemoryTimeoutsOutput
+}
+
+type AgentMemoryTimeoutsArgs struct {
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Create pulumi.StringPtrInput `pulumi:"create"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+	Delete pulumi.StringPtrInput `pulumi:"delete"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+	Read pulumi.StringPtrInput `pulumi:"read"`
+	// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+	Update pulumi.StringPtrInput `pulumi:"update"`
+}
+
+func (AgentMemoryTimeoutsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryTimeouts)(nil)).Elem()
+}
+
+func (i AgentMemoryTimeoutsArgs) ToAgentMemoryTimeoutsOutput() AgentMemoryTimeoutsOutput {
+	return i.ToAgentMemoryTimeoutsOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryTimeoutsArgs) ToAgentMemoryTimeoutsOutputWithContext(ctx context.Context) AgentMemoryTimeoutsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryTimeoutsOutput)
+}
+
+func (i AgentMemoryTimeoutsArgs) ToAgentMemoryTimeoutsPtrOutput() AgentMemoryTimeoutsPtrOutput {
+	return i.ToAgentMemoryTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (i AgentMemoryTimeoutsArgs) ToAgentMemoryTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryTimeoutsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryTimeoutsOutput).ToAgentMemoryTimeoutsPtrOutputWithContext(ctx)
+}
+
+// AgentMemoryTimeoutsPtrInput is an input type that accepts AgentMemoryTimeoutsArgs, AgentMemoryTimeoutsPtr and AgentMemoryTimeoutsPtrOutput values.
+// You can construct a concrete instance of `AgentMemoryTimeoutsPtrInput` via:
+//
+//	        AgentMemoryTimeoutsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AgentMemoryTimeoutsPtrInput interface {
+	pulumi.Input
+
+	ToAgentMemoryTimeoutsPtrOutput() AgentMemoryTimeoutsPtrOutput
+	ToAgentMemoryTimeoutsPtrOutputWithContext(context.Context) AgentMemoryTimeoutsPtrOutput
+}
+
+type agentMemoryTimeoutsPtrType AgentMemoryTimeoutsArgs
+
+func AgentMemoryTimeoutsPtr(v *AgentMemoryTimeoutsArgs) AgentMemoryTimeoutsPtrInput {
+	return (*agentMemoryTimeoutsPtrType)(v)
+}
+
+func (*agentMemoryTimeoutsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryTimeouts)(nil)).Elem()
+}
+
+func (i *agentMemoryTimeoutsPtrType) ToAgentMemoryTimeoutsPtrOutput() AgentMemoryTimeoutsPtrOutput {
+	return i.ToAgentMemoryTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (i *agentMemoryTimeoutsPtrType) ToAgentMemoryTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryTimeoutsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AgentMemoryTimeoutsPtrOutput)
+}
+
+type AgentMemoryTimeoutsOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryTimeoutsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AgentMemoryTimeouts)(nil)).Elem()
+}
+
+func (o AgentMemoryTimeoutsOutput) ToAgentMemoryTimeoutsOutput() AgentMemoryTimeoutsOutput {
+	return o
+}
+
+func (o AgentMemoryTimeoutsOutput) ToAgentMemoryTimeoutsOutputWithContext(ctx context.Context) AgentMemoryTimeoutsOutput {
+	return o
+}
+
+func (o AgentMemoryTimeoutsOutput) ToAgentMemoryTimeoutsPtrOutput() AgentMemoryTimeoutsPtrOutput {
+	return o.ToAgentMemoryTimeoutsPtrOutputWithContext(context.Background())
+}
+
+func (o AgentMemoryTimeoutsOutput) ToAgentMemoryTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryTimeoutsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AgentMemoryTimeouts) *AgentMemoryTimeouts {
+		return &v
+	}).(AgentMemoryTimeoutsPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryTimeoutsOutput) Create() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryTimeouts) *string { return v.Create }).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+func (o AgentMemoryTimeoutsOutput) Delete() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryTimeouts) *string { return v.Delete }).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+func (o AgentMemoryTimeoutsOutput) Read() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryTimeouts) *string { return v.Read }).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryTimeoutsOutput) Update() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AgentMemoryTimeouts) *string { return v.Update }).(pulumi.StringPtrOutput)
+}
+
+type AgentMemoryTimeoutsPtrOutput struct{ *pulumi.OutputState }
+
+func (AgentMemoryTimeoutsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AgentMemoryTimeouts)(nil)).Elem()
+}
+
+func (o AgentMemoryTimeoutsPtrOutput) ToAgentMemoryTimeoutsPtrOutput() AgentMemoryTimeoutsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryTimeoutsPtrOutput) ToAgentMemoryTimeoutsPtrOutputWithContext(ctx context.Context) AgentMemoryTimeoutsPtrOutput {
+	return o
+}
+
+func (o AgentMemoryTimeoutsPtrOutput) Elem() AgentMemoryTimeoutsOutput {
+	return o.ApplyT(func(v *AgentMemoryTimeouts) AgentMemoryTimeouts {
+		if v != nil {
+			return *v
+		}
+		var ret AgentMemoryTimeouts
+		return ret
+	}).(AgentMemoryTimeoutsOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryTimeoutsPtrOutput) Create() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Create
+	}).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+func (o AgentMemoryTimeoutsPtrOutput) Delete() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Delete
+	}).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+func (o AgentMemoryTimeoutsPtrOutput) Read() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Read
+	}).(pulumi.StringPtrOutput)
+}
+
+// A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+func (o AgentMemoryTimeoutsPtrOutput) Update() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AgentMemoryTimeouts) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Update
+	}).(pulumi.StringPtrOutput)
 }
 
 type CloudAccountTimeouts struct {
@@ -12503,6 +15871,45 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionArrayInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionDatabaseInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionDatabaseArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ActiveActiveSubscriptionRegionsRegionDatabaseArrayInput)(nil)).Elem(), ActiveActiveSubscriptionRegionsRegionDatabaseArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryApiKeyTimeoutsInput)(nil)).Elem(), AgentMemoryApiKeyTimeoutsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryApiKeyTimeoutsPtrInput)(nil)).Elem(), AgentMemoryApiKeyTimeoutsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeArrayInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeExtractionStrategyInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeExtractionStrategyArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeExtractionStrategyPtrInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeExtractionStrategyArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeFieldInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeFieldArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryCustomMemoryTypeFieldArrayInput)(nil)).Elem(), AgentMemoryCustomMemoryTypeFieldArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEmbeddingInput)(nil)).Elem(), AgentMemoryEmbeddingArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEmbeddingPtrInput)(nil)).Elem(), AgentMemoryEmbeddingArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEmbeddingCredentialsInput)(nil)).Elem(), AgentMemoryEmbeddingCredentialsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEmbeddingCredentialsPtrInput)(nil)).Elem(), AgentMemoryEmbeddingCredentialsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEndpointInput)(nil)).Elem(), AgentMemoryEndpointArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryEndpointArrayInput)(nil)).Elem(), AgentMemoryEndpointArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLlmInput)(nil)).Elem(), AgentMemoryLlmArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLlmPtrInput)(nil)).Elem(), AgentMemoryLlmArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLlmCredentialsInput)(nil)).Elem(), AgentMemoryLlmCredentialsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLlmCredentialsPtrInput)(nil)).Elem(), AgentMemoryLlmCredentialsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsPtrInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsSemanticInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsSemanticArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryLongTermMemoryExclusionsSemanticPtrInput)(nil)).Elem(), AgentMemoryLongTermMemoryExclusionsSemanticArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemorySummarizationInput)(nil)).Elem(), AgentMemorySummarizationArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemorySummarizationPtrInput)(nil)).Elem(), AgentMemorySummarizationArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemorySummarizationEventCountInput)(nil)).Elem(), AgentMemorySummarizationEventCountArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemorySummarizationEventCountPtrInput)(nil)).Elem(), AgentMemorySummarizationEventCountArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryTimeoutsInput)(nil)).Elem(), AgentMemoryTimeoutsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AgentMemoryTimeoutsPtrInput)(nil)).Elem(), AgentMemoryTimeoutsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CloudAccountTimeoutsInput)(nil)).Elem(), CloudAccountTimeoutsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CloudAccountTimeoutsPtrInput)(nil)).Elem(), CloudAccountTimeoutsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*EssentialsDatabaseAlertInput)(nil)).Elem(), EssentialsDatabaseAlertArgs{})
@@ -12695,6 +16102,45 @@ func init() {
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionArrayOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionDatabaseOutput{})
 	pulumi.RegisterOutputType(ActiveActiveSubscriptionRegionsRegionDatabaseArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryApiKeyTimeoutsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryApiKeyTimeoutsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeExtractionStrategyOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeExtractionStrategyPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeFieldOutput{})
+	pulumi.RegisterOutputType(AgentMemoryCustomMemoryTypeFieldArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEmbeddingOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEmbeddingPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEmbeddingCredentialsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEmbeddingCredentialsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEndpointOutput{})
+	pulumi.RegisterOutputType(AgentMemoryEndpointArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLlmOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLlmPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLlmCredentialsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLlmCredentialsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsBuiltInDetectorsDetectorArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorArrayOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsCustomDetectorsDetectorMatcherRegexPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsSemanticOutput{})
+	pulumi.RegisterOutputType(AgentMemoryLongTermMemoryExclusionsSemanticPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemorySummarizationOutput{})
+	pulumi.RegisterOutputType(AgentMemorySummarizationPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemorySummarizationEventCountOutput{})
+	pulumi.RegisterOutputType(AgentMemorySummarizationEventCountPtrOutput{})
+	pulumi.RegisterOutputType(AgentMemoryTimeoutsOutput{})
+	pulumi.RegisterOutputType(AgentMemoryTimeoutsPtrOutput{})
 	pulumi.RegisterOutputType(CloudAccountTimeoutsOutput{})
 	pulumi.RegisterOutputType(CloudAccountTimeoutsPtrOutput{})
 	pulumi.RegisterOutputType(EssentialsDatabaseAlertOutput{})

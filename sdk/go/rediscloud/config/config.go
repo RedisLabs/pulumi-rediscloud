@@ -11,7 +11,7 @@ import (
 
 var _ = internal.GetEnvOrDefault
 
-// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable, or by `REDISCLOUD_API_KEY` when that variable is unset.
+// This is the Redis Cloud API key. It must be provided but can also be set by the `REDISCLOUD_ACCESS_KEY` environment variable.
 func GetApiKey(ctx *pulumi.Context) string {
 	v, err := config.Try(ctx, "rediscloud:apiKey")
 	if err == nil {
