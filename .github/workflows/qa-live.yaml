@@ -8,6 +8,25 @@ on:
   schedule:
     - cron: "17 8 * * *"
   workflow_dispatch:
+    inputs:
+      cloud_provider:
+        description: Pro subscription cloud provider
+        required: true
+        type: choice
+        options:
+          - AWS
+          - GCP
+        default: AWS
+      region:
+        description: Provider region
+        required: true
+        type: string
+        default: us-east-1
+      evidence_hold_seconds:
+        description: Hold active resources for evidence capture
+        required: true
+        type: string
+        default: "0"
 
 permissions:
   contents: read
@@ -24,6 +43,9 @@ jobs:
     env:
       PULUMI_CONFIG_PASSPHRASE: ""
       QA_RUN_ID: ${{ github.run_id }}
+      QA_CLOUD_PROVIDER: ${{ inputs.cloud_provider || 'AWS' }}
+      QA_REGION: ${{ inputs.region || 'us-east-1' }}
+      QA_EVIDENCE_HOLD_SECONDS: ${{ inputs.evidence_hold_seconds || '0' }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # tag=v7.0.1

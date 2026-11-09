@@ -340,6 +340,8 @@ class LiveProgram:
         flag = "true" if include_database else "false"
         self._pulumi(["config", "set", "name", self._name])
         self._pulumi(["config", "set", "cidr", self._cidr])
+        self._pulumi(["config", "set", "cloudProvider", self.env.get("QA_CLOUD_PROVIDER", "AWS")])
+        self._pulumi(["config", "set", "region", self.env.get("QA_REGION", "us-east-1")])
         self._pulumi(["config", "set", "includeDatabase", flag])
 
     def _read_outputs(self) -> dict:
@@ -382,6 +384,9 @@ class Deps:
         log: Log,
         sleep=time.sleep,
         now=time.monotonic,
+        cloud_provider: str = "AWS",
+        region: str = "us-east-1",
+        evidence_hold_seconds: int = 0,
     ) -> None:
         self.url = url
         self.run_id = run_id
@@ -390,6 +395,9 @@ class Deps:
         self.log = log
         self.sleep = sleep
         self.now = now
+        self.cloud_provider = cloud_provider
+        self.region = region
+        self.evidence_hold_seconds = evidence_hold_seconds
         self.poll = 30.0
         self.timeouts = {
             "subscription": 2700.0,
@@ -431,6 +439,7 @@ def run_acceptance(deps: Deps) -> None:
     cidr = choose_cidr(deployment_cidrs(subscriptions))
     deps.log(f"cidr {cidr}")
     name = f"{PREFIX}{run_id}"
+    deps.log(f"target cloud {deps.cloud_provider} region {deps.region} name {name}")
     created = None
     destroyed = False
     try:
@@ -457,6 +466,13 @@ def run_acceptance(deps: Deps) -> None:
         missing = [item for item in OUTPUT_NAMES if item not in names]
         if missing:
             raise SuiteFailure("missing output name " + ",".join(missing))
+        deps.log(
+            f"active evidence checkpoint subscription {created} database {database_id} "
+            f"cloud {deps.cloud_provider} region {deps.region}"
+        )
+        if deps.evidence_hold_seconds > 0:
+            deps.log(f"evidence hold {deps.evidence_hold_seconds} seconds")
+            deps.sleep(float(deps.evidence_hold_seconds))
         deps.program.destroy()
         destroyed = True
         database_code = _wait_http(deps, "database", lambda: deps.cloud.get_database(created, database_id))
@@ -547,7 +563,26 @@ def main(argv: list[str] | None = None) -> int:
         log,
     )
     program = LiveProgram(env, log)
-    deps = Deps(env.get("REDISCLOUD_URL", ""), run_id, cloud, program, log)
+    provider = env.get("QA_CLOUD_PROVIDER", "AWS").strip().upper()
+    region = env.get("QA_REGION", "us-east-1").strip()
+    try:
+        hold = int(env.get("QA_EVIDENCE_HOLD_SECONDS", "0"))
+    except ValueError as exc:
+        raise SuiteFailure("QA_EVIDENCE_HOLD_SECONDS is not an integer") from exc
+    if provider not in {"AWS", "GCP"}:
+        raise SuiteFailure("QA_CLOUD_PROVIDER must be AWS or GCP")
+    if hold < 0 or hold > 1800:
+        raise SuiteFailure("QA_EVIDENCE_HOLD_SECONDS must be between 0 and 1800")
+    deps = Deps(
+        env.get("REDISCLOUD_URL", ""),
+        run_id,
+        cloud,
+        program,
+        log,
+        cloud_provider=provider,
+        region=region,
+        evidence_hold_seconds=hold,
+    )
     try:
         if args.cleanup_only:
             cleanup_only(deps)
