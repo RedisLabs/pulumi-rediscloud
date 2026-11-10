@@ -215,6 +215,37 @@ def assert_clean(test: unittest.TestCase, log: qa_live.Log) -> None:
 
 
 class QaLiveTest(unittest.TestCase):
+    def test_target_configuration_normalizes_values_and_defaults_region_by_provider(self) -> None:
+        self.assertEqual(qa_live.target_configuration({}), ("AWS", "us-east-1", 0))
+        self.assertEqual(
+            qa_live.target_configuration(
+                {
+                    "QA_CLOUD_PROVIDER": "  gcp ",
+                    "QA_REGION": "  ",
+                    "QA_EVIDENCE_HOLD_SECONDS": "12",
+                }
+            ),
+            ("GCP", "us-central1", 12),
+        )
+        self.assertEqual(
+            qa_live.target_configuration(
+                {"QA_CLOUD_PROVIDER": " aws ", "QA_REGION": " eu-west-1 "}
+            ),
+            ("AWS", "eu-west-1", 0),
+        )
+
+    def test_live_program_config_uses_validated_target_values(self) -> None:
+        calls: list[list[str]] = []
+        program = qa_live.LiveProgram({}, qa_live.Log(), "GCP", "us-central1")
+        program._name = "test-name"
+        program._cidr = "10.0.0.0/24"
+        program._pulumi = lambda args, check=True: calls.append(args) or 0
+
+        program._config(include_database=False)
+
+        self.assertIn(["config", "set", "cloudProvider", "GCP"], calls)
+        self.assertIn(["config", "set", "region", "us-central1"], calls)
+
     def test_leftover_pulumi_ci_subscription_is_deleted_before_create(self) -> None:
         subscriptions = [
             {
@@ -474,6 +505,8 @@ class QaLiveTest(unittest.TestCase):
         self.assertNotIn("ci-success", text)
         self.assertIn('cron: "17 8 * * *"', text)
         self.assertIn("workflow_dispatch", text)
+        self.assertIn("description: Provider region (defaults by cloud provider)", text)
+        self.assertIn("QA_REGION: ${{ inputs.region || '' }}", text)
         self.assertIn("group: qa-live", text)
         self.assertIn("cancel-in-progress: false", text)
         self.assertIn("timeout-minutes: 120", text)
