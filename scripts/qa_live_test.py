@@ -509,7 +509,7 @@ class QaLiveTest(unittest.TestCase):
         self.assertIn("QA_REGION: ${{ inputs.region || '' }}", text)
         self.assertIn("group: qa-live", text)
         self.assertIn("cancel-in-progress: false", text)
-        self.assertIn("timeout-minutes: 120", text)
+        self.assertIn("timeout-minutes: 180", text)
         self.assertIn("pulumi login --local", text)
         self.assertIn("pulumi plugin install resource rediscloud 0.0.0 --file", text)
         self.assertIn("bin/pulumi-resource-rediscloud", text)

@@ -39,7 +39,7 @@ jobs:
   qa-live:
     name: QA create and delete
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       PULUMI_CONFIG_PASSPHRASE: ""
       QA_RUN_ID: ${{ github.run_id }}
