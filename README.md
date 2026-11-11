@@ -44,6 +44,12 @@ The following configuration points are available for the `rediscloud` provider:
 - `secretKey` (environment: `REDISCLOUD_SECRET_KEY`) - This is the Redis Enterprise Cloud API secret key. It must be provided but can also be set by the environment variable.
 - `url` (environment: `REDISCLOUD_URL`) - Optional Cloud API base URL. Defaults to the production Cloud API when unset.
 
+## Usage
+
+See [USAGE.md](USAGE.md) for a complete quickstart that configures credentials,
+creates a Pro subscription and database, explains which Pulumi command triggers
+Cloud API operations, and tears the resources down safely.
+
 ## Running the live QA acceptance workflow
 
 The [`QA nightly acceptance`](.github/workflows/qa-live.yaml) workflow tests the
