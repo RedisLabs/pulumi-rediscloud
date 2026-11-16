@@ -406,11 +406,14 @@ const activeActivePeering = new rediscloud.ActiveActiveSubscriptionPeering("exam
 
 `getActiveActiveSubscriptionRegions` requires `subscriptionName`. Its `regionId`
 output is an integer, which matches the Active-Active Private Link input.
+`sdk/go/rediscloud/activeActivePrivateLink.go` says a database must be
+attached before a `regionId` is assigned. This lookup depends on
+`activeActiveDatabase`.
 
 ```javascript
 const activeActiveRegionLookup = rediscloud.getActiveActiveSubscriptionRegionsOutput({
   subscriptionName: activeActiveSubscription.name,
-});
+}, { dependsOn: [activeActiveDatabase] });
 
 const privateLink = new rediscloud.PrivateLink("example-private-link", {
   subscriptionId: subscription.id,
@@ -453,6 +456,8 @@ The Active-Active service, endpoint, and accepter require those same arguments
 plus `regionId`. `regionId` is an integer on these Private Service Connect
 resources. On `ActiveActiveTransitGatewayAttachment` and
 `ActiveActiveTransitGatewayRoute`, the schema types `regionId` as a string.
+The GCP region lookup depends on `gcpActiveActiveDatabase`, which is created
+first. A database must be attached before a `regionId` is assigned.
 
 The shipped Go example says an endpoint can be accepted only after the GCP
 forwarding rules exist, and the accepter depends on those rules. Create the
@@ -506,9 +511,14 @@ const gcpActiveActiveSubscription = new rediscloud.ActiveActiveSubscription("exa
   },
 });
 
+const gcpActiveActiveDatabase = new rediscloud.ActiveActiveSubscriptionDatabase("example-gcp-active-active-database", {
+  name: "example-gcp-active-active",
+  subscriptionId: gcpActiveActiveSubscription.id,
+});
+
 const gcpActiveActiveRegionLookup = rediscloud.getActiveActiveSubscriptionRegionsOutput({
   subscriptionName: gcpActiveActiveSubscription.name,
-});
+}, { dependsOn: [gcpActiveActiveDatabase] });
 
 const privateServiceConnect = new rediscloud.PrivateServiceConnect("example-private-service-connect", {
   subscriptionId: gcpSubscription.id,
@@ -609,8 +619,10 @@ require `subscriptionId`, `regionId`, and `tgwId`. The route also requires
 `sdk/go/rediscloud/activeActiveTransitGatewayRoute.go` say to configure CIDRs
 only after the attachment is accepted on both Redis Cloud and AWS, and to use
 `dependsOn`. Accept the invitation, create the attachment, accept it on AWS,
-and make the route wait for both acceptances. Install `@pulumi/aws` before
-running this section. These resources stay on the AWS subscriptions above.
+and make the route wait for both acceptances. The gateway lookup depends on
+the invitation acceptor. `waitForTgwTimeout` is 60 seconds. The default is 0,
+which does not wait. Install `@pulumi/aws` before running this section. These
+resources stay on the AWS subscriptions above.
 
 ```javascript
 import * as aws from "@pulumi/aws";
@@ -627,7 +639,8 @@ const transitGatewayInvitationAcceptor = new rediscloud.TransitGatewayInvitation
 
 const transitGateway = rediscloud.getTransitGatewayOutput({
   subscriptionId: subscription.id,
-});
+  waitForTgwTimeout: 60,
+}, { dependsOn: [transitGatewayInvitationAcceptor] });
 
 const transitGatewayAttachment = new rediscloud.TransitGatewayAttachment("example-transit-gateway-attachment", {
   subscriptionId: subscription.id,
@@ -659,7 +672,8 @@ const activeActiveTransitGatewayInvitationAcceptor = new rediscloud.ActiveActive
 const activeActiveTransitGateway = rediscloud.getActiveActiveTransitGatewayOutput({
   subscriptionId: activeActiveSubscription.id,
   regionId: activeActiveRegionLookup.regions.apply(regions => regions[0].regionId),
-});
+  waitForTgwTimeout: 60,
+}, { dependsOn: [activeActiveTransitGatewayInvitationAcceptor] });
 
 const activeActiveRegionId = activeActiveRegionLookup.regions.apply(regions => String(regions[0].regionId));
 

@@ -12,9 +12,9 @@ Source: [the refresh plan](analysis/design/pulumi-provider-refresh.md).
 
 ## Active-Active
 
-A Redis Cloud subscription deployed in more than one region. Terraform and Pulumi resource names use the prefix `rediscloud_active_active_` / `ActiveActive`.
+A Redis Cloud subscription deployed in more than one region. Terraform and Pulumi resource names use the prefix `rediscloud_active_active_` / `ActiveActive`. A database must be attached before a `regionId` is assigned.
 
-Source: `provider/resources.go`; Terraform provider resources of the same name.
+Source: `provider/resources.go`; Terraform provider resources of the same name; `sdk/go/rediscloud/activeActivePrivateLink.go`.
 
 ## Alignment
 
