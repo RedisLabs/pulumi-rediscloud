@@ -367,6 +367,13 @@ class LiveProgram:
         completed = self._run(args)
         self.log(f"pulumi {args[0]} exit {completed.returncode}")
         if check and completed.returncode != 0:
+            detail = "\n".join(
+                part.strip()
+                for part in (completed.stdout, completed.stderr)
+                if part and part.strip()
+            )
+            if detail:
+                self.log(detail[-4000:])
             raise SuiteFailure(f"pulumi {args[0]} exit {completed.returncode}")
         return completed.returncode
 
