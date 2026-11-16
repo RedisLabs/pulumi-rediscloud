@@ -1,6 +1,6 @@
 module github.com/RedisLabs/pulumi-rediscloud/provider
 
-go 1.26.10
+go 1.26.11
 
 require (
 	// v2.20.0 is commit 89239cdf9846fee2909be9b171c3a13a1dd172a0.
