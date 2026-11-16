@@ -23,6 +23,10 @@ func main() {
 		if value := cfg.Get("aclRule"); value != "" {
 			aclRule = value
 		}
+		aclRuleName := name
+		if value := cfg.Get("aclRuleName"); value != "" {
+			aclRuleName = value
+		}
 
 		card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
 			ExcludeExpired: pulumi.BoolRef(true),
@@ -61,7 +65,7 @@ func main() {
 		}
 
 		_, err = rediscloud.NewAclRule(ctx, "rule", &rediscloud.AclRuleArgs{
-			Name: pulumi.String(name),
+			Name: pulumi.String(aclRuleName),
 			Rule: pulumi.String(aclRule),
 		})
 		if err != nil {

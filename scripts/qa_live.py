@@ -318,6 +318,11 @@ class LiveProgram:
         self._pulumi(["config", "set", "aclRule", "+@read ~* -@dangerous"])
         self._pulumi(["up", "--yes", "--skip-preview"])
 
+    def rename_acl_rule(self) -> None:
+        """Change only the rule name and apply. The rule text stays."""
+        self._pulumi(["config", "set", "aclRuleName", self._name + "-renamed"])
+        self._pulumi(["up", "--yes", "--skip-preview"], log_output=True)
+
     def create_database(self, name: str, subscription_id: str) -> str:
         del subscription_id  # the program reads subscription.ID(), not this argument
         self._name = name
@@ -363,10 +368,11 @@ class LiveProgram:
         self._outputs = data
         return data
 
-    def _pulumi(self, args: list[str], check: bool = True) -> int:
+    def _pulumi(self, args: list[str], check: bool = True, log_output: bool = False) -> int:
         completed = self._run(args)
         self.log(f"pulumi {args[0]} exit {completed.returncode}")
-        if check and completed.returncode != 0:
+        failed = check and completed.returncode != 0
+        if failed or log_output:
             detail = "\n".join(
                 part.strip()
                 for part in (completed.stdout, completed.stderr)
@@ -374,6 +380,7 @@ class LiveProgram:
             )
             if detail:
                 self.log(detail[-4000:])
+        if failed:
             raise SuiteFailure(f"pulumi {args[0]} exit {completed.returncode}")
         return completed.returncode
 
@@ -460,6 +467,8 @@ def run_acceptance(deps: Deps) -> None:
         created = str(deps.program.create_subscription(name, cidr))
         deps.program.update_acl_rule()
         deps.log("acl rule updated")
+        deps.program.rename_acl_rule()
+        deps.log("acl rule renamed")
         _wait_active(
             deps,
             "subscription",
