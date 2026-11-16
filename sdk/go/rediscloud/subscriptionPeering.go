@@ -267,7 +267,7 @@ func (SubscriptionPeeringState) ElementType() reflect.Type {
 
 // SubscriptionPeeringExists checks whether an existing SubscriptionPeering resource with the given ID exists.
 func SubscriptionPeeringExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *SubscriptionPeeringState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *SubscriptionPeeringState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/subscriptionPeering:SubscriptionPeering", id, state, "", opts...)
 }
 

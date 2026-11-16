@@ -112,7 +112,7 @@ func (AclRuleState) ElementType() reflect.Type {
 
 // AclRuleExists checks whether an existing AclRule resource with the given ID exists.
 func AclRuleExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *AclRuleState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *AclRuleState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/aclRule:AclRule", id, state, "", opts...)
 }
 

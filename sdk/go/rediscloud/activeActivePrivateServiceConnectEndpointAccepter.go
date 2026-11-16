@@ -108,7 +108,7 @@ func (ActiveActivePrivateServiceConnectEndpointAccepterState) ElementType() refl
 
 // ActiveActivePrivateServiceConnectEndpointAccepterExists checks whether an existing ActiveActivePrivateServiceConnectEndpointAccepter resource with the given ID exists.
 func ActiveActivePrivateServiceConnectEndpointAccepterExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActivePrivateServiceConnectEndpointAccepterState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActivePrivateServiceConnectEndpointAccepterState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActivePrivateServiceConnectEndpointAccepter:ActiveActivePrivateServiceConnectEndpointAccepter", id, state, "", opts...)
 }
 

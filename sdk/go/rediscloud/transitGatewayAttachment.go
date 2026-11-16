@@ -168,7 +168,7 @@ func (TransitGatewayAttachmentState) ElementType() reflect.Type {
 
 // TransitGatewayAttachmentExists checks whether an existing TransitGatewayAttachment resource with the given ID exists.
 func TransitGatewayAttachmentExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *TransitGatewayAttachmentState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *TransitGatewayAttachmentState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/transitGatewayAttachment:TransitGatewayAttachment", id, state, "", opts...)
 }
 

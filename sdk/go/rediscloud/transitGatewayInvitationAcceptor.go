@@ -160,7 +160,7 @@ func (TransitGatewayInvitationAcceptorState) ElementType() reflect.Type {
 
 // TransitGatewayInvitationAcceptorExists checks whether an existing TransitGatewayInvitationAcceptor resource with the given ID exists.
 func TransitGatewayInvitationAcceptorExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *TransitGatewayInvitationAcceptorState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *TransitGatewayInvitationAcceptorState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/transitGatewayInvitationAcceptor:TransitGatewayInvitationAcceptor", id, state, "", opts...)
 }
 

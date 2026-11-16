@@ -267,7 +267,7 @@ func (SubscriptionState) ElementType() reflect.Type {
 
 // SubscriptionExists checks whether an existing Subscription resource with the given ID exists.
 func SubscriptionExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *SubscriptionState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *SubscriptionState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/subscription:Subscription", id, state, "", opts...)
 }
 

@@ -327,7 +327,7 @@ func (PrivateServiceConnectEndpointState) ElementType() reflect.Type {
 
 // PrivateServiceConnectEndpointExists checks whether an existing PrivateServiceConnectEndpoint resource with the given ID exists.
 func PrivateServiceConnectEndpointExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *PrivateServiceConnectEndpointState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *PrivateServiceConnectEndpointState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/privateServiceConnectEndpoint:PrivateServiceConnectEndpoint", id, state, "", opts...)
 }
 
