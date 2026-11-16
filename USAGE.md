@@ -369,19 +369,29 @@ const activeActiveRegions = new rediscloud.ActiveActiveSubscriptionRegions("exam
 
 ### SubscriptionPeering and ActiveActiveSubscriptionPeering
 
-Both resources require only `subscriptionId`. The schema also has optional
-cloud-specific inputs (`providerName`, `region` or `sourceRegion` and
-`destinationRegion`, `awsAccountId`, `vpcId`, `vpcCidr`, `vpcCidrs`,
-`gcpProjectId`, and `gcpNetworkName`). Those values are omitted here so the
-example does not invent an account ID.
+`subscriptionId` is the only `requiredInputs` entry. The shipped AWS examples
+in `sdk/go/rediscloud/subscriptionPeering.go` and
+`sdk/go/rediscloud/activeActiveSubscriptionPeering.go` also set the
+destination account, VPC, and region, and the schema says either `vpcCidr` or
+`vpcCidrs` must be set. Read the account and VPC from config. The CIDRs below
+are synthetic.
 
 ```javascript
 const subscriptionPeering = new rediscloud.SubscriptionPeering("example-peering", {
   subscriptionId: subscription.id,
+  region: "us-east-1",
+  awsAccountId: exampleConfig.require("exampleAwsAccountId"),
+  vpcId: exampleConfig.require("exampleVpcId"),
+  vpcCidr: "10.0.30.0/24",
 });
 
 const activeActivePeering = new rediscloud.ActiveActiveSubscriptionPeering("example-active-active-peering", {
   subscriptionId: activeActiveSubscription.id,
+  sourceRegion: "us-east-1",
+  destinationRegion: "eu-west-2",
+  awsAccountId: exampleConfig.require("exampleAwsAccountId"),
+  vpcId: exampleConfig.require("exampleActiveActiveVpcId"),
+  vpcCidr: "10.0.31.0/24",
 });
 ```
 
@@ -424,6 +434,13 @@ const activeActivePrivateLink = new rediscloud.ActiveActivePrivateLink("example-
 
 ### Private Service Connect
 
+Private Service Connect requires GCP. The quickstart `subscription` and the
+earlier `activeActiveSubscription` are AWS. The shipped example in
+`sdk/go/rediscloud/privateServiceConnectEndpoint.go` sets
+`cloudProvider.provider` to `GCP`. The two subscriptions below are those
+definitions adapted to GCP. For Active-Active, `cloudProvider` is the string
+`GCP`.
+
 `PrivateServiceConnect` requires `subscriptionId`.
 `PrivateServiceConnectEndpoint` requires `subscriptionId`,
 `privateServiceConnectServiceId`, `gcpProjectId`, `gcpVpcName`,
@@ -437,37 +454,108 @@ plus `regionId`. `regionId` is an integer on these Private Service Connect
 resources. On `ActiveActiveTransitGatewayAttachment` and
 `ActiveActiveTransitGatewayRoute`, the schema types `regionId` as a string.
 
-The project, network, subnet, and endpoint names below are synthetic names.
+The shipped Go example says an endpoint can be accepted only after the GCP
+forwarding rules exist, and the accepter depends on those rules. Create the
+forwarding rule first, for both Pro and Active-Active, and pass it in
+`dependsOn`. Project, network, subnet, and endpoint names below are synthetic.
+Install `@pulumi/gcp` before running this section.
 
 ```javascript
+import * as gcp from "@pulumi/gcp";
+
+const gcpSubscription = new rediscloud.Subscription("example-gcp-subscription", {
+  name: "example-gcp",
+  paymentMethod: "credit-card",
+  paymentMethodId: paymentMethod.id,
+  cloudProvider: {
+    provider: "GCP",
+    regions: [{
+      region: "us-central1",
+      networkingDeploymentCidr: "10.2.0.0/24",
+    }],
+  },
+  creationPlan: {
+    quantity: 1,
+    replication: true,
+    throughputMeasurementBy: "operations-per-second",
+    throughputMeasurementValue: 1000,
+  },
+});
+
+const gcpActiveActiveSubscription = new rediscloud.ActiveActiveSubscription("example-gcp-active-active-subscription", {
+  name: "example-gcp-active-active",
+  cloudProvider: "GCP",
+  paymentMethod: "credit-card",
+  paymentMethodId: paymentMethod.id,
+  creationPlan: {
+    quantity: 1,
+    regions: [
+      {
+        region: "us-central1",
+        networkingDeploymentCidr: "10.2.1.0/24",
+        readOperationsPerSecond: 1000,
+        writeOperationsPerSecond: 1000,
+      },
+      {
+        region: "us-east1",
+        networkingDeploymentCidr: "10.2.2.0/24",
+        readOperationsPerSecond: 1000,
+        writeOperationsPerSecond: 1000,
+      },
+    ],
+  },
+});
+
+const gcpActiveActiveRegionLookup = rediscloud.getActiveActiveSubscriptionRegionsOutput({
+  subscriptionName: gcpActiveActiveSubscription.name,
+});
+
 const privateServiceConnect = new rediscloud.PrivateServiceConnect("example-private-service-connect", {
-  subscriptionId: subscription.id,
+  subscriptionId: gcpSubscription.id,
 });
 
 const privateServiceConnectEndpoint = new rediscloud.PrivateServiceConnectEndpoint("example-private-service-connect-endpoint", {
-  subscriptionId: subscription.id,
+  subscriptionId: gcpSubscription.id,
   privateServiceConnectServiceId: privateServiceConnect.privateServiceConnectServiceId,
   gcpProjectId: "example-project",
   gcpVpcName: "example-vpc",
   gcpVpcSubnetName: "example-subnet",
   endpointConnectionName: "example-endpoint",
+});
+
+const privateServiceConnectAddress = new gcp.compute.Address("example-psc-address", {
+  project: "example-project",
+  name: privateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].ipAddressName),
+  subnetwork: "example-subnet",
+  addressType: "INTERNAL",
+  region: "us-central1",
+});
+
+const privateServiceConnectForwardingRule = new gcp.compute.ForwardingRule("example-psc-forwarding-rule", {
+  name: privateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].forwardingRuleName),
+  project: "example-project",
+  region: "us-central1",
+  ipAddress: privateServiceConnectAddress.id,
+  network: "example-vpc",
+  target: privateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].name),
+  loadBalancingScheme: "",
 });
 
 const privateServiceConnectEndpointAccepter = new rediscloud.PrivateServiceConnectEndpointAccepter("example-private-service-connect-accepter", {
-  subscriptionId: subscription.id,
+  subscriptionId: gcpSubscription.id,
   privateServiceConnectServiceId: privateServiceConnect.privateServiceConnectServiceId,
   privateServiceConnectEndpointId: privateServiceConnectEndpoint.privateServiceConnectEndpointId,
   action: "accept",
-});
+}, { dependsOn: [privateServiceConnectForwardingRule] });
 
 const activeActivePrivateServiceConnect = new rediscloud.ActiveActivePrivateServiceConnect("example-active-active-private-service-connect", {
-  subscriptionId: activeActiveSubscription.id,
-  regionId: activeActiveRegionLookup.regions.apply(regions => regions[0].regionId),
+  subscriptionId: gcpActiveActiveSubscription.id,
+  regionId: gcpActiveActiveRegionLookup.regions.apply(regions => regions[0].regionId),
 });
 
 const activeActivePrivateServiceConnectEndpoint = new rediscloud.ActiveActivePrivateServiceConnectEndpoint("example-active-active-private-service-connect-endpoint", {
-  subscriptionId: activeActiveSubscription.id,
-  regionId: activeActiveRegionLookup.regions.apply(regions => regions[0].regionId),
+  subscriptionId: gcpActiveActiveSubscription.id,
+  regionId: gcpActiveActiveRegionLookup.regions.apply(regions => regions[0].regionId),
   privateServiceConnectServiceId: activeActivePrivateServiceConnect.privateServiceConnectServiceId,
   gcpProjectId: "example-project",
   gcpVpcName: "example-vpc",
@@ -475,13 +563,31 @@ const activeActivePrivateServiceConnectEndpoint = new rediscloud.ActiveActivePri
   endpointConnectionName: "example-endpoint",
 });
 
+const activeActivePrivateServiceConnectAddress = new gcp.compute.Address("example-active-active-psc-address", {
+  project: "example-project",
+  name: activeActivePrivateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].ipAddressName),
+  subnetwork: "example-subnet",
+  addressType: "INTERNAL",
+  region: "us-central1",
+});
+
+const activeActivePrivateServiceConnectForwardingRule = new gcp.compute.ForwardingRule("example-active-active-psc-forwarding-rule", {
+  name: activeActivePrivateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].forwardingRuleName),
+  project: "example-project",
+  region: "us-central1",
+  ipAddress: activeActivePrivateServiceConnectAddress.id,
+  network: "example-vpc",
+  target: activeActivePrivateServiceConnectEndpoint.serviceAttachments.apply(attachments => attachments[0].name),
+  loadBalancingScheme: "",
+});
+
 const activeActivePrivateServiceConnectEndpointAccepter = new rediscloud.ActiveActivePrivateServiceConnectEndpointAccepter("example-active-active-private-service-connect-accepter", {
-  subscriptionId: activeActiveSubscription.id,
-  regionId: activeActiveRegionLookup.regions.apply(regions => regions[0].regionId),
+  subscriptionId: gcpActiveActiveSubscription.id,
+  regionId: gcpActiveActiveRegionLookup.regions.apply(regions => regions[0].regionId),
   privateServiceConnectServiceId: activeActivePrivateServiceConnect.privateServiceConnectServiceId,
   privateServiceConnectEndpointId: activeActivePrivateServiceConnectEndpoint.privateServiceConnectEndpointId,
   action: "accept",
-});
+}, { dependsOn: [activeActivePrivateServiceConnectForwardingRule] });
 ```
 
 ### Transit gateway
@@ -499,7 +605,16 @@ const activeActivePrivateServiceConnectEndpointAccepter = new rediscloud.ActiveA
 require `subscriptionId`, `regionId`, and `tgwId`. The route also requires
 `cidrs`. `action` accepts `accept` and `reject`.
 
+`sdk/go/rediscloud/transitGatewayRoute.go` and
+`sdk/go/rediscloud/activeActiveTransitGatewayRoute.go` say to configure CIDRs
+only after the attachment is accepted on both Redis Cloud and AWS, and to use
+`dependsOn`. Accept the invitation, create the attachment, accept it on AWS,
+and make the route wait for both acceptances. Install `@pulumi/aws` before
+running this section. These resources stay on the AWS subscriptions above.
+
 ```javascript
+import * as aws from "@pulumi/aws";
+
 const transitGatewayInvitations = rediscloud.getTransitGatewayInvitationsOutput({
   subscriptionId: subscription.id,
 });
@@ -519,11 +634,15 @@ const transitGatewayAttachment = new rediscloud.TransitGatewayAttachment("exampl
   tgwId: transitGateway.tgwId,
 });
 
+const transitGatewayAttachmentAccepter = new aws.ec2transitgateway.VpcAttachmentAccepter("example-transit-gateway-attachment-accepter", {
+  transitGatewayAttachmentId: transitGatewayAttachment.attachmentUid,
+});
+
 const transitGatewayRoute = new rediscloud.TransitGatewayRoute("example-transit-gateway-route", {
   subscriptionId: subscription.id,
   tgwId: transitGateway.tgwId,
   cidrs: ["10.0.20.0/24"],
-});
+}, { dependsOn: [transitGatewayInvitationAcceptor, transitGatewayAttachmentAccepter] });
 
 const activeActiveTransitGatewayInvitations = rediscloud.getActiveActiveTransitGatewayInvitationsOutput({
   subscriptionId: activeActiveSubscription.id,
@@ -550,12 +669,16 @@ const activeActiveTransitGatewayAttachment = new rediscloud.ActiveActiveTransitG
   tgwId: activeActiveTransitGateway.tgwId,
 });
 
+const activeActiveTransitGatewayAttachmentAccepter = new aws.ec2transitgateway.VpcAttachmentAccepter("example-active-active-transit-gateway-attachment-accepter", {
+  transitGatewayAttachmentId: activeActiveTransitGatewayAttachment.attachmentUid,
+});
+
 const activeActiveTransitGatewayRoute = new rediscloud.ActiveActiveTransitGatewayRoute("example-active-active-transit-gateway-route", {
   subscriptionId: activeActiveSubscription.id,
   regionId: activeActiveRegionId,
   tgwId: activeActiveTransitGateway.tgwId,
   cidrs: ["10.0.21.0/24"],
-});
+}, { dependsOn: [activeActiveTransitGatewayInvitationAcceptor, activeActiveTransitGatewayAttachmentAccepter] });
 ```
 
 ### CloudAccount
