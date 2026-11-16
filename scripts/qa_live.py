@@ -313,6 +313,11 @@ class LiveProgram:
             raise SuiteFailure("subscription output subscriptionId is missing")
         return str(outputs["subscriptionId"])
 
+    def update_acl_rule(self) -> None:
+        """Change the rule text and apply. The name stays, so this is an update."""
+        self._pulumi(["config", "set", "aclRule", "+@read ~* -@dangerous"])
+        self._pulumi(["up", "--yes", "--skip-preview"])
+
     def create_database(self, name: str, subscription_id: str) -> str:
         del subscription_id  # the program reads subscription.ID(), not this argument
         self._name = name
@@ -446,6 +451,8 @@ def run_acceptance(deps: Deps) -> None:
     destroyed = False
     try:
         created = str(deps.program.create_subscription(name, cidr))
+        deps.program.update_acl_rule()
+        deps.log("acl rule updated")
         _wait_active(
             deps,
             "subscription",

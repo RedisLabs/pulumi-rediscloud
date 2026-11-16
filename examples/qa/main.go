@@ -19,6 +19,10 @@ func main() {
 		if cfg.Get("includeDatabase") != "" {
 			includeDatabase = cfg.GetBool("includeDatabase")
 		}
+		aclRule := "+@read ~*"
+		if value := cfg.Get("aclRule"); value != "" {
+			aclRule = value
+		}
 
 		card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
 			ExcludeExpired: pulumi.BoolRef(true),
@@ -58,7 +62,7 @@ func main() {
 
 		_, err = rediscloud.NewAclRule(ctx, "rule", &rediscloud.AclRuleArgs{
 			Name: pulumi.String(name),
-			Rule: pulumi.String("+@read ~*"),
+			Rule: pulumi.String(aclRule),
 		})
 		if err != nil {
 			return err

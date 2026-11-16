@@ -37,6 +37,7 @@ class FakeProgram:
             "subscriptionId",
         ]
         self.creates: list[tuple[str, str]] = []
+        self.acl_updates = 0
         self.databases: list[tuple[str, str]] = []
         self.deletes: list[str] = []
         self.destroys = 0
@@ -47,6 +48,9 @@ class FakeProgram:
     def create_subscription(self, name: str, cidr: str) -> str:
         self.creates.append((name, cidr))
         return self.subscription_id
+
+    def update_acl_rule(self) -> None:
+        self.acl_updates += 1
 
     def create_database(self, name: str, subscription_id: str) -> str:
         self.databases.append((name, subscription_id))
@@ -485,6 +489,7 @@ class QaLiveTest(unittest.TestCase):
         self.assertIn("PaymentMethodId: pulumi.String(card.Id)", program)
         self.assertNotIn('PaymentMethodId: pulumi.String("', program)
         self.assertIn("NewAclRule", program)
+        self.assertIn("cfg.Get(\"aclRule\")", program)
         self.assertIn("NewSubscription", program)
         self.assertIn("NewSubscriptionDatabase", program)
         self.assertIn("SubscriptionId:", program)
