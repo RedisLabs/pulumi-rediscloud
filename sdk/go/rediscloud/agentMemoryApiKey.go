@@ -153,7 +153,7 @@ func (AgentMemoryApiKeyState) ElementType() reflect.Type {
 
 // AgentMemoryApiKeyExists checks whether an existing AgentMemoryApiKey resource with the given ID exists.
 func AgentMemoryApiKeyExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *AgentMemoryApiKeyState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *AgentMemoryApiKeyState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey", id, state, "", opts...)
 }
 

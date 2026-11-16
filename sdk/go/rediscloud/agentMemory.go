@@ -417,7 +417,7 @@ func (AgentMemoryState) ElementType() reflect.Type {
 
 // AgentMemoryExists checks whether an existing AgentMemory resource with the given ID exists.
 func AgentMemoryExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *AgentMemoryState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *AgentMemoryState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/agentMemory:AgentMemory", id, state, "", opts...)
 }
 

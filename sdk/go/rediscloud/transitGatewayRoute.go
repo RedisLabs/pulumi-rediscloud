@@ -155,7 +155,7 @@ func (TransitGatewayRouteState) ElementType() reflect.Type {
 
 // TransitGatewayRouteExists checks whether an existing TransitGatewayRoute resource with the given ID exists.
 func TransitGatewayRouteExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *TransitGatewayRouteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *TransitGatewayRouteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/transitGatewayRoute:TransitGatewayRoute", id, state, "", opts...)
 }
 

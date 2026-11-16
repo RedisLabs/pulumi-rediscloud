@@ -132,7 +132,7 @@ func (AclUserState) ElementType() reflect.Type {
 
 // AclUserExists checks whether an existing AclUser resource with the given ID exists.
 func AclUserExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *AclUserState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *AclUserState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/aclUser:AclUser", id, state, "", opts...)
 }
 

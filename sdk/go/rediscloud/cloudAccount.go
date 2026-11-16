@@ -167,7 +167,7 @@ func (CloudAccountState) ElementType() reflect.Type {
 
 // CloudAccountExists checks whether an existing CloudAccount resource with the given ID exists.
 func CloudAccountExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *CloudAccountState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *CloudAccountState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/cloudAccount:CloudAccount", id, state, "", opts...)
 }
 

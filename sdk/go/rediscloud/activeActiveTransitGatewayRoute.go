@@ -167,7 +167,7 @@ func (ActiveActiveTransitGatewayRouteState) ElementType() reflect.Type {
 
 // ActiveActiveTransitGatewayRouteExists checks whether an existing ActiveActiveTransitGatewayRoute resource with the given ID exists.
 func ActiveActiveTransitGatewayRouteExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActiveTransitGatewayRouteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActiveTransitGatewayRouteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute", id, state, "", opts...)
 }
 

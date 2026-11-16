@@ -95,7 +95,7 @@ func (ActiveActivePrivateServiceConnectState) ElementType() reflect.Type {
 
 // ActiveActivePrivateServiceConnectExists checks whether an existing ActiveActivePrivateServiceConnect resource with the given ID exists.
 func ActiveActivePrivateServiceConnectExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActivePrivateServiceConnectState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActivePrivateServiceConnectState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActivePrivateServiceConnect:ActiveActivePrivateServiceConnect", id, state, "", opts...)
 }
 

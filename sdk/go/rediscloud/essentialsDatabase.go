@@ -342,7 +342,7 @@ func (EssentialsDatabaseState) ElementType() reflect.Type {
 
 // EssentialsDatabaseExists checks whether an existing EssentialsDatabase resource with the given ID exists.
 func EssentialsDatabaseExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *EssentialsDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *EssentialsDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/essentialsDatabase:EssentialsDatabase", id, state, "", opts...)
 }
 

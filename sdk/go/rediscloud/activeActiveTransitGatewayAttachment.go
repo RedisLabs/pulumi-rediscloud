@@ -180,7 +180,7 @@ func (ActiveActiveTransitGatewayAttachmentState) ElementType() reflect.Type {
 
 // ActiveActiveTransitGatewayAttachmentExists checks whether an existing ActiveActiveTransitGatewayAttachment resource with the given ID exists.
 func ActiveActiveTransitGatewayAttachmentExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActiveTransitGatewayAttachmentState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActiveTransitGatewayAttachmentState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment", id, state, "", opts...)
 }
 

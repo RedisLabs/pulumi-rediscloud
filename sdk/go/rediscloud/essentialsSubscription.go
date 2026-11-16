@@ -152,7 +152,7 @@ func (EssentialsSubscriptionState) ElementType() reflect.Type {
 
 // EssentialsSubscriptionExists checks whether an existing EssentialsSubscription resource with the given ID exists.
 func EssentialsSubscriptionExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *EssentialsSubscriptionState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *EssentialsSubscriptionState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/essentialsSubscription:EssentialsSubscription", id, state, "", opts...)
 }
 

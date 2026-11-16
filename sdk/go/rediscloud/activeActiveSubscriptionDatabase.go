@@ -369,7 +369,7 @@ func (ActiveActiveSubscriptionDatabaseState) ElementType() reflect.Type {
 
 // ActiveActiveSubscriptionDatabaseExists checks whether an existing ActiveActiveSubscriptionDatabase resource with the given ID exists.
 func ActiveActiveSubscriptionDatabaseExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActiveSubscriptionDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActiveSubscriptionDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase", id, state, "", opts...)
 }
 

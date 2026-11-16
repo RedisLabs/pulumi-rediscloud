@@ -235,7 +235,7 @@ func (ActiveActivePrivateLinkState) ElementType() reflect.Type {
 
 // ActiveActivePrivateLinkExists checks whether an existing ActiveActivePrivateLink resource with the given ID exists.
 func ActiveActivePrivateLinkExists(ctx *pulumi.Context,
-	id pulumi.StringInput, state *ActiveActivePrivateLinkState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	id pulumi.IDInput, state *ActiveActivePrivateLinkState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
 	return ctx.ExistsResource("rediscloud:index/activeActivePrivateLink:ActiveActivePrivateLink", id, state, "", opts...)
 }
 
