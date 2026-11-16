@@ -13,9 +13,19 @@ func main() {
 		cfg := config.New(ctx, "")
 		name := cfg.Require("name")
 		cidr := cfg.Require("cidr")
+		cloudProvider := cfg.Require("cloudProvider")
+		region := cfg.Require("region")
 		includeDatabase := true
 		if cfg.Get("includeDatabase") != "" {
 			includeDatabase = cfg.GetBool("includeDatabase")
+		}
+		aclRule := "+@read ~*"
+		if value := cfg.Get("aclRule"); value != "" {
+			aclRule = value
+		}
+		aclRuleName := name
+		if value := cfg.Get("aclRuleName"); value != "" {
+			aclRuleName = value
 		}
 
 		card, err := rediscloud.GetPaymentMethod(ctx, &rediscloud.GetPaymentMethodArgs{
@@ -29,7 +39,7 @@ func main() {
 		}
 
 		regions, err := rediscloud.GetRegions(ctx, &rediscloud.GetRegionsArgs{
-			ProviderName: pulumi.StringRef("AWS"),
+			ProviderName: pulumi.StringRef(cloudProvider),
 		}, nil)
 		if err != nil {
 			return err
@@ -55,8 +65,8 @@ func main() {
 		}
 
 		_, err = rediscloud.NewAclRule(ctx, "rule", &rediscloud.AclRuleArgs{
-			Name: pulumi.String(name),
-			Rule: pulumi.String("+@read ~*"),
+			Name: pulumi.String(aclRuleName),
+			Rule: pulumi.String(aclRule),
 		})
 		if err != nil {
 			return err
@@ -68,10 +78,10 @@ func main() {
 			PaymentMethodId: pulumi.String(card.Id),
 			MemoryStorage:   pulumi.String("ram"),
 			CloudProvider: &rediscloud.SubscriptionCloudProviderArgs{
-				Provider: pulumi.String("AWS"),
+				Provider: pulumi.String(cloudProvider),
 				Regions: rediscloud.SubscriptionCloudProviderRegionArray{
 					&rediscloud.SubscriptionCloudProviderRegionArgs{
-						Region:                     pulumi.String("us-east-1"),
+						Region:                     pulumi.String(region),
 						MultipleAvailabilityZones:  pulumi.Bool(false),
 						NetworkingDeploymentCidr:   pulumi.String(cidr),
 						PreferredAvailabilityZones: pulumi.StringArray{},

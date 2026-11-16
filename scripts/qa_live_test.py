@@ -37,6 +37,8 @@ class FakeProgram:
             "subscriptionId",
         ]
         self.creates: list[tuple[str, str]] = []
+        self.acl_updates = 0
+        self.acl_renames = 0
         self.databases: list[tuple[str, str]] = []
         self.deletes: list[str] = []
         self.destroys = 0
@@ -47,6 +49,12 @@ class FakeProgram:
     def create_subscription(self, name: str, cidr: str) -> str:
         self.creates.append((name, cidr))
         return self.subscription_id
+
+    def update_acl_rule(self) -> None:
+        self.acl_updates += 1
+
+    def rename_acl_rule(self) -> None:
+        self.acl_renames += 1
 
     def create_database(self, name: str, subscription_id: str) -> str:
         self.databases.append((name, subscription_id))
@@ -215,6 +223,53 @@ def assert_clean(test: unittest.TestCase, log: qa_live.Log) -> None:
 
 
 class QaLiveTest(unittest.TestCase):
+    def test_target_configuration_normalizes_values_and_defaults_region_by_provider(self) -> None:
+        self.assertEqual(qa_live.target_configuration({}), ("AWS", "us-east-1", 0))
+        self.assertEqual(
+            qa_live.target_configuration(
+                {
+                    "QA_CLOUD_PROVIDER": "  gcp ",
+                    "QA_REGION": "  ",
+                    "QA_EVIDENCE_HOLD_SECONDS": "12",
+                }
+            ),
+            ("GCP", "us-central1", 12),
+        )
+        self.assertEqual(
+            qa_live.target_configuration(
+                {"QA_CLOUD_PROVIDER": " aws ", "QA_REGION": " eu-west-1 "}
+            ),
+            ("AWS", "eu-west-1", 0),
+        )
+
+    def test_live_program_config_uses_validated_target_values(self) -> None:
+        calls: list[list[str]] = []
+        program = qa_live.LiveProgram({}, qa_live.Log(), "GCP", "us-central1")
+        program._name = "test-name"
+        program._cidr = "10.0.0.0/24"
+        program._pulumi = lambda args, check=True: calls.append(args) or 0
+
+        program._config(include_database=False)
+
+        self.assertIn(["config", "set", "cloudProvider", "GCP"], calls)
+        self.assertIn(["config", "set", "region", "us-central1"], calls)
+
+    def test_rename_changes_only_the_acl_rule_name(self) -> None:
+        calls: list[list[str]] = []
+        program = qa_live.LiveProgram({}, qa_live.Log(), "AWS", "us-east-1")
+        program._name = "pulumi-ci-run"
+        program._pulumi = lambda args, check=True, log_output=False: calls.append(args) or 0
+
+        program.rename_acl_rule()
+
+        self.assertEqual(
+            calls,
+            [
+                ["config", "set", "aclRuleName", "pulumi-ci-run-renamed"],
+                ["up", "--yes", "--skip-preview"],
+            ],
+        )
+
     def test_leftover_pulumi_ci_subscription_is_deleted_before_create(self) -> None:
         subscriptions = [
             {
@@ -368,6 +423,8 @@ class QaLiveTest(unittest.TestCase):
             opener = forwarder(server.httpd.server_address[1], hosts)
             deps = deps_for("https://qa.example.test/v1/", program, opener, run_id="run7")
             qa_live.run_acceptance(deps)
+            self.assertEqual(program.acl_updates, 1)
+            self.assertEqual(program.acl_renames, 1)
             self.assertEqual(program.creates, [("pulumi-ci-run7", "10.0.2.0/24")])
             self.assertEqual(program.databases, [("pulumi-ci-run7", "101")])
             self.assertEqual(program.destroys, 1)
@@ -454,6 +511,11 @@ class QaLiveTest(unittest.TestCase):
         self.assertIn("PaymentMethodId: pulumi.String(card.Id)", program)
         self.assertNotIn('PaymentMethodId: pulumi.String("', program)
         self.assertIn("NewAclRule", program)
+        self.assertIn("cfg.Get(\"aclRule\")", program)
+        self.assertIn("cfg.Get(\"aclRuleName\")", program)
+        live = (REPO / "scripts" / "qa_live.py").read_text()
+        self.assertIn("aclRuleName", live)
+        self.assertIn('self._name + "-renamed"', live)
         self.assertIn("NewSubscription", program)
         self.assertIn("NewSubscriptionDatabase", program)
         self.assertIn("SubscriptionId:", program)
@@ -474,9 +536,11 @@ class QaLiveTest(unittest.TestCase):
         self.assertNotIn("ci-success", text)
         self.assertIn('cron: "17 8 * * *"', text)
         self.assertIn("workflow_dispatch", text)
+        self.assertIn("description: Provider region (defaults by cloud provider)", text)
+        self.assertIn("QA_REGION: ${{ inputs.region || '' }}", text)
         self.assertIn("group: qa-live", text)
         self.assertIn("cancel-in-progress: false", text)
-        self.assertIn("timeout-minutes: 120", text)
+        self.assertIn("timeout-minutes: 180", text)
         self.assertIn("pulumi login --local", text)
         self.assertIn("pulumi plugin install resource rediscloud 0.0.0 --file", text)
         self.assertIn("bin/pulumi-resource-rediscloud", text)

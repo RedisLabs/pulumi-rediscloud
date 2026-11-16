@@ -293,9 +293,11 @@ class HttpCloud:
 class LiveProgram:
     """Run examples/qa. The program creates the ACL rule, subscription, and database."""
 
-    def __init__(self, env: dict[str, str], log: Log) -> None:
+    def __init__(self, env: dict[str, str], log: Log, cloud_provider: str, region: str) -> None:
         self.env = env
         self.log = log
+        self.cloud_provider = cloud_provider
+        self.region = region
         self._name = ""
         self._cidr = ""
         self._outputs: dict = {}
@@ -310,6 +312,16 @@ class LiveProgram:
         if "subscriptionId" not in outputs:
             raise SuiteFailure("subscription output subscriptionId is missing")
         return str(outputs["subscriptionId"])
+
+    def update_acl_rule(self) -> None:
+        """Change the rule text and apply. The name stays, so this is an update."""
+        self._pulumi(["config", "set", "aclRule", "+@read ~* -@dangerous"])
+        self._pulumi(["up", "--yes", "--skip-preview"])
+
+    def rename_acl_rule(self) -> None:
+        """Change only the rule name and apply. The rule text stays."""
+        self._pulumi(["config", "set", "aclRuleName", self._name + "-renamed"])
+        self._pulumi(["up", "--yes", "--skip-preview"], log_output=True)
 
     def create_database(self, name: str, subscription_id: str) -> str:
         del subscription_id  # the program reads subscription.ID(), not this argument
@@ -340,6 +352,8 @@ class LiveProgram:
         flag = "true" if include_database else "false"
         self._pulumi(["config", "set", "name", self._name])
         self._pulumi(["config", "set", "cidr", self._cidr])
+        self._pulumi(["config", "set", "cloudProvider", self.cloud_provider])
+        self._pulumi(["config", "set", "region", self.region])
         self._pulumi(["config", "set", "includeDatabase", flag])
 
     def _read_outputs(self) -> dict:
@@ -354,10 +368,19 @@ class LiveProgram:
         self._outputs = data
         return data
 
-    def _pulumi(self, args: list[str], check: bool = True) -> int:
+    def _pulumi(self, args: list[str], check: bool = True, log_output: bool = False) -> int:
         completed = self._run(args)
         self.log(f"pulumi {args[0]} exit {completed.returncode}")
-        if check and completed.returncode != 0:
+        failed = check and completed.returncode != 0
+        if failed or log_output:
+            detail = "\n".join(
+                part.strip()
+                for part in (completed.stdout, completed.stderr)
+                if part and part.strip()
+            )
+            if detail:
+                self.log(detail[-4000:])
+        if failed:
             raise SuiteFailure(f"pulumi {args[0]} exit {completed.returncode}")
         return completed.returncode
 
@@ -382,6 +405,9 @@ class Deps:
         log: Log,
         sleep=time.sleep,
         now=time.monotonic,
+        cloud_provider: str = "AWS",
+        region: str = "us-east-1",
+        evidence_hold_seconds: int = 0,
     ) -> None:
         self.url = url
         self.run_id = run_id
@@ -390,6 +416,9 @@ class Deps:
         self.log = log
         self.sleep = sleep
         self.now = now
+        self.cloud_provider = cloud_provider
+        self.region = region
+        self.evidence_hold_seconds = evidence_hold_seconds
         self.poll = 30.0
         self.timeouts = {
             "subscription": 2700.0,
@@ -431,10 +460,15 @@ def run_acceptance(deps: Deps) -> None:
     cidr = choose_cidr(deployment_cidrs(subscriptions))
     deps.log(f"cidr {cidr}")
     name = f"{PREFIX}{run_id}"
+    deps.log(f"target cloud {deps.cloud_provider} region {deps.region} name {name}")
     created = None
     destroyed = False
     try:
         created = str(deps.program.create_subscription(name, cidr))
+        deps.program.update_acl_rule()
+        deps.log("acl rule updated")
+        deps.program.rename_acl_rule()
+        deps.log("acl rule renamed")
         _wait_active(
             deps,
             "subscription",
@@ -457,6 +491,13 @@ def run_acceptance(deps: Deps) -> None:
         missing = [item for item in OUTPUT_NAMES if item not in names]
         if missing:
             raise SuiteFailure("missing output name " + ",".join(missing))
+        deps.log(
+            f"active evidence checkpoint subscription {created} database {database_id} "
+            f"cloud {deps.cloud_provider} region {deps.region}"
+        )
+        if deps.evidence_hold_seconds > 0:
+            deps.log(f"evidence hold {deps.evidence_hold_seconds} seconds")
+            deps.sleep(float(deps.evidence_hold_seconds))
         deps.program.destroy()
         destroyed = True
         database_code = _wait_http(deps, "database", lambda: deps.cloud.get_database(created, database_id))
@@ -534,20 +575,46 @@ def _provider_env(base: dict[str, str] | None = None) -> tuple[dict[str, str], L
     return env, log
 
 
+def target_configuration(env: dict[str, str]) -> tuple[str, str, int]:
+    provider = env.get("QA_CLOUD_PROVIDER", "AWS").strip().upper()
+    if provider not in {"AWS", "GCP"}:
+        raise SuiteFailure("QA_CLOUD_PROVIDER must be AWS or GCP")
+    region = env.get("QA_REGION", "").strip()
+    if not region:
+        region = {"AWS": "us-east-1", "GCP": "us-central1"}[provider]
+    try:
+        hold = int(env.get("QA_EVIDENCE_HOLD_SECONDS", "0"))
+    except ValueError as exc:
+        raise SuiteFailure("QA_EVIDENCE_HOLD_SECONDS is not an integer") from exc
+    if hold < 0 or hold > 1800:
+        raise SuiteFailure("QA_EVIDENCE_HOLD_SECONDS must be between 0 and 1800")
+    return provider, region, hold
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="QA nightly acceptance")
     parser.add_argument("--cleanup-only", action="store_true")
     args = parser.parse_args(argv)
     env, log = _provider_env()
     run_id = env.get("QA_RUN_ID") or env.get("GITHUB_RUN_ID") or "local"
+    provider, region, hold = target_configuration(env)
     cloud = HttpCloud(
         env.get("REDISCLOUD_URL", ""),
         env.get("REDISCLOUD_ACCESS_KEY", ""),
         env.get("REDISCLOUD_SECRET_KEY", ""),
         log,
     )
-    program = LiveProgram(env, log)
-    deps = Deps(env.get("REDISCLOUD_URL", ""), run_id, cloud, program, log)
+    program = LiveProgram(env, log, provider, region)
+    deps = Deps(
+        env.get("REDISCLOUD_URL", ""),
+        run_id,
+        cloud,
+        program,
+        log,
+        cloud_provider=provider,
+        region=region,
+        evidence_hold_seconds=hold,
+    )
     try:
         if args.cleanup_only:
             cleanup_only(deps)

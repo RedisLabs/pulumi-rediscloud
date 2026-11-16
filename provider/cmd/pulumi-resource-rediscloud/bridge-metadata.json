@@ -187,6 +187,121 @@
                     }
                 }
             },
+            "rediscloud_agent_memory": {
+                "current": "rediscloud:index/agentMemory:AgentMemory",
+                "majorVersion": 1,
+                "fields": {
+                    "custom_memory_types": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "extraction_strategy": {
+                                    "maxItemsOne": true
+                                },
+                                "fields": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "embedding": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "credentials": {
+                                    "maxItemsOne": true
+                                }
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "maxItemsOne": false,
+                        "elem": {
+                            "fields": {
+                                "egress_ips": {
+                                    "maxItemsOne": false
+                                }
+                            }
+                        }
+                    },
+                    "llm": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "credentials": {
+                                    "maxItemsOne": true
+                                }
+                            }
+                        }
+                    },
+                    "long_term_memory_exclusions": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "built_in_detectors": {
+                                    "maxItemsOne": true,
+                                    "elem": {
+                                        "fields": {
+                                            "detectors": {
+                                                "maxItemsOne": false
+                                            }
+                                        }
+                                    }
+                                },
+                                "custom_detectors": {
+                                    "maxItemsOne": true,
+                                    "elem": {
+                                        "fields": {
+                                            "detectors": {
+                                                "maxItemsOne": false,
+                                                "elem": {
+                                                    "fields": {
+                                                        "matcher": {
+                                                            "maxItemsOne": true,
+                                                            "elem": {
+                                                                "fields": {
+                                                                    "regex": {
+                                                                        "maxItemsOne": true
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "semantic": {
+                                    "maxItemsOne": true
+                                }
+                            }
+                        }
+                    },
+                    "summarization": {
+                        "maxItemsOne": true,
+                        "elem": {
+                            "fields": {
+                                "event_count": {
+                                    "maxItemsOne": true
+                                }
+                            }
+                        }
+                    },
+                    "timeouts": {
+                        "maxItemsOne": true
+                    }
+                }
+            },
+            "rediscloud_agent_memory_api_key": {
+                "current": "rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey",
+                "majorVersion": 1,
+                "fields": {
+                    "timeouts": {
+                        "maxItemsOne": true
+                    }
+                }
+            },
             "rediscloud_cloud_account": {
                 "current": "rediscloud:index/cloudAccount:CloudAccount",
                 "majorVersion": 1
@@ -849,6 +964,8 @@
     "default-resource-schema-fixups": {
         "resources": {
             "rediscloud_active_active_subscription_database": {},
+            "rediscloud_agent_memory": {},
+            "rediscloud_agent_memory_api_key": {},
             "rediscloud_cloud_account": {}
         }
     },
@@ -868,6 +985,8 @@
             "rediscloud:index/activeActiveTransitGatewayAttachment:ActiveActiveTransitGatewayAttachment": 0,
             "rediscloud:index/activeActiveTransitGatewayInvitationAcceptor:ActiveActiveTransitGatewayInvitationAcceptor": 0,
             "rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute": 0,
+            "rediscloud:index/agentMemory:AgentMemory": 1,
+            "rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey": 1,
             "rediscloud:index/cloudAccount:CloudAccount": 1,
             "rediscloud:index/essentialsDatabase:EssentialsDatabase": 0,
             "rediscloud:index/essentialsSubscription:EssentialsSubscription": 0,

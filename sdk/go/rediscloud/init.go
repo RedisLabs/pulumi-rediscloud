@@ -49,6 +49,10 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &ActiveActiveTransitGatewayInvitationAcceptor{}
 	case "rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute":
 		r = &ActiveActiveTransitGatewayRoute{}
+	case "rediscloud:index/agentMemory:AgentMemory":
+		r = &AgentMemory{}
+	case "rediscloud:index/agentMemoryApiKey:AgentMemoryApiKey":
+		r = &AgentMemoryApiKey{}
 	case "rediscloud:index/cloudAccount:CloudAccount":
 		r = &CloudAccount{}
 	case "rediscloud:index/essentialsDatabase:EssentialsDatabase":
@@ -174,6 +178,16 @@ func init() {
 	pulumi.RegisterResourceModule(
 		"rediscloud",
 		"index/activeActiveTransitGatewayRoute",
+		&module{version},
+	)
+	pulumi.RegisterResourceModule(
+		"rediscloud",
+		"index/agentMemory",
+		&module{version},
+	)
+	pulumi.RegisterResourceModule(
+		"rediscloud",
+		"index/agentMemoryApiKey",
 		&module{version},
 	)
 	pulumi.RegisterResourceModule(

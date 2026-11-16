@@ -119,8 +119,8 @@ func TestSchemaResourceAndDataSourceCounts(t *testing.T) {
 	if err := json.Unmarshal(contents, &schema); err != nil {
 		t.Fatal(err)
 	}
-	if len(schema.Resources) != 27 {
-		t.Fatalf("resources = %d, want 27", len(schema.Resources))
+	if len(schema.Resources) != 29 {
+		t.Fatalf("resources = %d, want 29", len(schema.Resources))
 	}
 	const providerConfig = "pulumi:providers:rediscloud/terraformConfig"
 	if _, ok := schema.Functions[providerConfig]; !ok {
