@@ -18,9 +18,9 @@ Source: `provider/resources.go`; Terraform provider resources of the same name.
 
 ## Alignment
 
-Keeping a generated Redis Cloud provider on a named `terraform-provider-rediscloud` release. The Crossplane provider records that in `docs/terraform-alignment.md` and is aligned to v2.19.3. This Pulumi provider is aligned to the same Terraform release. Later Terraform releases open a pull request that does not merge itself.
+Keeping this generated provider on a named `terraform-provider-rediscloud` release. `provider/go.mod` requires pseudo-version `v1.9.1-0.20261104071649-89239cdf9846`, which is Terraform provider v2.20.0, and `github.com/pulumi/pulumi-terraform-bridge/v3` v3.143.0. A newer Terraform release opens a pull request that does not merge itself.
 
-Source: `RedisLabs/crossplane-provider-rediscloud` `docs/terraform-alignment.md`; `provider/go.mod`.
+Source: `provider/go.mod`; `.github/workflows/terraform-release.yaml`.
 
 ## Any Terraform Provider
 
@@ -44,15 +44,15 @@ Source: Terraform provider schema for `url`; `provider/resources.go`.
 
 ## Essentials
 
-Redis Cloud fixed and free plans. Terraform resources use the prefix `rediscloud_essentials_`. This Pulumi provider exposes those resources and their data sources from the Terraform v2.19.3 schema.
+Redis Cloud fixed and free plans. Terraform resources use the prefix `rediscloud_essentials_`. This Pulumi provider exposes those resources and their data sources from the Terraform v2.20.0 schema.
 
-Source: Terraform provider changelog 1.7.0; `provider/cmd/pulumi-resource-rediscloud/schema.json`.
+Source: `provider/cmd/pulumi-resource-rediscloud/schema.json`.
 
 ## Mux
 
-The Terraform provider serving Plugin SDK resources and Plugin Framework resources on one gRPC server. Bridge v3.142.0 wraps that server with `MuxShimWithDisjointgPF` and `MainWithMuxer`. This repository loads Terraform v2.19.3 that way. Bridge v3.60.1 could only load a provider with `shimv2.NewProvider` and cannot serve that server.
+The Terraform provider serving Plugin SDK resources and Plugin Framework resources on one gRPC server. Bridge v3.143.0 wraps that server with `MuxShimWithDisjointgPF` and `MainWithMuxer`. This repository loads Terraform v2.20.0 that way. Bridge v3.60.1 could only load a provider with `shimv2.NewProvider` and cannot serve that server.
 
-Source: bridge guide `docs/guides/upgrade-sdk-to-mux.md` at v3.142.0; Terraform `main.go` at v2.19.3; `provider/resources.go`.
+Source: `provider/resources.go`; `provider/cmd/pulumi-resource-rediscloud/main.go`; `provider/cmd/pulumi-tfgen-rediscloud/main.go`; `provider/go.mod`.
 
 ## Native provider
 
@@ -64,7 +64,15 @@ Source: Pulumi docs, "Write a native provider", read 1 November 2026.
 
 Redis Cloud flexible subscription. Terraform keeps the public names `rediscloud_subscription` and `rediscloud_subscription_database` (Pulumi: `Subscription` and `SubscriptionDatabase`). The README calls this tier Flexible. In the current Terraform provider the implementation lives under `provider/pro`.
 
-Source: this repo's README; Terraform provider `provider/sdk_provider.go` comments at v2.19.3.
+Source: this repo's README.
+
+## Provider release
+
+A provider release is a `vX.Y.Z` tag push. That push runs `.github/workflows/release.yaml`, which publishes the GitHub release, the npm package, and the PyPI package. A tag under `sdk/` is not a provider release. Java and NuGet stay unpublished.
+
+Not to be confused with an `sdk/vX.Y.Z` tag, including `sdk/v1.3.5`.
+
+Source: [RELEASE.md](RELEASE.md); `.github/workflows/release.yaml`.
 
 ## Pulumi Terraform Bridge
 
@@ -82,7 +90,7 @@ Source: [the refresh plan](analysis/design/pulumi-provider-refresh.md).
 
 ## rediscloud-go-api
 
-Go client module `github.com/RedisLabs/rediscloud-go-api` for the Cloud API. The Terraform provider is the caller. This repo receives it indirectly from `terraform-provider-rediscloud` v2.19.3, which selects v0.52.1.
+Go client module `github.com/RedisLabs/rediscloud-go-api` for the Cloud API. The Terraform provider is the caller. This repo receives it indirectly from `terraform-provider-rediscloud` v2.20.0. `provider/go.mod` records v0.53.0 as an indirect requirement.
 
 Source: `provider/go.mod`.
 
