@@ -86,6 +86,8 @@ import (
 //						Name:                          pulumi.String("us-east-1"),
 //						OverrideGlobalDataPersistence: pulumi.String("none"),
 //						OverrideGlobalPassword:        pulumi.String("region-specific-password"),
+//						LocalReadOperationsPerSecond:  pulumi.Int(2000),
+//						LocalWriteOperationsPerSecond: pulumi.Int(1000),
 //					},
 //				},
 //				SubscriptionId:        subscription_resource.ID(),
@@ -363,6 +365,12 @@ type ActiveActiveSubscriptionDatabaseState struct {
 
 func (ActiveActiveSubscriptionDatabaseState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActiveSubscriptionDatabaseState)(nil)).Elem()
+}
+
+// ActiveActiveSubscriptionDatabaseExists checks whether an existing ActiveActiveSubscriptionDatabase resource with the given ID exists.
+func ActiveActiveSubscriptionDatabaseExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveSubscriptionDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveSubscriptionDatabase:ActiveActiveSubscriptionDatabase", id, state, "", opts...)
 }
 
 type activeActiveSubscriptionDatabaseArgs struct {

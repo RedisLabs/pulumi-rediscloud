@@ -20,14 +20,14 @@ import track_terraform_release as track
 
 REPO = Path(__file__).resolve().parents[1]
 CURRENT = track.Release(
-    tag="v2.19.3",
-    commit="ca1e97245378dc8e4be6413cf1745ef6805dc66d",
-    committed_at=datetime(2026, 10, 28, 13, 9, 56, tzinfo=timezone.utc),
+    tag="v2.20.0",
+    commit="89239cdf9846fee2909be9b171c3a13a1dd172a0",
+    committed_at=datetime(2026, 11, 4, 7, 16, 49, tzinfo=timezone.utc),
 )
 NEWER = track.Release(
-    tag="v2.20.0",
+    tag="v2.21.0",
     commit="0123456789abcdef0123456789abcdef01234567",
-    committed_at=datetime(2026, 11, 1, 12, 0, 0, tzinfo=timezone.utc),
+    committed_at=datetime(2026, 11, 16, 7, 0, 0, tzinfo=timezone.utc),
 )
 
 
@@ -161,7 +161,7 @@ class TrackTerraformReleaseTest(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertEqual(opened, [])
             self.assertEqual((provider / "go.mod").read_text(), self.original)
-            self.assertIn("decision=none pin=v2.19.3 candidate=v2.19.3", output.getvalue())
+            self.assertIn("decision=none pin=v2.20.0 candidate=v2.20.0", output.getvalue())
 
     def test_newer_tag_changes_only_the_pin(self) -> None:
         updated = track.apply_pin(self.original, NEWER)
@@ -174,16 +174,16 @@ class TrackTerraformReleaseTest(unittest.TestCase):
             changed,
             [
                 (
-                    "\t// v2.19.3 is commit ca1e97245378dc8e4be6413cf1745ef6805dc66d.",
-                    "\t// v2.20.0 is commit 0123456789abcdef0123456789abcdef01234567.",
+                    "\t// v2.20.0 is commit 89239cdf9846fee2909be9b171c3a13a1dd172a0.",
+                    "\t// v2.21.0 is commit 0123456789abcdef0123456789abcdef01234567.",
                 ),
                 (
-                    "\t// Go rejects the v2.19.3 tag because that module path has no /v2 suffix.",
                     "\t// Go rejects the v2.20.0 tag because that module path has no /v2 suffix.",
+                    "\t// Go rejects the v2.21.0 tag because that module path has no /v2 suffix.",
                 ),
                 (
-                    "\tgithub.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261028130956-ca1e97245378",
-                    "\tgithub.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261101120000-0123456789ab",
+                    "\tgithub.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261104071649-89239cdf9846",
+                    "\tgithub.com/RedisLabs/terraform-provider-rediscloud v1.9.1-0.20261116070000-0123456789ab",
                 ),
             ],
         )
@@ -229,9 +229,9 @@ class TrackTerraformReleaseTest(unittest.TestCase):
                 self.assertEqual(committed, updated)
                 parent = git(repo, "show", "HEAD^:provider/go.mod").stdout
                 self.assertEqual(parent, self.original)
-                remote = git(repo, "ls-remote", "origin", "refs/heads/track/terraform-provider-v2.20.0").stdout
+                remote = git(repo, "ls-remote", "origin", "refs/heads/track/terraform-provider-v2.21.0").stdout
                 self.assertEqual(remote, "")
-                os.environ["TRACK_CANDIDATE"] = "v2.20.0"
+                os.environ["TRACK_CANDIDATE"] = "v2.21.0"
                 os.environ["TRACK_BUNDLE"] = str(bundle_dir / "track-release.bundle")
                 git(repo, "checkout", "main")
                 code = track.main(
@@ -281,12 +281,12 @@ class TrackTerraformReleaseTest(unittest.TestCase):
             self.assertEqual(timeout, 30)
             urls.append(request.full_url)
             if request.full_url.endswith("/releases/latest"):
-                return Response({"tag_name": "v2.19.3", "target_commitish": "main"})
-            if request.full_url.endswith("/commits/v2.19.3"):
+                return Response({"tag_name": "v2.20.0", "target_commitish": "main"})
+            if request.full_url.endswith("/commits/v2.20.0"):
                 return Response(
                     {
                         "sha": CURRENT.commit,
-                        "commit": {"committer": {"date": "2026-10-28T13:09:56Z"}},
+                        "commit": {"committer": {"date": "2026-11-04T07:16:49Z"}},
                     }
                 )
             raise AssertionError(request.full_url)

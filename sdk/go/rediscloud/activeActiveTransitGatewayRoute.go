@@ -165,6 +165,12 @@ func (ActiveActiveTransitGatewayRouteState) ElementType() reflect.Type {
 	return reflect.TypeOf((*activeActiveTransitGatewayRouteState)(nil)).Elem()
 }
 
+// ActiveActiveTransitGatewayRouteExists checks whether an existing ActiveActiveTransitGatewayRoute resource with the given ID exists.
+func ActiveActiveTransitGatewayRouteExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *ActiveActiveTransitGatewayRouteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/activeActiveTransitGatewayRoute:ActiveActiveTransitGatewayRoute", id, state, "", opts...)
+}
+
 type activeActiveTransitGatewayRouteArgs struct {
 	// A list of consumer CIDR blocks
 	Cidrs []string `pulumi:"cidrs"`

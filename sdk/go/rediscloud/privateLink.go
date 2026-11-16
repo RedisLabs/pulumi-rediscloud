@@ -217,6 +217,12 @@ func (PrivateLinkState) ElementType() reflect.Type {
 	return reflect.TypeOf((*privateLinkState)(nil)).Elem()
 }
 
+// PrivateLinkExists checks whether an existing PrivateLink resource with the given ID exists.
+func PrivateLinkExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *PrivateLinkState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/privateLink:PrivateLink", id, state, "", opts...)
+}
+
 type privateLinkArgs struct {
 	// The principal(s) attached to the PrivateLink.
 	Principals []PrivateLinkPrincipal `pulumi:"principals"`

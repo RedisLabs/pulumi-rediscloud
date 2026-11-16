@@ -124,6 +124,12 @@ func (AclRoleState) ElementType() reflect.Type {
 	return reflect.TypeOf((*aclRoleState)(nil)).Elem()
 }
 
+// AclRoleExists checks whether an existing AclRole resource with the given ID exists.
+func AclRoleExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *AclRoleState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/aclRole:AclRole", id, state, "", opts...)
+}
+
 type aclRoleArgs struct {
 	// A meaningful name for the role. Must be unique.
 	Name *string `pulumi:"name"`

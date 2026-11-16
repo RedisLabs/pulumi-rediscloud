@@ -84,6 +84,12 @@ func (PrivateServiceConnectState) ElementType() reflect.Type {
 	return reflect.TypeOf((*privateServiceConnectState)(nil)).Elem()
 }
 
+// PrivateServiceConnectExists checks whether an existing PrivateServiceConnect resource with the given ID exists.
+func PrivateServiceConnectExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *PrivateServiceConnectState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/privateServiceConnect:PrivateServiceConnect", id, state, "", opts...)
+}
+
 type privateServiceConnectArgs struct {
 	// The ID of the Pro subscription to attach **Modifying this attribute will force creation of a new resource.**
 	SubscriptionId string `pulumi:"subscriptionId"`

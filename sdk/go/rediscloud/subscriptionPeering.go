@@ -265,6 +265,12 @@ func (SubscriptionPeeringState) ElementType() reflect.Type {
 	return reflect.TypeOf((*subscriptionPeeringState)(nil)).Elem()
 }
 
+// SubscriptionPeeringExists checks whether an existing SubscriptionPeering resource with the given ID exists.
+func SubscriptionPeeringExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *SubscriptionPeeringState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/subscriptionPeering:SubscriptionPeering", id, state, "", opts...)
+}
+
 type subscriptionPeeringArgs struct {
 	// AWS account ID that the VPC to be peered lives in. **Modifying this attribute will force creation of a new resource.**
 	AwsAccountId *string `pulumi:"awsAccountId"`

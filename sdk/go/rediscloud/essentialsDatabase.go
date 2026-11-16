@@ -340,6 +340,12 @@ func (EssentialsDatabaseState) ElementType() reflect.Type {
 	return reflect.TypeOf((*essentialsDatabaseState)(nil)).Elem()
 }
 
+// EssentialsDatabaseExists checks whether an existing EssentialsDatabase resource with the given ID exists.
+func EssentialsDatabaseExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *EssentialsDatabaseState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("rediscloud:index/essentialsDatabase:EssentialsDatabase", id, state, "", opts...)
+}
+
 type essentialsDatabaseArgs struct {
 	// A block defining Redis database alert. Can be specified multiple times. Documented below.
 	Alerts []EssentialsDatabaseAlert `pulumi:"alerts"`
