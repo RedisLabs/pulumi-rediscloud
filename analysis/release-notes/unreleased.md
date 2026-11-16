@@ -18,9 +18,9 @@ These unreleased notes do not mean the refreshed provider has been published.
 
 Compared with v1.3.5:
 
-- Pulumi Terraform Bridge v3.60.1 is now v3.142.0.
-- Terraform provider v1.3.1 is now v2.19.3. The Go require line is the pseudo-version of that tag, because the module path has no `/v2` suffix.
-- Resources go from 11 to 27. Data sources go from 11 to 29.
+- Pulumi Terraform Bridge v3.60.1 is now v3.143.0. The provider module's Pulumi SDK is v3.274.0. Go is 1.26.11.
+- Terraform provider v1.3.1 is now v2.20.0. The Go require line is the pseudo-version of that tag, because the module path has no `/v2` suffix.
+- Resources go from 11 to 29. Data sources go from 11 to 29. The two resources added by Terraform v2.20.0 are Agent Memory and Agent Memory API key.
 - Pull requests run the `ci-success` check. The nightly QA suite is not a required check, and it refuses the production API host.
 - A manual build can produce the provider and the Node.js, Python, Go, and .NET SDKs without publishing. The tag workflow uses GoReleaser v2 with `--clean`. Java is not published. NuGet stays unpublished.
 
@@ -30,5 +30,6 @@ These behavior changes make this a new major even where the tokens stay the same
 - `REDISCLOUD_ACCESS_KEY` is the API key environment variable. `REDISCLOUD_API_KEY` still works when `REDISCLOUD_ACCESS_KEY` is unset.
 - The database has `redis_version`.
 - Terraform defaults apply for `auto_minor_version_upgrade`, `source_ips`, and `enable_default_user`.
+- An ACL rule update sends the name only when the name changes. v1.3.5 sent the current name on every rule change, and the Cloud API answered `ACL_REDIS_RULE_NAME_ALREADY_EXISTS`. A rule-text change and a rename now update the existing rule. QA proved both on 16 Nov 2026.
 
 Java is not in this refresh.
