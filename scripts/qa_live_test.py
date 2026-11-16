@@ -38,6 +38,7 @@ class FakeProgram:
         ]
         self.creates: list[tuple[str, str]] = []
         self.acl_updates = 0
+        self.acl_renames = 0
         self.databases: list[tuple[str, str]] = []
         self.deletes: list[str] = []
         self.destroys = 0
@@ -51,6 +52,9 @@ class FakeProgram:
 
     def update_acl_rule(self) -> None:
         self.acl_updates += 1
+
+    def rename_acl_rule(self) -> None:
+        self.acl_renames += 1
 
     def create_database(self, name: str, subscription_id: str) -> str:
         self.databases.append((name, subscription_id))
@@ -250,6 +254,22 @@ class QaLiveTest(unittest.TestCase):
         self.assertIn(["config", "set", "cloudProvider", "GCP"], calls)
         self.assertIn(["config", "set", "region", "us-central1"], calls)
 
+    def test_rename_changes_only_the_acl_rule_name(self) -> None:
+        calls: list[list[str]] = []
+        program = qa_live.LiveProgram({}, qa_live.Log(), "AWS", "us-east-1")
+        program._name = "pulumi-ci-run"
+        program._pulumi = lambda args, check=True, log_output=False: calls.append(args) or 0
+
+        program.rename_acl_rule()
+
+        self.assertEqual(
+            calls,
+            [
+                ["config", "set", "aclRuleName", "pulumi-ci-run-renamed"],
+                ["up", "--yes", "--skip-preview"],
+            ],
+        )
+
     def test_leftover_pulumi_ci_subscription_is_deleted_before_create(self) -> None:
         subscriptions = [
             {
@@ -403,6 +423,8 @@ class QaLiveTest(unittest.TestCase):
             opener = forwarder(server.httpd.server_address[1], hosts)
             deps = deps_for("https://qa.example.test/v1/", program, opener, run_id="run7")
             qa_live.run_acceptance(deps)
+            self.assertEqual(program.acl_updates, 1)
+            self.assertEqual(program.acl_renames, 1)
             self.assertEqual(program.creates, [("pulumi-ci-run7", "10.0.2.0/24")])
             self.assertEqual(program.databases, [("pulumi-ci-run7", "101")])
             self.assertEqual(program.destroys, 1)
@@ -490,6 +512,10 @@ class QaLiveTest(unittest.TestCase):
         self.assertNotIn('PaymentMethodId: pulumi.String("', program)
         self.assertIn("NewAclRule", program)
         self.assertIn("cfg.Get(\"aclRule\")", program)
+        self.assertIn("cfg.Get(\"aclRuleName\")", program)
+        live = (REPO / "scripts" / "qa_live.py").read_text()
+        self.assertIn("aclRuleName", live)
+        self.assertIn('self._name + "-renamed"', live)
         self.assertIn("NewSubscription", program)
         self.assertIn("NewSubscriptionDatabase", program)
         self.assertIn("SubscriptionId:", program)
