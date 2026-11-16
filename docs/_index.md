@@ -4,7 +4,7 @@ meta_desc: Provides an overview of the RedisCloud Provider for Pulumi.
 layout: package
 ---
 
-The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private service connect, private link, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.19.3.
+The [Redis Cloud](https://redis.com) Resource Provider lets you manage Redis Cloud resources. The provider is used to interact with the resources supported by Redis Enterprise Cloud. It covers Pro (Flexible) and Annual subscriptions, Essentials (Fixed and Free) plans, Active-Active, ACL, cloud accounts, private service connect, private link, and transit gateway attachments. The schema matches `terraform-provider-rediscloud` v2.20.0.
 
 ## Example
 
