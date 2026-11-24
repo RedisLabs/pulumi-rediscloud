@@ -2,7 +2,7 @@
 """Nightly QA acceptance for one ACL rule, one Pro subscription, and one database.
 
 The Pulumi program in examples/qa creates the resources. This wrapper refuses a
-missing or production REDISCLOUD_URL, deletes leftover pulumi-ci- subscriptions
+missing or production REDISCLOUD_URL, refuses leftover pulumi-ci- subscriptions
 before create, picks a deployment CIDR, destroys on a failed database step, and
 checks HTTP 404 after destroy. Hermetic tests point the HTTP client at a fake
 server. This script does not call Redis Cloud unless a person runs it with a
@@ -133,28 +133,33 @@ def prefixed(subscriptions: list) -> list:
 
 def subscription_rows(body: object) -> list:
     if isinstance(body, dict):
-        rows = body.get("subscriptions") or []
-        return list(rows) if isinstance(rows, list) else []
-    if isinstance(body, list):
-        return body
-    return []
-
-
-def database_rows(body: object) -> list:
-    if not isinstance(body, dict):
-        return []
-    rows = []
-    for sub in body.get("subscription") or []:
-        if isinstance(sub, dict):
-            databases = sub.get("databases") or []
-            if isinstance(databases, list):
-                rows.extend(databases)
+        if any(body.get(key) for key in ("next", "nextPage", "nextToken", "cursor", "links", "_links", "pagination", "hasMore", "hasNext", "truncated", "isTruncated")):
+            raise SuiteFailure("subscription inventory indicates incomplete results")
+        rows = body.get("subscriptions")
+    else:
+        rows = body
+    if not isinstance(rows, list):
+        raise SuiteFailure("subscription inventory is malformed")
+    if len(rows) > 10000:
+        raise SuiteFailure("subscription inventory exceeds its safety bound")
+    if isinstance(body, dict):
+        for key in ("total", "totalCount", "totalRecords", "numberOfSubscriptions"):
+            if key in body and (type(body[key]) is not int or body[key] != len(rows)):
+                raise SuiteFailure("subscription inventory count mismatch")
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get("name"), str) or not row["name"].strip():
+            raise SuiteFailure("subscription inventory row is malformed")
+        identifier = str(int(safe_resource_id(row.get("id"))))
+        if identifier in seen:
+            raise SuiteFailure("subscription inventory contains duplicate IDs")
+        seen.add(identifier)
     return rows
 
 
 def safe_resource_id(value: object) -> str:
     text = str(value).strip()
-    if not RESOURCE_ID.fullmatch(text):
+    if not RESOURCE_ID.fullmatch(text) or int(text) <= 0:
         raise SuiteFailure("resource id is not safe to place in a path")
     return text
 
@@ -239,23 +244,6 @@ class HttpCloud:
         code, body = self._json("GET", path)
         self.log.absorb(body)
         return code
-
-    def delete_run_subscription(self, subscription_id: str) -> None:
-        sub_id = safe_resource_id(subscription_id)
-        code, body = self._json("GET", f"/subscriptions/{sub_id}/databases?limit=100&offset=0")
-        self.log(f"list databases HTTP {code}")
-        self.log.absorb(body)
-        if code == 200:
-            for row in database_rows(body):
-                if not isinstance(row, dict) or row.get("databaseId") in (None, ""):
-                    continue
-                db_id = safe_resource_id(row.get("databaseId"))
-                deleted, _ = self._json("DELETE", f"/subscriptions/{sub_id}/databases/{db_id}")
-                self.log(f"cleanup database HTTP {deleted}")
-        elif code != 404:
-            raise SuiteFailure(f"list databases HTTP {code}")
-        deleted, _ = self._json("DELETE", f"/subscriptions/{sub_id}")
-        self.log(f"cleanup subscription HTTP {deleted}")
 
     def _json(self, method: str, path: str) -> tuple[int, object]:
         code, raw = self._request(method, path)
@@ -427,35 +415,20 @@ class Deps:
         }
 
 
-def clear_leftovers(deps: Deps) -> None:
-    """Delete leftover pulumi-ci- subscriptions and wait until they are gone.
-
-    A crashed runner used to leave a pulumi-ci- name that made every later
-    run refuse to create. Names that do not start with pulumi-ci- are left
-    alone. cleanup_only still deletes only this run.
-    """
-    leftovers = prefixed(deps.cloud.list_subscriptions())
-    if not leftovers:
-        return
-    deps.log(f"deleting {len(leftovers)} leftover pulumi-ci- subscription(s)")
-    for sub in leftovers:
-        if sub.get("id") in (None, ""):
-            raise SuiteFailure("leftover pulumi-ci- subscription has no id")
-        deps.cloud.delete_run_subscription(str(sub.get("id")))
-    deadline = deps.now() + deps.timeouts["delete"]
-    while prefixed(deps.cloud.list_subscriptions()):
-        if deps.now() >= deadline:
-            deps.log("pulumi-ci- subscription still present; refusing to create")
-            raise SuiteFailure("pulumi-ci- subscription still present")
-        deps.sleep(deps.poll)
+def clear_leftovers(deps: Deps) -> list:
+    """Refuse other runs' objects; a shared name prefix does not prove ownership."""
+    subscriptions = deps.cloud.list_subscriptions()
+    leftovers = prefixed(subscriptions)
+    if leftovers:
+        raise SuiteFailure("prior pulumi-ci- subscription exists; refusing to create or delete")
+    return subscriptions
 
 
 def run_acceptance(deps: Deps) -> None:
-    """Create and delete this run. Clear leftover pulumi-ci- names first."""
+    """Create and delete this run only when no prefixed leftovers exist."""
     refuse_url(deps.url)
     run_id = safe_run_id(deps.run_id)
-    clear_leftovers(deps)
-    subscriptions = deps.cloud.list_subscriptions()
+    subscriptions = clear_leftovers(deps)
 
     cidr = choose_cidr(deployment_cidrs(subscriptions))
     deps.log(f"cidr {cidr}")
@@ -513,7 +486,7 @@ def run_acceptance(deps: Deps) -> None:
 
 
 def cleanup_only(deps: Deps) -> None:
-    """Delete the subscription this run created. Leave any other pulumi-ci- name alone."""
+    """Hold recovery; a run-derived name alone does not prove exact ownership."""
     refuse_url(deps.url)
     run_id = safe_run_id(deps.run_id)
     name = f"{PREFIX}{run_id}"
@@ -524,9 +497,7 @@ def cleanup_only(deps: Deps) -> None:
     if not matches:
         deps.log("cleanup found no subscription for this run")
         return
-    for sub in matches:
-        deps.cloud.delete_run_subscription(str(sub.get("id")))
-    deps.log("cleanup deleted this run")
+    raise SuiteFailure("run-named subscription requires verified recovery; no delete sent")
 
 
 def _wait_active(deps: Deps, label: str, fetch) -> None:

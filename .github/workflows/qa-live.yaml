@@ -36,8 +36,18 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  shared-account-gate:
+    name: Defer live writer until shared-account serialization
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Refuse live write without an enforced cross-repository lock
+        run: |
+          echo 'DEFER: shared-account serialization and recovery ownership are not verified.'
+          exit 1
+
   qa-live:
     name: QA create and delete
+    needs: shared-account-gate
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     env:
