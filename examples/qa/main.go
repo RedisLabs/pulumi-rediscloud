@@ -12,9 +12,6 @@ func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		cfg := config.New(ctx, "")
 		name := cfg.Require("name")
-		cidr := cfg.Require("cidr")
-		cloudProvider := cfg.Require("cloudProvider")
-		region := cfg.Require("region")
 		includeDatabase := true
 		if cfg.Get("includeDatabase") != "" {
 			includeDatabase = cfg.GetBool("includeDatabase")
@@ -38,16 +35,6 @@ func main() {
 			return fmt.Errorf("payment method lookup returned nothing")
 		}
 
-		regions, err := rediscloud.GetRegions(ctx, &rediscloud.GetRegionsArgs{
-			ProviderName: pulumi.StringRef(cloudProvider),
-		}, nil)
-		if err != nil {
-			return err
-		}
-		if regions == nil {
-			return fmt.Errorf("regions lookup returned nothing")
-		}
-
 		plan, err := rediscloud.GetEssentialsPlan(ctx, &rediscloud.GetEssentialsPlanArgs{
 			CloudProvider:          pulumi.StringRef("GCP"),
 			Region:                 pulumi.StringRef("us-central1"),
@@ -62,6 +49,21 @@ func main() {
 		}
 		if plan == nil {
 			return fmt.Errorf("essentials plan lookup returned nothing")
+		}
+		if cfg.GetBool("includeEssentials") {
+			return createEssentials(ctx, name, plan.Id, card.Id, includeDatabase)
+		}
+		cidr := cfg.Require("cidr")
+		cloudProvider := cfg.Require("cloudProvider")
+		region := cfg.Require("region")
+		regions, err := rediscloud.GetRegions(ctx, &rediscloud.GetRegionsArgs{
+			ProviderName: pulumi.StringRef(cloudProvider),
+		}, nil)
+		if err != nil {
+			return err
+		}
+		if regions == nil {
+			return fmt.Errorf("regions lookup returned nothing")
 		}
 
 		_, err = rediscloud.NewAclRule(ctx, "rule", &rediscloud.AclRuleArgs{

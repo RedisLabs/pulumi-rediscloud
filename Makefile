@@ -135,5 +135,6 @@ install_sdks:: install_dotnet_sdk install_python_sdk install_nodejs_sdk
 
 test::
 	cd provider && go test
+	go -C examples/qa test ./...
 	if [ -d scripts ]; then python3 -m unittest discover -s scripts -p '*_test.py'; fi
 
