@@ -1,0 +1,154 @@
+"""Exercise the proof model without Redis Cloud credentials or Pulumi CLI."""
+
+import unittest
+
+import qa_essentials_model as model
+
+
+class FakeBackend:
+    def __init__(self):
+        self.events = []
+        self.sub = None
+        self.db = None
+        self.locked = True
+        self.complete = True
+
+    def assert_lock(self):
+        self.events.append("lock")
+        if not self.locked:
+            raise model.ProofError("lock lost")
+
+    def inventory(self, account, name):
+        self.events.append("inventory")
+        return self.complete, [r for r in (self.sub, self.db) if r and r.account == account and r.name == name]
+
+    def create_subscription(self, account, name):
+        self.events.append("create subscription")
+        self.sub = model.Resource(account, "", "10", name)
+        return self.sub
+
+    def create_database(self, account, parent, name):
+        self.events.append("create database")
+        self.db = model.Resource(account, parent, "20", name)
+        return self.db
+
+    def read_subscription(self, account, identifier):
+        self.events.append("read subscription")
+        return (200, self.sub) if self.sub else (404, None)
+
+    def read_database(self, account, parent, identifier):
+        self.events.append("read database")
+        return (200, self.db) if self.db else (404, None)
+
+    def delete_database(self, resource):
+        self.events.append("delete database")
+        if resource != self.db:
+            raise AssertionError("not the created database")
+        self.db = None
+
+    def delete_subscription(self, resource):
+        self.events.append("delete subscription")
+        if resource != self.sub or self.db is not None:
+            raise AssertionError("parent delete before exact child absence")
+        self.sub = None
+
+
+class EssentialsProofModelTest(unittest.TestCase):
+    def test_exact_order_and_empty_inventory(self):
+        api = FakeBackend()
+        sub, db = model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertEqual((sub.identifier, db.identifier), ("10", "20"))
+        self.assertEqual(api.events, [
+            "lock", "inventory", "lock", "create subscription", "read subscription",
+            "lock", "create database", "read subscription", "read database", "lock",
+            "delete database", "read database", "read subscription", "lock",
+            "delete subscription", "read subscription", "inventory",
+        ])
+        self.assertIsNone(api.sub)
+        self.assertIsNone(api.db)
+
+    def test_missing_lock_or_incomplete_inventory_never_creates(self):
+        for which in ("lock", "inventory"):
+            api = FakeBackend()
+            if which == "lock": api.locked = False
+            else: api.complete = False
+            with self.subTest(which=which), self.assertRaises(model.ProofError):
+                model.run_model(api, "fake-account", "pulumi-proof-1")
+            self.assertNotIn("create subscription", api.events)
+
+    def test_foreign_existing_resource_stops_before_creation(self):
+        api = FakeBackend()
+        api.sub = model.Resource("fake-account", "", "999", "pulumi-proof-1")
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("create subscription", api.events)
+        self.assertNotIn("delete subscription", api.events)
+
+    def test_wrong_parent_binding_stops_without_delete(self):
+        api = FakeBackend()
+        original = api.create_database
+        def wrong_parent(account, parent, name):
+            db = original(account, parent, name)
+            return model.Resource(db.account, "999", db.identifier, db.name)
+        api.create_database = wrong_parent
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("delete database", api.events)
+        self.assertNotIn("delete subscription", api.events)
+
+    def test_wrong_subscription_read_prevents_child_creation(self):
+        api = FakeBackend()
+        def wrong_identity(account, identifier):
+            api.events.append("read subscription")
+            return 200, model.Resource(account, "", "999", "pulumi-proof-1")
+        api.read_subscription = wrong_identity
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("create database", api.events)
+        self.assertNotIn("delete subscription", api.events)
+
+    def test_unauthenticated_absence_keeps_parent(self):
+        api = FakeBackend()
+        read = api.read_database
+        def forbidden_after_delete(account, parent, identifier):
+            if api.db is None:
+                api.events.append("read database")
+                return 403, None
+            return read(account, parent, identifier)
+        api.read_database = forbidden_after_delete
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("delete subscription", api.events)
+        self.assertIsNotNone(api.sub)
+
+    def test_lock_loss_before_child_delete_prevents_both_deletes(self):
+        api = FakeBackend()
+        read = api.read_database
+        def lose_lock(account, parent, identifier):
+            value = read(account, parent, identifier)
+            api.locked = False
+            return value
+        api.read_database = lose_lock
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("delete database", api.events)
+        self.assertNotIn("delete subscription", api.events)
+
+    def test_lost_lock_after_child_absence_prevents_parent_delete(self):
+        api = FakeBackend()
+        read = api.read_database
+        def lose_lock_after_delete(account, parent, identifier):
+            result = read(account, parent, identifier)
+            if result[0] == 404:
+                api.locked = False
+            return result
+        api.read_database = lose_lock_after_delete
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertIn("delete database", api.events)
+        self.assertNotIn("delete subscription", api.events)
+        self.assertIsNotNone(api.sub)
+
+
+if __name__ == "__main__":
+    unittest.main()

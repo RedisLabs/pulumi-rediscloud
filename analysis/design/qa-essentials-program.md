@@ -26,6 +26,16 @@ Pulumi SDK and program registration against a fake engine, not provider HTTP
 operations, update, delete, complete inventories, identity recovery, or live
 Cloud state. The plan lookup remains the program's fixed GCP 1GB selection.
 
+The companion `qa_essentials_model.py` is an executable **fake-only proof
+model**, not a live driver: it has no Cloud, Pulumi CLI, shared lock or
+durable journal implementation. Its tests assert authenticated exact identity
+reads in order, database 404 while the subscription remains present, then
+subscription 404 and a complete empty run inventory. Invalid identity,
+incomplete inventory, failed authentication or lost lock stops future writes.
+An abstract `assert_lock` does not itself establish fencing, does not prevent
+an old writer, and leaves a check-to-write race. Missing durable ownership
+and post-crash recovery also make it unsuitable for live use.
+
 ## Validation and rollout
 
 `go test ./...` in `examples/qa` covers the two resource requests, parent ID
