@@ -149,6 +149,41 @@ class EssentialsProofModelTest(unittest.TestCase):
         self.assertNotIn("delete subscription", api.events)
         self.assertIsNotNone(api.sub)
 
+    def test_lost_create_response_preserves_unknown_resources(self):
+        for kind in ("subscription", "database"):
+            api = FakeBackend()
+            if kind == "subscription":
+                create = api.create_subscription
+                def lose_subscription(account, name):
+                    create(account, name)
+                    raise model.ProofError("response lost")
+                api.create_subscription = lose_subscription
+            else:
+                create = api.create_database
+                def lose_database(account, parent, name):
+                    create(account, parent, name)
+                    raise model.ProofError("response lost")
+                api.create_database = lose_database
+            with self.subTest(kind=kind), self.assertRaises(model.ProofError):
+                model.run_model(api, "fake-account", "pulumi-proof-1")
+            self.assertIsNotNone(api.sub)
+            if kind == "database": self.assertIsNotNone(api.db)
+            self.assertNotIn("delete database", api.events)
+            self.assertNotIn("delete subscription", api.events)
+
+    def test_lost_delete_response_never_starts_parent_delete(self):
+        api = FakeBackend()
+        delete = api.delete_database
+        def lose_response(db):
+            delete(db)
+            raise model.ProofError("delete response lost")
+        api.delete_database = lose_response
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertIsNotNone(api.sub)
+        self.assertIsNone(api.db)
+        self.assertNotIn("delete subscription", api.events)
+
 
 if __name__ == "__main__":
     unittest.main()
