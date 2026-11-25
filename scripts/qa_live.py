@@ -3,7 +3,7 @@
 
 The Pulumi program in examples/qa creates the resources. This wrapper refuses a
 missing or production REDISCLOUD_URL, refuses leftover pulumi-ci- subscriptions
-before create, picks a deployment CIDR, destroys on a failed database step, and
+before create, picks a deployment CIDR, holds on failure for recovery, and
 checks HTTP 404 after destroy. Hermetic tests point the HTTP client at a fake
 server. This script does not call Redis Cloud unless a person runs it with a
 non-production URL.
@@ -324,10 +324,6 @@ class LiveProgram:
     def output_names(self) -> list[str]:
         return sorted(self._read_outputs())
 
-    def delete_subscription(self, subscription_id: str) -> None:
-        del subscription_id
-        self._pulumi(["destroy", "--yes", "--skip-preview"])
-
     def destroy(self) -> None:
         self._pulumi(["destroy", "--yes", "--skip-preview"])
 
@@ -434,8 +430,6 @@ def run_acceptance(deps: Deps) -> None:
     deps.log(f"cidr {cidr}")
     name = f"{PREFIX}{run_id}"
     deps.log(f"target cloud {deps.cloud_provider} region {deps.region} name {name}")
-    created = None
-    destroyed = False
     try:
         created = str(deps.program.create_subscription(name, cidr))
         deps.program.update_acl_rule()
@@ -447,13 +441,7 @@ def run_acceptance(deps: Deps) -> None:
             "subscription",
             lambda: deps.cloud.subscription_status(created),
         )
-        try:
-            database_id = str(deps.program.create_database(name, created))
-        except Exception:
-            deps.program.delete_subscription(created)
-            destroyed = True
-            deps.log("database step failed; subscription delete requested")
-            raise
+        database_id = str(deps.program.create_database(name, created))
         _wait_active(
             deps,
             "database",
@@ -472,16 +460,13 @@ def run_acceptance(deps: Deps) -> None:
             deps.log(f"evidence hold {deps.evidence_hold_seconds} seconds")
             deps.sleep(float(deps.evidence_hold_seconds))
         deps.program.destroy()
-        destroyed = True
         database_code = _wait_http(deps, "database", lambda: deps.cloud.get_database(created, database_id))
         subscription_code = _wait_http(deps, "subscription", lambda: deps.cloud.get_subscription(created))
         if database_code != 404 or subscription_code != 404:
             raise SuiteFailure("delete did not return HTTP 404")
         deps.log("qa live ok")
     except Exception:
-        if created is not None and not destroyed:
-            deps.program.delete_subscription(created)
-            deps.log("subscription delete requested")
+        deps.log("qa failed; automatic recovery held because mutation outcome may be unknown")
         raise
 
 

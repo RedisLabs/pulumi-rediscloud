@@ -384,7 +384,15 @@ class QaLiveTest(unittest.TestCase):
             with self.subTest(body=body), self.assertRaises(qa_live.SuiteFailure):
                 qa_live.subscription_rows(body)
 
-    def test_failed_database_step_deletes_the_subscription(self) -> None:
+    def test_failed_database_step_holds_parent_when_child_outcome_unknown(self) -> None:
+        class AmbiguousCreate(FakeProgram):
+            child_accepted = False
+
+            def create_database(self, name: str, subscription_id: str) -> str:
+                self.databases.append((name, subscription_id))
+                self.child_accepted = True  # server accepted before client lost its response
+                raise RuntimeError("database response lost")
+
         server = ServerHandle(
             [
                 {
@@ -398,20 +406,43 @@ class QaLiveTest(unittest.TestCase):
             ]
         )
         try:
-            program = FakeProgram(database_error=RuntimeError("database step failed"))
+            program = AmbiguousCreate()
             hosts: list[str] = []
             opener = forwarder(server.httpd.server_address[1], hosts)
             deps = deps_for("https://qa.example.test/v1", program, opener, run_id="run42")
-            with self.assertRaises(RuntimeError):
+            with self.assertRaisesRegex(RuntimeError, "database response lost"):
                 qa_live.run_acceptance(deps)
             self.assertEqual(program.creates, [("pulumi-ci-run42", "10.0.1.0/24")])
             self.assertEqual(program.databases, [("pulumi-ci-run42", "101")])
-            self.assertEqual(program.deletes, ["101"])
+            self.assertTrue(program.child_accepted)
+            self.assertEqual(program.deletes, [])
             self.assertEqual(program.destroys, 0)
             self.assertNotIn("POST", [method for method, _path in server.requests])
             self.assertNotIn(("DELETE", "/v1/subscriptions/7"), server.requests)
-            self.assertTrue(any("database step failed" in line for line in deps.log.lines))
+            self.assertTrue(any("automatic recovery held" in line for line in deps.log.lines))
             assert_clean(self, deps.log)
+        finally:
+            server.close()
+
+    def test_failed_destroy_is_not_replayed_after_possible_acceptance(self) -> None:
+        class AmbiguousDestroy(FakeProgram):
+            def destroy(self) -> None:
+                self.destroys += 1
+                self.server.destroyed = True  # server accepted before client lost its response
+                raise RuntimeError("destroy response lost")
+
+        server = ServerHandle([])
+        try:
+            program = AmbiguousDestroy()
+            program.server = server.httpd
+            deps = deps_for("https://qa.example.test/v1", program, forwarder(server.httpd.server_address[1], []))
+            with self.assertRaisesRegex(RuntimeError, "destroy response lost"):
+                qa_live.run_acceptance(deps)
+            self.assertEqual(program.destroys, 1)
+            self.assertEqual(program.deletes, [])
+            self.assertTrue(server.httpd.destroyed)
+            self.assertTrue(any("automatic recovery held" in line for line in deps.log.lines))
+            self.assertFalse(any(method == "DELETE" for method, _ in server.requests))
         finally:
             server.close()
 

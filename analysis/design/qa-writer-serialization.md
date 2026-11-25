@@ -7,7 +7,8 @@ Status: Candidate; credential-free validation only
 
 Defer the scheduled and manual QA writer until a shared account lock and safe
 recovery are available. Refuse prefix-based and name-only direct API cleanup.
-The existing Pulumi destroy path remains available inside a running job.
+After a failed operation, do not automatically retry destroy: a child create or
+destroy may already have been accepted even though the response was lost.
 
 ## Problem and behavior
 
@@ -29,8 +30,9 @@ make cross-repository concurrency safe. No workflow bypass is provided.
 
 ## Validation and limitations
 
-Credential-free tests exercise failure before creation, preservation of a
-different run's subscription, refusal of same-name recovery, malformed/partial
+Credential-free tests exercise a lost response after a fake child create and
+after a fake destroy (no parent cleanup or destroy replay), failure before
+creation, preservation of a different run's subscription, refusal of same-name recovery, malformed/partial
 inventories, and the failing gate dependency. The existing success-path fixture
 is a fake HTTP server and does not establish live Cloud behavior. Missing
 pagination metadata and silent truncation cannot be disproved by these tests.
@@ -38,7 +40,12 @@ Any nonempty `links` or `_links` also causes a hold, including a self link;
 the live response contract needs verification before relaxing this guard.
 Existing workflow runs and reruns of older commits use their original files and
 can bypass the new gate; other repositories and local tools are also outside
-this gate. It is a mitigation, not a shared lock.
+this gate. It is a mitigation, not a shared lock. A failed run can leave resources
+behind and requires recovery from independently established ownership and state;
+the ephemeral runner's Pulumi state and a post-job artifact are not a durable
+journal. An intent record by itself cannot resolve a create with unknown outcome.
+A future design needs durable state and journal writes before each mutation, an
+authoritative fencing boundary, and a reviewed process for ambiguous outcomes.
 
 ## Rollout, recovery, and next steps
 
