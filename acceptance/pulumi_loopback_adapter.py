@@ -29,6 +29,7 @@ class FixtureServer(ThreadingHTTPServer):
         super().__init__(("127.0.0.1", 0), FixtureHandler)
         self.sub = False
         self.db = False
+        self.eviction = "volatile-lru"
         self.events = []
         self.violations = []
         self.lock = threading.Lock()
@@ -71,11 +72,15 @@ class FixtureHandler(BaseHTTPRequestHandler):
                         return self.reply(400, {"error": "wrong fixture subscription payload"})
                     self.server.sub, task = True, "subcreate"
                 elif self.command == "POST" and path == "/v1/fixed/subscriptions/1/databases" and self.server.sub and not self.server.db:
-                    if any(body.get(key) != value for key, value in {"name": "fixture", "dataPersistence": "none", "replication": False}.items()):
+                    if any(body.get(key) != value for key, value in {"name": "fixture", "dataPersistence": "none", "dataEvictionPolicy": "volatile-lru", "replication": False}.items()):
                         self.server.violations.append("wrong database payload")
                         return self.reply(400, {"error": "wrong fixture database payload"})
                     self.server.db, task = True, "dbcreate"
                 elif self.command == "PUT" and path == "/v1/fixed/subscriptions/1/databases/2" and self.server.db:
+                    if body.get("dataEvictionPolicy") not in {"volatile-lru", "allkeys-lru"}:
+                        self.server.violations.append("unexpected eviction policy")
+                        return self.reply(400, {"error": "unexpected fixture eviction"})
+                    self.server.eviction = body["dataEvictionPolicy"]
                     task = "dbupdate"
                 elif self.command == "PUT" and path == "/v1/fixed/subscriptions/1/databases/2/tags" and self.server.db:
                     return self.reply(200, {"tags": []})
@@ -103,7 +108,7 @@ class FixtureHandler(BaseHTTPRequestHandler):
             if path == "/v1/fixed/subscriptions/1/databases/2":
                 if not self.server.db:
                     return self.reply(404, {"message": "fixture not found"})
-                return self.reply(200, {"databaseId": 2, "name": "fixture", "status": "active", "protocol": "redis", "provider": "GCP", "region": "us-central1", "dataPersistence": "none", "dataEvictionPolicy": "volatile-lru", "replication": False, "activatedOn": "2025-01-01T00:00:00Z", "security": {"defaultUserEnabled": True, "sourceIps": ["0.0.0.0/0"]}, "modules": [], "alerts": []})
+                return self.reply(200, {"databaseId": 2, "name": "fixture", "status": "active", "protocol": "redis", "provider": "GCP", "region": "us-central1", "dataPersistence": "none", "dataEvictionPolicy": self.server.eviction, "replication": False, "activatedOn": "2025-01-01T00:00:00Z", "security": {"defaultUserEnabled": True, "sourceIps": ["0.0.0.0/0"]}, "modules": [], "alerts": []})
             if path == "/v1/fixed/subscriptions":
                 return self.reply(200, {"subscriptions": ([{"id": 1, "name": "fixture", "status": "active"}] if self.server.sub else [])})
             self.server.violations.append("unexpected read")
@@ -144,7 +149,7 @@ def _fixture_env(pulumi_home, url):
     return env
 
 
-def run_loopback(cli, provider):
+def run_loopback(cli, provider, update_eviction=False):
     """Run the CLI and repository-built provider using disposable local state."""
     cli = shutil.which(cli) or cli
     cli, provider = str(Path(cli).resolve(strict=True)), str(Path(provider).resolve(strict=True))
@@ -192,6 +197,17 @@ def run_loopback(cli, provider):
             if parent.get("status") != "active" or parent.get("id") != 1:
                 raise AssertionError("fixture parent identity or status differs")
             print("SIMULATED LOOPBACK: child ID 2 and parent ID 1 authenticated 200 active", flush=True)
+            if update_eviction:
+                _run(cli, program, env, "config", "set", "eviction", "allkeys-lru")
+                _run(cli, program, env, "up", "--yes", "--skip-preview", "--non-interactive")
+                outputs = json.loads(_run(cli, program, env, "stack", "output", "--json"))
+                changed = _read(url, "/fixed/subscriptions/1/databases/2", 200)
+                parent = _read(url, "/fixed/subscriptions/1", 200)
+                if (str(outputs.get("sub")) != "1" or outputs.get("db") != 2 or
+                        changed.get("databaseId") != 2 or changed.get("status") != "active" or
+                        changed.get("dataEvictionPolicy") != "allkeys-lru" or parent.get("id") != 1):
+                    raise AssertionError("fixture update readback or identities differ")
+                print("SIMULATED LOOPBACK: eviction updated to allkeys-lru with IDs 1 and 2 unchanged", flush=True)
             _run(cli, program, env, "config", "set", "includeDatabase", "false")
             _run(cli, program, env, "up", "--yes", "--skip-preview", "--non-interactive")
             _read(url, "/fixed/subscriptions/1/databases/2", 404)
@@ -207,7 +223,10 @@ def run_loopback(cli, provider):
                 if server.violations or server.sub or server.db:
                     raise AssertionError("unexpected fixture traffic or residual state")
                 writes = [(method, path) for method, path in server.events if method in {"POST", "PUT", "DELETE"}]
-            expected = [("POST", "/v1/fixed/subscriptions"), ("POST", "/v1/fixed/subscriptions/1/databases"), ("PUT", "/v1/fixed/subscriptions/1/databases/2"), ("PUT", "/v1/fixed/subscriptions/1/databases/2/tags"), ("DELETE", "/v1/fixed/subscriptions/1/databases/2"), ("DELETE", "/v1/fixed/subscriptions/1")]
+            expected = [("POST", "/v1/fixed/subscriptions"), ("POST", "/v1/fixed/subscriptions/1/databases"), ("PUT", "/v1/fixed/subscriptions/1/databases/2"), ("PUT", "/v1/fixed/subscriptions/1/databases/2/tags")]
+            if update_eviction:
+                expected.extend([("PUT", "/v1/fixed/subscriptions/1/databases/2"), ("PUT", "/v1/fixed/subscriptions/1/databases/2/tags")])
+            expected.extend([("DELETE", "/v1/fixed/subscriptions/1/databases/2"), ("DELETE", "/v1/fixed/subscriptions/1")])
             if writes != expected:
                 raise AssertionError(f"unexpected fixture mutation sequence: {writes}")
             print("SIMULATED LOOPBACK: provider mutation order matched", flush=True)
@@ -225,17 +244,19 @@ class PulumiLoopbackAdapter:
 
     def execute(self, scenario):
         base = dict(provider="pulumi", scenario_id=scenario.id, mode="simulated", source_revision="0" * 40, artifact_digest="", run_url="https://fixture.invalid/run", evidence_url="https://fixture.invalid/log", direct_cloud_recovery=False)
-        if scenario.id != "essentials-database-lifecycle":
+        update = scenario.id == "essentials-database-eviction-update"
+        if scenario.id not in {"essentials-database-lifecycle", "essentials-database-eviction-update"}:
             return Evidence(**base, steps=(), outcome="unsupported", cleanup="not_started")
-        if scenario.steps != LIFECYCLE:
+        expected_steps = LIFECYCLE[:5] + ("update_eviction", "read_updated_eviction_same_identity") + LIFECYCLE[5:] if update else LIFECYCLE
+        if scenario.steps != expected_steps:
             return Evidence(**base, steps=(), outcome="blocked", cleanup="not_started")
         try:
-            run_loopback(self.cli, self.provider)
+            run_loopback(self.cli, self.provider, update_eviction=update)
         except (AssertionError, OSError, RuntimeError, subprocess.TimeoutExpired, ValueError) as exc:
             print(f"SIMULATED LOOPBACK failed: {exc}", flush=True)
             return Evidence(**base, steps=(), outcome="fail", cleanup="unknown")
         # A disposable fake server establishes no cross-repository account
         # admission. Keep that step and the overall claim blocked even when
         # the provider's remaining loopback operations succeed.
-        receipts = tuple(StepReceipt(step, "blocked" if i == 0 else "passed", f"https://fixture.invalid/loopback-only/{step}") for i, step in enumerate(LIFECYCLE))
+        receipts = tuple(StepReceipt(step, "blocked" if i == 0 else "passed", f"https://fixture.invalid/loopback-only/{step}") for i, step in enumerate(expected_steps))
         return Evidence(**base, steps=receipts, outcome="blocked", cleanup="clean")

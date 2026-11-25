@@ -55,11 +55,13 @@ an isolated plugin directory. The program creates the fake parent and child,
 then removes the child and parent in separate CLI operations. Independent
 dummy-authenticated fake reads assert the child 404 while the exact parent is
 200, then the parent 404 and empty fake inventory; request order and fake
-state are checked. Its result is simulated and overall **blocked**: the first
+state are checked. A separate instance runs the shared eviction-update case,
+verifying fake `allkeys-lru` readback with the same parent and child IDs before
+the same ordered teardown. Its result is simulated and overall **blocked**: the first
 admission step cannot pass without an actual shared account lock. Later step
 receipts point explicitly to fake fixture evidence; the fake server's task and
 inventory responses do not establish live Cloud properties. It does not serve
-an account identity or lock endpoint. The test does not exercise updates,
+an account identity or lock endpoint. The test does not exercise live updates,
 recovery after runner loss, credentials, real account identity or real cleanup.
 The trusted live adapter, durable admission and journal remain unimplemented.
 

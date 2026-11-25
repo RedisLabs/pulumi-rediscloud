@@ -23,8 +23,12 @@ func main() {
 		if !cfg.GetBool("includeDatabase") {
 			return nil
 		}
+		eviction := cfg.Get("eviction")
+		if eviction == "" {
+			eviction = "volatile-lru"
+		}
 		db, err := rediscloud.NewEssentialsDatabase(ctx, "db", &rediscloud.EssentialsDatabaseArgs{
-			Name: pulumi.String("fixture"), DataPersistence: pulumi.String("none"), Replication: pulumi.Bool(false),
+			Name: pulumi.String("fixture"), DataPersistence: pulumi.String("none"), DataEviction: pulumi.String(eviction), Replication: pulumi.Bool(false),
 			SubscriptionId: sub.ID().ToStringOutput().ApplyT(func(id string) (int, error) {
 				v, parseErr := strconv.Atoi(id)
 				if parseErr != nil || v <= 0 {

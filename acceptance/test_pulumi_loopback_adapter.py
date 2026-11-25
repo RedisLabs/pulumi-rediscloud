@@ -37,20 +37,19 @@ class PulumiLoopbackAdapterTest(unittest.TestCase):
     @unittest.skipUnless(os.environ.get("PULUMI_LOOPBACK_PROVIDER"), "provider fixture not built")
     def test_real_provider_against_loopback_only(self):
         scenarios = load_scenarios(CONTRACT_DIR / "scenarios.json")
-        scenario = scenarios["essentials-database-lifecycle"]
         adapter = PulumiLoopbackAdapter(os.environ.get("PULUMI_LOOPBACK_CLI", "pulumi"), os.environ["PULUMI_LOOPBACK_PROVIDER"])
-        result = adapter.execute(scenario)
-        self.assertEqual(result.outcome, "blocked")
-        self.assertEqual(result.mode, "simulated")
-        self.assertEqual(classify_claim(scenario, result), "blocked")
-        self.assertEqual(result.steps[0].outcome, "blocked")
-        self.assertTrue(all(item.outcome == "passed" for item in result.steps[1:]))
-        self.assertEqual(result.cleanup, "clean")
-        self.assertNotEqual(classify_claim(scenario, replace(result, mode="live")), "live_claim_requires_verification")
-        self.assertEqual(result.evidence_url, "https://fixture.invalid/log")
-        update = adapter.execute(scenarios["essentials-database-eviction-update"])
-        self.assertEqual(update.outcome, "unsupported")
-        self.assertEqual(update.mode, "simulated")
+        for scenario_id in ("essentials-database-lifecycle", "essentials-database-eviction-update"):
+            with self.subTest(scenario=scenario_id):
+                scenario = scenarios[scenario_id]
+                result = adapter.execute(scenario)
+                self.assertEqual(result.outcome, "blocked")
+                self.assertEqual(result.mode, "simulated")
+                self.assertEqual(classify_claim(scenario, result), "blocked")
+                self.assertEqual(result.steps[0].outcome, "blocked")
+                self.assertTrue(all(item.outcome == "passed" for item in result.steps[1:]))
+                self.assertEqual(result.cleanup, "clean")
+                self.assertNotEqual(classify_claim(scenario, replace(result, mode="live")), "live_claim_requires_verification")
+                self.assertEqual(result.evidence_url, "https://fixture.invalid/log")
 
 
 if __name__ == "__main__":
