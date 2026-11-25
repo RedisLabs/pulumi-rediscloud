@@ -182,6 +182,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Run credential-free QA safety tests
+        working-directory: scripts
+        run: python3 -m unittest qa_live_test -v
+
       - name: Install Go
         uses: actions/setup-go@v5
         with:

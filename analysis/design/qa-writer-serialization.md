@@ -32,9 +32,10 @@ make cross-repository concurrency safe. No workflow bypass is provided.
 
 Credential-free tests exercise a lost response after a fake child create and
 after a fake destroy (no parent cleanup or destroy replay), failure before
-creation, preservation of a different run's subscription, refusal of same-name recovery, malformed/partial
-inventories, and the failing gate dependency. The existing success-path fixture
-is a fake HTTP server and does not establish live Cloud behavior. Missing
+creation, preservation of a different run's subscription, refusal of same-name
+recovery, malformed/partial inventories, and the failing gate dependency. Required
+CI runs this suite. The success-path fixture is a fake HTTP server and does not
+establish live Cloud behavior. Missing
 pagination metadata and silent truncation cannot be disproved by these tests.
 Any nonempty `links` or `_links` also causes a hold, including a self link;
 the live response contract needs verification before relaxing this guard.
