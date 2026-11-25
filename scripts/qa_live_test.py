@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import subprocess
 import threading
 import unittest
 import urllib.error
@@ -270,7 +272,7 @@ class QaLiveTest(unittest.TestCase):
             ],
         )
 
-    def test_leftover_pulumi_ci_subscription_is_deleted_before_create(self) -> None:
+    def test_foreign_prefixed_subscription_refuses_before_create_without_delete(self) -> None:
         subscriptions = [
             {
                 "id": 555,
@@ -297,13 +299,14 @@ class QaLiveTest(unittest.TestCase):
             hosts: list[str] = []
             opener = forwarder(server.httpd.server_address[1], hosts)
             deps = deps_for("https://qa.example.test/v1/", program, opener, run_id="run42")
-            qa_live.run_acceptance(deps)
+            with self.assertRaises(qa_live.SuiteFailure):
+                qa_live.run_acceptance(deps)
             names = [str(row.get("name")) for row in server.httpd.subscriptions]
-            self.assertNotIn("pulumi-ci-already", names)
+            self.assertIn("pulumi-ci-already", names)
             self.assertIn("kept-subscription", names)
-            self.assertEqual(program.creates, [("pulumi-ci-run42", "10.0.0.0/24")])
+            self.assertEqual(program.creates, [])
             methods = [method for method, _path in server.requests]
-            self.assertIn("DELETE", methods)
+            self.assertNotIn("DELETE", methods)
             self.assertNotIn("POST", methods)
             self.assertNotIn("PUT", methods)
             assert_clean(self, deps.log)
@@ -327,7 +330,7 @@ class QaLiveTest(unittest.TestCase):
             with self.assertRaises(qa_live.SuiteFailure):
                 qa_live.run_acceptance(deps)
             self.assertEqual(program.creates, [])
-            self.assertIn("DELETE", [method for method, _path in server.requests])
+            self.assertNotIn("DELETE", [method for method, _path in server.requests])
             assert_clean(self, deps.log)
         finally:
             server.close()
@@ -362,7 +365,34 @@ class QaLiveTest(unittest.TestCase):
         finally:
             server.close()
 
-    def test_failed_database_step_deletes_the_subscription(self) -> None:
+    def test_same_run_name_does_not_authorize_direct_recovery(self) -> None:
+        server = ServerHandle([{"id": 555, "name": "pulumi-ci-run", "status": "active"}])
+        try:
+            program = FakeProgram()
+            deps = deps_for("https://qa.example.test/v1", program, forwarder(server.httpd.server_address[1], []))
+            with self.assertRaises(qa_live.SuiteFailure):
+                qa_live.cleanup_only(deps)
+            self.assertFalse(any(method == "DELETE" for method, _ in server.requests))
+            self.assertEqual(len(server.httpd.subscriptions), 1)
+        finally:
+            server.close()
+
+    def test_malformed_subscription_inventory_fails_closed(self) -> None:
+        for body in ({}, {"subscriptions": None}, {"subscriptions": [], "hasNext": True},
+                     {"subscriptions": [{"name": "test"}]},
+                     {"subscriptions": [{"id": 3, "name": "x"}, {"id": 3, "name": "y"}]}):
+            with self.subTest(body=body), self.assertRaises(qa_live.SuiteFailure):
+                qa_live.subscription_rows(body)
+
+    def test_failed_database_step_holds_parent_when_child_outcome_unknown(self) -> None:
+        class AmbiguousCreate(FakeProgram):
+            child_accepted = False
+
+            def create_database(self, name: str, subscription_id: str) -> str:
+                self.databases.append((name, subscription_id))
+                self.child_accepted = True  # server accepted before client lost its response
+                raise RuntimeError("database response lost")
+
         server = ServerHandle(
             [
                 {
@@ -376,20 +406,43 @@ class QaLiveTest(unittest.TestCase):
             ]
         )
         try:
-            program = FakeProgram(database_error=RuntimeError("database step failed"))
+            program = AmbiguousCreate()
             hosts: list[str] = []
             opener = forwarder(server.httpd.server_address[1], hosts)
             deps = deps_for("https://qa.example.test/v1", program, opener, run_id="run42")
-            with self.assertRaises(RuntimeError):
+            with self.assertRaisesRegex(RuntimeError, "database response lost"):
                 qa_live.run_acceptance(deps)
             self.assertEqual(program.creates, [("pulumi-ci-run42", "10.0.1.0/24")])
             self.assertEqual(program.databases, [("pulumi-ci-run42", "101")])
-            self.assertEqual(program.deletes, ["101"])
+            self.assertTrue(program.child_accepted)
+            self.assertEqual(program.deletes, [])
             self.assertEqual(program.destroys, 0)
             self.assertNotIn("POST", [method for method, _path in server.requests])
             self.assertNotIn(("DELETE", "/v1/subscriptions/7"), server.requests)
-            self.assertTrue(any("database step failed" in line for line in deps.log.lines))
+            self.assertTrue(any("automatic recovery held" in line for line in deps.log.lines))
             assert_clean(self, deps.log)
+        finally:
+            server.close()
+
+    def test_failed_destroy_is_not_replayed_after_possible_acceptance(self) -> None:
+        class AmbiguousDestroy(FakeProgram):
+            def destroy(self) -> None:
+                self.destroys += 1
+                self.server.destroyed = True  # server accepted before client lost its response
+                raise RuntimeError("destroy response lost")
+
+        server = ServerHandle([])
+        try:
+            program = AmbiguousDestroy()
+            program.server = server.httpd
+            deps = deps_for("https://qa.example.test/v1", program, forwarder(server.httpd.server_address[1], []))
+            with self.assertRaisesRegex(RuntimeError, "destroy response lost"):
+                qa_live.run_acceptance(deps)
+            self.assertEqual(program.destroys, 1)
+            self.assertEqual(program.deletes, [])
+            self.assertTrue(server.httpd.destroyed)
+            self.assertTrue(any("automatic recovery held" in line for line in deps.log.lines))
+            self.assertFalse(any(method == "DELETE" for method, _ in server.requests))
         finally:
             server.close()
 
@@ -552,6 +605,23 @@ class QaLiveTest(unittest.TestCase):
         self.assertIn("if: always()", text)
         self.assertNotIn("pulumi login --cloud", text)
         self.assertNotIn("api.github.com/RedisLabs/pulumi-rediscloud/releases", text)
+
+    def test_workflow_defer_gate_runs_before_credentials_or_writer(self) -> None:
+        text = (REPO / ".github" / "workflows" / "qa-live.yaml").read_text()
+        gate = re.search(r"(?ms)^  shared-account-gate:\n(.*?)(?=^  qa-live:)", text)
+        writer = re.search(r"(?ms)^  qa-live:\n(.*)\Z", text)
+        self.assertIsNotNone(gate)
+        self.assertIsNotNone(writer)
+        self.assertRegex(writer.group(1), r"(?m)^    needs: shared-account-gate$")
+        self.assertNotRegex(writer.group(1), r"(?m)^    if:.*always\(")
+        self.assertNotIn("secrets.", gate.group(1))
+        self.assertNotIn("checkout", gate.group(1))
+        command = re.search(r"(?ms)^        run: \|\n((?:          .*\n)+)", gate.group(1))
+        self.assertIsNotNone(command)
+        script = "\n".join(line[10:] for line in command.group(1).splitlines())
+        result = subprocess.run(["bash", "-e", "-c", script], capture_output=True, text=True, check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("DEFER", result.stdout)
 
     def test_map_secret_does_not_print_values(self) -> None:
         raw = json.dumps({"api_key": ACCESS_KEY, "secret_key": SECRET_KEY, "url": "https://qa.example.test/v1"})

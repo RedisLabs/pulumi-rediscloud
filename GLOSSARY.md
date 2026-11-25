@@ -4,7 +4,7 @@ Vocabulary for this repository. Meanings live here. The gap review is [analysis/
 
 ## Acceptance
 
-A test that creates real Redis Cloud resources. In this repository that is the nightly QA-account create-and-delete of one ACL rule, one Pro subscription, and one database. It is not a pull-request check.
+A test that creates real Redis Cloud resources. The nightly QA suite is designed to create and delete one ACL rule, one Pro subscription, and one database. Its writer is currently deferred pending shared-account serialization; see [QA writer serialization](analysis/design/qa-writer-serialization.md). It is not a pull-request check.
 
 Not to be confused with the boilerplate workflow `run-acceptance-tests`, which runs on pull requests and logs in to Pulumi Cloud.
 
