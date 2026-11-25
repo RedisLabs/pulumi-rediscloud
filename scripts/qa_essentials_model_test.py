@@ -107,6 +107,18 @@ class EssentialsProofModelTest(unittest.TestCase):
         self.assertNotIn("create database", api.events)
         self.assertNotIn("delete subscription", api.events)
 
+    def test_non_active_database_prevents_both_deletes(self):
+        api = FakeBackend()
+        read = api.read_database
+        def provisioning(account, parent, identifier):
+            code, db = read(account, parent, identifier)
+            return code, model.Resource(db.account, db.parent, db.identifier, db.name, "provisioning")
+        api.read_database = provisioning
+        with self.assertRaises(model.ProofError):
+            model.run_model(api, "fake-account", "pulumi-proof-1")
+        self.assertNotIn("delete database", api.events)
+        self.assertNotIn("delete subscription", api.events)
+
     def test_unauthenticated_absence_keeps_parent(self):
         api = FakeBackend()
         read = api.read_database

@@ -22,6 +22,7 @@ class Resource:
     parent: str
     identifier: str
     name: str
+    status: str = "active"
 
 
 class Backend(Protocol):
@@ -43,8 +44,10 @@ def _identity(resource: Resource, account: str, parent: str, name: str) -> bool:
 
 def _read(expected: Resource, result: tuple[int, Resource | None]) -> None:
     code, resource = result
-    if code != 200 or resource != expected:
-        raise ProofError("authenticated exact identity read did not match")
+    if (code != 200 or resource is None or resource.status != "active" or
+            (resource.account, resource.parent, resource.identifier, resource.name) !=
+            (expected.account, expected.parent, expected.identifier, expected.name)):
+        raise ProofError("authenticated exact active identity read did not match")
 
 
 def run_model(backend: Backend, account: str, name: str) -> tuple[Resource, Resource]:
