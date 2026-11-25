@@ -132,7 +132,10 @@ def _read(base, path, expected):
         with opener.open(req, timeout=5) as response:
             code, body = response.status, json.load(response)
     except urllib.error.HTTPError as exc:
-        code, body = exc.code, json.load(exc)
+        try:
+            code, body = exc.code, json.load(exc)
+        finally:
+            exc.close()
     if code != expected:
         raise AssertionError(f"fake authenticated read expected {expected}, got {code}")
     return body

@@ -2,11 +2,13 @@
 
 import hashlib
 from dataclasses import replace
+import io
 import os
 from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
+import urllib.error
 
 CONTRACT_DIR = Path(os.environ["ACCEPTANCE_CONTRACT_DIR"])
 EXPECTED = {
@@ -19,10 +21,18 @@ for name, digest in EXPECTED.items():
 sys.path.insert(0, str(CONTRACT_DIR))
 
 from contract import classify_claim, load_scenarios  # noqa: E402
-from pulumi_loopback_adapter import PulumiLoopbackAdapter, _fixture_env  # noqa: E402
+from pulumi_loopback_adapter import PulumiLoopbackAdapter, _fixture_env, _read  # noqa: E402
 
 
 class PulumiLoopbackAdapterTest(unittest.TestCase):
+    def test_authenticated_404_response_is_closed(self):
+        body = io.BytesIO(b'{"message":"fixture not found"}')
+        error = urllib.error.HTTPError("http://127.0.0.1:1234/v1/test", 404, "not found", {}, body)
+        with patch("pulumi_loopback_adapter.urllib.request.build_opener") as build_opener:
+            build_opener.return_value.open.side_effect = error
+            self.assertEqual(_read("http://127.0.0.1:1234/v1", "/test", 404), {"message": "fixture not found"})
+        self.assertTrue(body.closed)
+
     def test_fixture_environment_refuses_remote_hosts_and_excludes_inherited_secrets(self):
         for url in ("https://api.redislabs.com/v1", "http://localhost:1234/v1", "http://127.0.0.1:1234/other", "http://user:password@127.0.0.1:1234/v1"):
             with self.subTest(url=url), self.assertRaises(ValueError):
