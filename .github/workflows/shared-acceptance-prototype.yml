@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: RedisLabs/crossplane-provider-rediscloud
-          ref: 7ab7fcbb7f70c01dbf08d9df3e40f072ec24b20e
+          ref: c585a473b0c8f68f9e179ca1ae9edf0aabe146d2
           path: .shared-contract
           persist-credentials: false
       - name: Verify revision and run simulated-only adapter
@@ -26,5 +26,46 @@ jobs:
           ACCEPTANCE_CONTRACT_DIR: ${{ github.workspace }}/.shared-contract/acceptance
         run: |
           set -euo pipefail
-          git -C .shared-contract rev-parse HEAD | grep -Fx 7ab7fcbb7f70c01dbf08d9df3e40f072ec24b20e
+          git -C .shared-contract rev-parse HEAD | grep -Fx c585a473b0c8f68f9e179ca1ae9edf0aabe146d2
           python3 -m unittest discover -s acceptance -p 'test_*.py' -v
+
+  provider-loopback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout Pulumi prototype
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Checkout provisional shared scenario by exact commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: RedisLabs/crossplane-provider-rediscloud
+          ref: c585a473b0c8f68f9e179ca1ae9edf0aabe146d2
+          path: .shared-contract
+          persist-credentials: false
+      - name: Install Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.26.11"
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # v2.0.0
+        with:
+          pulumi-version: "3.273.0"
+      - name: Build repository provider and warm program dependencies
+        env:
+          VERSION: "0.0.0"
+        run: |
+          set -euo pipefail
+          go -C provider/cmd/pulumi-resource-rediscloud run ./generate.go
+          go -C provider build -ldflags '-X github.com/RedisLabs/pulumi-rediscloud/provider/pkg/version.Version=0.0.0' -o "${RUNNER_TEMP}/pulumi-resource-rediscloud" ./cmd/pulumi-resource-rediscloud
+          go -C examples/qa test ./...
+      - name: Run real Pulumi provider against isolated loopback fake
+        env:
+          ACCEPTANCE_CONTRACT_DIR: ${{ github.workspace }}/.shared-contract/acceptance
+          PULUMI_LOOPBACK_PROVIDER: ${{ runner.temp }}/pulumi-resource-rediscloud
+          PULUMI_LOOPBACK_CLI: pulumi
+        run: |
+          set -euo pipefail
+          git -C .shared-contract rev-parse HEAD | grep -Fx c585a473b0c8f68f9e179ca1ae9edf0aabe146d2
+          python3 -m unittest discover -s acceptance -p 'test_pulumi_loopback_adapter.py' -v

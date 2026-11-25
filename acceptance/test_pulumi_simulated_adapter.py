@@ -1,6 +1,7 @@
 """Run only with the exact provisional shared contract, with no credentials."""
 
 import hashlib
+from dataclasses import replace
 import os
 from pathlib import Path
 import sys
@@ -9,7 +10,7 @@ from unittest.mock import patch
 
 CONTRACT_DIR = Path(os.environ["ACCEPTANCE_CONTRACT_DIR"])
 EXPECTED = {
-    "contract.py": "d886f1c07d769cef790677a4d4edd52355a15feffbc5c64cd0fa1017b89a1fcc",
+    "contract.py": "ea4e814af164658654dc860bad4c9549526d347793e25856a0e2afba794236c0",
     "scenarios.json": "66f926d8c9a26acb6b2952b68280a1f82e71e98d2f463ff32862505b3989865a",
 }
 for name, digest in EXPECTED.items():
@@ -33,6 +34,7 @@ class PulumiSharedScenarioTests(unittest.TestCase):
         self.assertEqual(result.provider, "pulumi")
         self.assertEqual(result.mode, "simulated")
         self.assertEqual(classify_claim(scenario, result), "simulated_claim_requires_verification")
+        self.assertEqual(classify_claim(scenario, replace(result, mode="live")), "invalid")
         self.assertEqual(result.run_url, "https://fixture.invalid/run")
         self.assertEqual(result.evidence_url, "https://fixture.invalid/log")
         self.assertEqual(result.source_revision, "0" * 40)
