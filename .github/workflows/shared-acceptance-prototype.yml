@@ -1,0 +1,30 @@
+name: Shared acceptance prototype
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  simulated-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Pulumi prototype
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Checkout provisional shared scenario by exact commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: RedisLabs/crossplane-provider-rediscloud
+          ref: 7ab7fcbb7f70c01dbf08d9df3e40f072ec24b20e
+          path: .shared-contract
+          persist-credentials: false
+      - name: Verify revision and run simulated-only adapter
+        env:
+          ACCEPTANCE_CONTRACT_DIR: ${{ github.workspace }}/.shared-contract/acceptance
+        run: |
+          set -euo pipefail
+          git -C .shared-contract rev-parse HEAD | grep -Fx 7ab7fcbb7f70c01dbf08d9df3e40f072ec24b20e
+          python3 -m unittest discover -s acceptance -p 'test_*.py' -v

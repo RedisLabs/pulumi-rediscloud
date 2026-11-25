@@ -36,6 +36,18 @@ An abstract `assert_lock` does not itself establish fencing, does not prevent
 an old writer, and leaves a check-to-write race. Missing durable ownership
 and post-crash recovery also make it unsuitable for live use.
 
+The separate pull-request-only `Shared acceptance prototype` workflow checks
+out the provisional Crossplane shared contract at immutable revision
+`7ab7fcbb7f70c01dbf08d9df3e40f072ec24b20e`, verifies the checkout and both
+file digests, and runs a Pulumi-labeled simulated adapter using its actual
+scenario definition. This adapter invokes the fake model, not Pulumi or its
+SDK; it hardcodes simulated mode, yields `unsupported` for the update scenario
+and blocks an incompatible lifecycle definition. Its fixture result is an
+unverified simulated claim, never live coverage. The separately tested Pulumi
+SDK mock program is not wired to the fake model. The pin is a temporary
+unmerged proposal and is not a production contract or a reason to merge it;
+neutral ownership, schema compatibility and trusted evidence remain open.
+
 ## Validation and rollout
 
 `go test ./...` in `examples/qa` covers the two resource requests, parent ID
